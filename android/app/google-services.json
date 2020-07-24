@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "555670573637",
+    "firebase_url": "https://flykeys-ccc77.firebaseio.com",
+    "project_id": "flykeys-ccc77",
+    "storage_bucket": "flykeys-ccc77.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:555670573637:android:bd676693ada90067a0492c",
+        "android_client_info": {
+          "package_name": "com.moundapp.flykeys"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "555670573637-h13bgc6479gc75odb6mh735mgu60lqi5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.moundapp.flykeys",
+            "certificate_hash": "519a1067474da1cb0b7e1ceb1cbc4e1fe196964f"
+          }
+        },
+        {
+          "client_id": "555670573637-e99sq99hnupvgs1tvq3bk8a3olr403pq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBzUsOw9mpC8ao3TikFlSPELx88iwJnyFE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "555670573637-e99sq99hnupvgs1tvq3bk8a3olr403pq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

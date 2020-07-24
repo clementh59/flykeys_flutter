@@ -1,0 +1,134 @@
+name: flykeys
+description: A new Flutter application.
+
+# The following defines the version and build number for your application.
+# A version number is three numbers separated by dots, like 1.2.43
+# followed by an optional build number separated by a +.
+# Both the version and the builder number may be overridden in flutter
+# build by specifying --build-name and --build-number, respectively.
+# In Android, build-name is used as versionName while build-number used as versionCode.
+# Read more about Android versioning at https://developer.android.com/studio/publish/versioning
+# In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
+# Read more about iOS versioning at
+# https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.6.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # The following adds the Cupertino Icons font to your application.
+  # Use with the CupertinoIcons class for iOS style icons.
+  cupertino_icons: ^0.1.2
+
+  # BLoC
+  flutter_bloc: ^4.0.0
+  equatable: ^0.3.0
+
+  # Firebase
+  cloud_firestore: ^0.13.5
+  firebase_storage: ^3.1.5
+
+  #BLE
+  flutter_blue: ^0.6.0+2
+
+  #visibility detector for transcriber view, dots indicator
+  visibility_detector: ^0.1.5
+
+  #Shared prefs
+  shared_preferences: ^0.5.6+3
+
+  flutter_colorpicker: ^0.3.4
+
+  flare_flutter: ^2.0.4
+
+  email_validator: '^1.0.0'
+
+  #auth
+  google_sign_in: ^4.5.1
+  firebase_auth: ^0.16.1
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_native_splash: ^0.1.9
+
+  flutter_launcher_icons: "^0.7.3"
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter.
+
+flutter_native_splash:
+  image: assets/images/splash_screen/splash_screen.png
+  color: "09121C"
+
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/logo/logo.png"
+
+flutter:
+
+  uses-material-design: true
+
+  assets:
+    - assets/
+    - assets/launcher/
+    - assets/images/
+    - assets/images/logo/
+    - assets/images/icons/
+    - assets/images/icons/parameter/
+    - assets/images/games/
+    - assets/images/temporary/
+    - assets/images/splash_screen/
+    - assets/flare/
+
+  fonts:
+    - family: DarkerGrotesque
+      fonts:
+        - asset: assets/fonts/darker_grotesque/DarkerGrotesque-Light.ttf
+          weight: 200
+        - asset: assets/fonts/darker_grotesque/DarkerGrotesque-Regular.ttf
+          weight: 300
+        - asset: assets/fonts/darker_grotesque/DarkerGrotesque-Medium.ttf
+          weight: 400
+        - asset: assets/fonts/darker_grotesque/DarkerGrotesque-SemiBold.ttf
+          weight: 500
+        - asset: assets/fonts/darker_grotesque/DarkerGrotesque-Bold.ttf
+          weight: 600
+        - asset: assets/fonts/darker_grotesque/DarkerGrotesque-ExtraBold.ttf
+          weight: 700
+        - asset: assets/fonts/darker_grotesque/DarkerGrotesque-Black.ttf
+          weight: 800
+
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/poppins/Poppins-ExtraLight.ttf
+          weight: 100
+        - asset: assets/fonts/poppins/Poppins-Thin.ttf
+          weight: 200
+        - asset: assets/fonts/poppins/Poppins-Light.ttf
+          weight: 300
+        - asset: assets/fonts/poppins/Poppins-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/poppins/Poppins-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/poppins/Poppins-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/poppins/Poppins-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/poppins/Poppins-ExtraBold.ttf
+          weight: 800
+        - asset: assets/fonts/poppins/Poppins-Black.ttf
+          weight: 900
+
+    - family: Galada
+      fonts:
+        - asset: assets/fonts/galada/Galada-Regular.ttf
