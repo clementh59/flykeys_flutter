@@ -33,7 +33,7 @@ dependencies:
   firebase_storage: ^3.1.5
 
   #BLE
-  flutter_blue: ^0.6.0+2
+  flutter_blue: ^0.7.2
 
   #visibility detector for transcriber view, dots indicator
   visibility_detector: ^0.1.5
