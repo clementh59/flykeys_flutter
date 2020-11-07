@@ -301,7 +301,6 @@ class BluetoothRepository {
    * l'utilisateur appuie sur une touche pour faire défiler
    */
   void askToWaitForUserInputInModeApprentissage() async {
-    print('I ask to wait');
     await mainBluetoothCharacteristic.write([0xF9]);
   }
 
@@ -310,7 +309,6 @@ class BluetoothRepository {
    * l'utilisateur appuie sur une touche pour faire défiler
    */
   void askToNotWaitForUserInputInModeApprentissage() async {
-    print('I ask to not wait');
     await mainBluetoothCharacteristic.write([0xF8]);
   }
 
