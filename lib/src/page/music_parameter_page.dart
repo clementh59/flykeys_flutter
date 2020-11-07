@@ -170,9 +170,7 @@ class _MusicParameterPageState extends State<MusicParameterPage> {
 	}
 
 	void initWaitForUserInput() async {
-		bool _tempoWaitForUserInput = await Utils.getBooleanFromSharedPreferences(Strings.WAIT_FOR_USER_INPUT);
-		if (_tempoWaitForUserInput == null)
-			_tempoWaitForUserInput = false;
+		bool _tempoWaitForUserInput = await Utils.getBooleanFromSharedPreferences(Strings.WAIT_FOR_USER_INPUT, defaultValue: false);
 		setState(() {
 			waitForUserInput = _tempoWaitForUserInput;
 		});

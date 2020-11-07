@@ -12,6 +12,7 @@ import 'package:flykeys/src/repository/database_repository.dart';
 import 'package:flykeys/src/utils/custom_colors.dart';
 import 'package:flykeys/src/utils/custom_size.dart';
 import 'package:flykeys/src/utils/custom_style.dart';
+import 'package:flykeys/src/utils/strings.dart';
 import 'package:flykeys/src/utils/utils.dart';
 import 'package:flykeys/src/widget/custom_widgets.dart';
 import 'package:flykeys/src/page/music_parameter_page.dart';
@@ -266,7 +267,8 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
   ValueNotifier<bool> valueNotifierUpdateTickInPage;
   Duration durationOfTheMorceau;
 
-  double vitesseFactor = 1;
+	bool waitForUserInput;
+	double vitesseFactor = 1;
   double minSlideVitesse = 0.1;
   double maxSlideVitesse = 2;
   double lastDelaySent =
@@ -292,9 +294,13 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
 
     if (widget.state is MorceauSentState) {
       //Je viens d'envoyer le morceau, je lui envoi donc le delay
-      //De base je suis en pause
       _sendDelay(widget.music.speed);
-      buttonState = PAUSE;
+
+			//je lui envoi aussi si il doit attendre que j'appuie sur les touches ou non
+			envoiWaitForTheUserInput();
+
+			//De base je suis en pause
+			buttonState = PAUSE;
     } else if (widget.state is PlayingMusicState) {
       buttonState = PLAYING;
     } else if (widget.state is StoppedMusicState) {
@@ -774,4 +780,16 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
     durationOfTheMorceau =
         BlocProvider.of<BluetoothBloc>(context).getDurationOfTheMorceau();
   }
+
+  void envoiWaitForTheUserInput() async {
+  	bool wait = await getWaitForUserInput();
+  	if (wait)
+			BlocProvider.of<BluetoothBloc>(context).add(AskToWaitForTheUserInputEvent());
+  	else
+			BlocProvider.of<BluetoothBloc>(context).add(AskToNotWaitForTheUserInputEvent());
+	}
+
+	Future<bool> getWaitForUserInput() async {
+		return await Utils.getBooleanFromSharedPreferences(Strings.WAIT_FOR_USER_INPUT, defaultValue: false);
+	}
 }
