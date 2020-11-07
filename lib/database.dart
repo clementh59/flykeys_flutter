@@ -1,10 +1,13 @@
+import 'package:flykeys/src/page/game_pages/lightning_show_page.dart';
+
 var games = [
 	{
 		"name":"Lightning show",
 		"nb_players":251743,
 		"stars":5,
 		"image":"assets/images/games/lightning_show.png",
-		"key":"1"
+		"key":"1",
+		"page": LightningShowPage(),
 	},
 	{
 		"name":"Blind Test",
@@ -20,5 +23,4 @@ var games = [
 		"image":"assets/images/games/piano_tiles.png",
 		"key":"3"
 	},
-
 ];

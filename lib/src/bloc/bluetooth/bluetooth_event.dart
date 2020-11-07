@@ -78,6 +78,15 @@ class DisconnectEvent extends BluetoothEvent{
   List<Object> get props => [];
 }
 
+class LightningShowEvent extends BluetoothEvent{
+
+  LightningShowEvent();
+
+  @override
+  List<Object> get props => [];
+
+}
+
 /**
  * Lorsque je quitte la musique pour revenir au choix de la musique
  */

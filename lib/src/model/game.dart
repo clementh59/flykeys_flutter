@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flykeys/src/utils/utils.dart';
 
 class Game{
@@ -7,8 +8,9 @@ class Game{
 	double stars;
 	String id;
 	String imagePath;
+	Widget page;
 
-	Game({this.name, this.nbPlayers, this.stars, this.id, this.imagePath});
+	Game({this.name, this.nbPlayers, this.stars, this.id, this.imagePath, this.page});
 
 	Game.fromMapObject(Map<String, dynamic> map) {
 		name = map['name'];
@@ -16,6 +18,7 @@ class Game{
 		nbPlayers = map["nb_players"];
 		stars = Utils.getIntOrDouble(map["stars"]);
 		imagePath = map["image"];
+		page = map["page"];
 	}
 
 }

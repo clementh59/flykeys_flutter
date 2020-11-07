@@ -283,33 +283,47 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget gameTile(Game game) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        ClipRRect(
-            borderRadius: BorderRadius.circular(17),
-            child: Image.asset(
-              game.imagePath,
-              height: 100,
-              width: 100,
-            )),
-        SizedBox(
-          height: 4,
-        ),
-        Text(
-          game.name,
-          style: CustomStyle.gameTileName,
-        ),
-        Text(
-          Utils.showNumber(game.nbPlayers.toString()) + " players",
-          style: CustomStyle.gameTileNbPlayers,
-        ),
-        SizedBox(
-          height: 1,
-        ),
-        CustomWidgets.starsWidget(game.stars),
-      ],
+    return InkWell(
+      onTap: (){
+        if (game.page!=null){
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => game.page),
+          );
+        }
+      },
+      focusColor: Colors.transparent,
+      hoverColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      splashColor: Colors.transparent,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+              borderRadius: BorderRadius.circular(17),
+              child: Image.asset(
+                game.imagePath,
+                height: 100,
+                width: 100,
+              )),
+          SizedBox(
+            height: 4,
+          ),
+          Text(
+            game.name,
+            style: CustomStyle.gameTileName,
+          ),
+          Text(
+            Utils.showNumber(game.nbPlayers.toString()) + " players",
+            style: CustomStyle.gameTileNbPlayers,
+          ),
+          SizedBox(
+            height: 1,
+          ),
+          CustomWidgets.starsWidget(game.stars),
+        ],
+      ),
     );
   }
 }

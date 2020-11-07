@@ -15,6 +15,8 @@ import 'package:flykeys/src/utils/custom_style.dart';
 import 'package:flykeys/src/utils/utils.dart';
 import 'package:flykeys/src/widget/custom_widgets.dart';
 
+import 'bluetooth/connection_to_flykeys_object_page.dart';
+
 class MusicPage extends StatefulWidget {
   Music music;
 
@@ -73,7 +75,7 @@ class _MusicPageState extends State<MusicPage> {
                         builder: (c, snapshot) {
                           final state = snapshot.data;
                           if (state == BluetoothState.on) {
-                            bluetoothBloc.initEverything();
+                            bluetoothBloc.initEverythingLearningMode();
                             bluetoothBloc.add(FindFlyKeysDevice());
 
                             return BlocBuilder<BluetoothBloc, MyBluetoothState>(
@@ -86,8 +88,12 @@ class _MusicPageState extends State<MusicPage> {
                                     children: <Widget>[
                                       _topbar(),
                                       Center(
-                                          child: SettingUpBluetoothPage(
-                                              state, widget.music)),
+                                          child:
+                                              SettingUpBluetoothPage(state, () {
+                                        BlocProvider.of<BluetoothBloc>(context)
+                                            .add(SendMorceauEvent(
+                                                widget.music.id));
+                                      })),
                                     ],
                                   );
                                 }
@@ -139,7 +145,7 @@ class _MusicPageState extends State<MusicPage> {
       child: Container(
         margin: EdgeInsets.only(top: 15, left: 15),
         child: InkWell(
-          onTap: (){
+          onTap: () {
             Navigator.of(context).pop();
           },
           focusColor: Colors.transparent,
@@ -155,91 +161,6 @@ class _MusicPageState extends State<MusicPage> {
       ),
     );
   }
-}
-
-/**
- * Donne des infos sur l'état de la recherche/connection à l'objet
- */
-class SettingUpBluetoothPage extends StatefulWidget {
-  final MyBluetoothState state;
-  final Music music;
-
-  SettingUpBluetoothPage(this.state, this.music);
-
-  @override
-  _SettingUpBluetoothPageState createState() => _SettingUpBluetoothPageState();
-}
-
-class _SettingUpBluetoothPageState extends State<SettingUpBluetoothPage> {
-
-  void scanAgain() {
-    BlocProvider.of<BluetoothBloc>(context).add(FindFlyKeysDevice());
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    dev.log("state is ${widget.state}",
-        name: "music_page setting up blue build");
-    if (widget.state is InitialBluetoothState) {
-      return CustomWidgets.textWithoutLoadingIndicator(
-          "La recherche de l'objet FlyKeys n'a pas encore commencée!");
-    } else if (widget.state is SearchingForFlyKeysDeviceState) {
-      return CustomWidgets.textWithLoadingIndicator(
-          "Je cherche l'objet FlyKeys!");
-    } else if (widget.state is FlyKeysDeviceFoundState) {
-      return CustomWidgets.textWithLoadingIndicator("Objet FlyKeys trouvé!");
-    } else if (widget.state is SucceedToConnectState) {
-      return CustomWidgets.textWithLoadingIndicator(
-          "Connection à l'objet réussie!");
-    } else if (widget.state is BluetoothIsSetUpState) {
-      //Je lui demande maintenant d'envoyer le morceau
-      BlocProvider.of<BluetoothBloc>(context)
-          .add(SendMorceauEvent(widget.music.id));
-      dev.log("Bluetooth is set up",
-          name: "Je demande au bloc : sendMorceauEvent");
-      return CustomWidgets.textWithLoadingIndicator(
-          "Récupération des informations de l'objet réussie!");
-    } else if (widget.state is FlyKeysDeviceDisconnectedState) {
-      Future.delayed(new Duration(seconds: 2), () {
-        //J'ai deux possibilités en arrivant ici, soit j'ai eu FlyKeysDeviceDisconnectedState car je viens de me déconnecter
-        // et je dois donc revenir à la page précédente
-        // dans ce cas, le state ne bouge pas au bout de 2s, et donc le if et true
-        // l'autre cas est que j'ai eu la deconnection une fois et que j'ai recliquer sur une musique,
-        // le dernier state était FlyKeysDeviceDisconnectedState et donc j'appelle le future.delayed
-        // Cependant le state change tout de suite et passe à findFlyKeys device state
-        // Le if suivant ne se fait donc pas
-        if (widget.state is FlyKeysDeviceDisconnectedState)
-          Navigator.of(context).pop();
-      });
-      return CustomWidgets.textWithLoadingIndicator(
-          "Une deconnexion est survenu!");
-    }
-
-    //Error :
-    else if (widget.state is FlyKeysDeviceNotFoundState) {
-      return Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            CustomWidgets.textWithoutLoadingIndicator(
-                "Objet FlyKeys non trouvé!"),
-            SizedBox(
-              height: 15,
-            ),
-            CustomWidgets.buttonWithText("Chercher de nouveau", scanAgain),
-          ],
-        ),
-      );
-    } else if (widget.state is FailedToConnectState) {
-      return CustomWidgets.textWithoutLoadingIndicator(
-          "La connection à l'appareil a échouée");
-    }
-
-    print(
-        "!!!!!!!!!!!ERROR!!!!!!!!!! NOT HANDLED CASE IN SettingUpBluetoothPage");
-    return SizedBox();
-  }
-
 }
 
 /**
@@ -413,7 +334,7 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
           child: _topBar(context),
         ),
         Padding(
-          padding: const EdgeInsets.only(top : 10.0),
+          padding: const EdgeInsets.only(top: 10.0),
           child: _generateInfoMusic(),
         ),
         Container(
@@ -428,51 +349,50 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
               ),
               _generateBottomCenterButton(buttonState),
               InkWell(
-                focusColor: Colors.transparent,
-                hoverColor: Colors.transparent,
-                highlightColor: Colors.transparent,
-                splashColor: Colors.transparent,
-                onTap: () {
-                  if (widget.music.liked) {
-                    setState(() {
-                      widget.music.liked = false;
-                    });
-                    BlocProvider.of<FavoritesBloc>(context)
-                      ..add(RemoveAFavoriteMusic(widget.music));
-                  } else {
-                    setState(() {
-                      widget.music.liked = true;
-                    });
-                    BlocProvider.of<FavoritesBloc>(context)
-                      ..add(AddAFavoriteMusic(widget.music));
-                  }
-                },
-                child: BlocBuilder<FavoritesBloc, FavoritesState>(
-                  builder: (BuildContext context, FavoritesState state) {
-                    if (state is ListsLoadedState){
-                      if (state.musicsId.contains(widget.music.id)){
+                  focusColor: Colors.transparent,
+                  hoverColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  splashColor: Colors.transparent,
+                  onTap: () {
+                    if (widget.music.liked) {
+                      setState(() {
+                        widget.music.liked = false;
+                      });
+                      BlocProvider.of<FavoritesBloc>(context)
+                        ..add(RemoveAFavoriteMusic(widget.music));
+                    } else {
+                      setState(() {
+                        widget.music.liked = true;
+                      });
+                      BlocProvider.of<FavoritesBloc>(context)
+                        ..add(AddAFavoriteMusic(widget.music));
+                    }
+                  },
+                  child: BlocBuilder<FavoritesBloc, FavoritesState>(
+                      builder: (BuildContext context, FavoritesState state) {
+                    if (state is ListsLoadedState) {
+                      if (state.musicsId.contains(widget.music.id)) {
                         widget.music.liked = true;
                         return CustomWidgets.heartIcon(true);
-                      }else{
+                      } else {
                         widget.music.liked = false;
                         return CustomWidgets.heartIcon(false);
                       }
                     }
                     return CustomWidgets.heartIcon(false);
-                  })
-              ),
+                  })),
             ],
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(bottom : 16.0),
+          padding: const EdgeInsets.only(bottom: 16.0),
           child: _generateTranscriber(),
         ),
       ],
     );
   }
 
-  Widget _generateTranscriber(){
+  Widget _generateTranscriber() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
@@ -485,7 +405,6 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
           widget.music.transcriberName,
           style: CustomStyle.transcriberColorNameMusicPage,
         ),
-
       ],
     );
   }
@@ -542,7 +461,9 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
           mainAxisSize: MainAxisSize.min,
           children: [
             CustomWidgets.biggerNoteWidget(widget.music.difficulty),
-            SizedBox(width: 15,),
+            SizedBox(
+              width: 15,
+            ),
             CustomWidgets.ytWidget(15),
           ],
         ),
@@ -556,8 +477,8 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
             children: [
               _timeSlider(),
               Container(
-                  transform: Matrix4.translationValues(0.0, -16.0, 0.0),
-                  child: _generateSpeedSlider(),
+                transform: Matrix4.translationValues(0.0, -16.0, 0.0),
+                child: _generateSpeedSlider(),
               ),
             ],
           ),

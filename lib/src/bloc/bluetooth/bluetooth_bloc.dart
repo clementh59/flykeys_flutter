@@ -36,7 +36,7 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
   @override
   MyBluetoothState get initialState => InitialBluetoothState();
 
-  void initEverything() {
+  void initEverythingLearningMode() {
     valueNotifierStopSendingMorceau = ValueNotifier(false);
     valueNotifierActualTick = ValueNotifier(0);
     speed_x1 = 0;
@@ -161,6 +161,15 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
     if (event is MorceauIsFinishEvent) {
       yield StoppedMusicState();
       isPlaying = false;
+    }
+
+
+    //other modes!!
+
+    if (event is LightningShowEvent){
+      yield LoadingCommandMusicState();
+      await bluetoothRepository.lightningShow();
+      yield LightningShowModeState();
     }
 
     //private events that are send in this class

@@ -15,6 +15,8 @@ class BluetoothRepository {
   static const String uuidOfTickCommunication =
       "beb5483e-36e1-4688-b7f5-ea07361b26a7";
 
+  List<int> console = [];//todo : remove, it's just for printing to the console all the bytes that I send
+
   BluetoothDevice flyKeysDevice;
   BluetoothCharacteristic mainBluetoothCharacteristic;
   BluetoothCharacteristic tickBluetoothCharacteristic;
@@ -40,7 +42,7 @@ class BluetoothRepository {
         n = listNotes[i];
 
         if (n.getKey() > 88) {
-          //je fais rien car elle ne sera pas visible sur le clavier!!
+          //je fais rien car elle ne sera pas visible sur le clavier!! //todo: changer avec les dimensions du piano que l'user a paramétrer dans l'app
           notesDejaEnvoyees.add(n);
         } else if (n.getTimeOff() < actualTick) {
           //On ne voit plus la note
@@ -112,12 +114,20 @@ class BluetoothRepository {
 
     int end = new DateTime.now().millisecondsSinceEpoch;
     print("TTS time to send : " + ((end - begin) / 1000).toString() + "s");
+    for (int i=0; i<console.length; i+=100){
+      String str = "";
+      for (int c = i; c<i+100 && c<console.length; c++){
+        str+=console[c].toString()+",";
+      }
+      print(str);
+    }
     return;
   }
 
   Future<Null> envoiLaTrameMTU(List<int> trame,
       BluetoothCharacteristic bluetoothCharacteristicToSend) async {
-    print("J'envoi la trame $trame");
+    //print("J'envoi la trame $trame");
+    console.addAll(trame);
     await bluetoothCharacteristicToSend.write(trame);
   }
 
@@ -251,6 +261,10 @@ class BluetoothRepository {
     await mainBluetoothCharacteristic.write([0xFB]); // PLAY
   }
 
+  Future<void> lightningShow() async {
+    await mainBluetoothCharacteristic.write([0xFA]); // PLAY
+  }
+
   void sendDelay(double delayDouble) async {
     //10011100010
     //je veux envoyer
@@ -341,12 +355,14 @@ class BluetoothRepository {
 
   int findTheIndexCorrespondToTheTick(int tickToGo) {
     int tick = 0;
+    print("tick to go is $tickToGo");
     for (int i = 0; i < bytesSent.length; i++) {
       if (tick == tickToGo) return i;
-      if (bytesSent[i] == 0xFF) {
+      if (bytesSent[i] == 0xBD) {
         tick++;
       }
     }
+    print("tick max is $tick");
     return -1;
   }
 

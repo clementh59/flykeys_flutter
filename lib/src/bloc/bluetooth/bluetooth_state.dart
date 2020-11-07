@@ -180,11 +180,22 @@ class TickNotPossibleState extends BluetoothInteractWithMusic{
 }
 
 /**
- * When you send play or stop, there is a delay between the time that you send and the time that the device read it. Between this delay, the state is loadingCommandMusicState
+ * When you send a play or stop event (or lightningshow, ...), there is a delay between the time that you send and the time that the device read it. Between this delay, the state is loadingCommandMusicState
  */
 class LoadingCommandMusicState extends BluetoothInteractWithMusic{
 
   LoadingCommandMusicState();
+
+  @override
+  List<Object> get props => [];
+}
+
+/**
+ * Le mode animation visuelle est lancé
+ */
+class LightningShowModeState extends BluetoothInteractWithMusic{
+
+  LightningShowModeState();
 
   @override
   List<Object> get props => [];

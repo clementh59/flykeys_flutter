@@ -47,6 +47,7 @@ class CustomStyle{
 	);
 
 	/***************		Music Tile	********************/
+
 	static TextStyle musicTileName = TextStyle(
 		color: CustomColors.white,
 		fontSize: 14,

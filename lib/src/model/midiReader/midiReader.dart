@@ -20,7 +20,8 @@ class MidiReader{
 		for(String line in lines){
 			List<String> info = line.split("/");
 			if (info.length==3) {
-				Note n = Note(int.parse(info[0]), int.parse(info[1]));
+				//todo : changer le -12!!
+				Note n = Note(int.parse(info[0])-12, int.parse(info[1]));
 				n.setTimeOff(int.parse(info[2]));
 				notes.add(n);
 			}
