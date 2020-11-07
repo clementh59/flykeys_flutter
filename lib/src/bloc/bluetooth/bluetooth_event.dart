@@ -60,6 +60,32 @@ class SendSpeedEvent extends BluetoothEvent{
   List<Object> get props => [speed];
 }
 
+/**
+ * Utile pour le mode apprentissage, si je dois ou non attendre que
+ * l'utilisateur appuie sur une touche pour faire défiler
+ */
+class AskToWaitForTheUserInputEvent extends BluetoothEvent{
+
+	AskToWaitForTheUserInputEvent();
+
+  @override
+  List<Object> get props => [];
+}
+
+/**
+ * Utile pour le mode apprentissage, si je dois ou non attendre que
+ * l'utilisateur appuie sur une touche pour faire défiler
+ */
+class AskToNotWaitForTheUserInputEvent extends BluetoothEvent{
+
+	AskToNotWaitForTheUserInputEvent();
+
+  @override
+  List<Object> get props => [];
+}
+
+
+
 class SendNewTickEvent extends BluetoothEvent{
 
   final int tick;

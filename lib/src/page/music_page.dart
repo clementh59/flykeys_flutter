@@ -14,6 +14,7 @@ import 'package:flykeys/src/utils/custom_size.dart';
 import 'package:flykeys/src/utils/custom_style.dart';
 import 'package:flykeys/src/utils/utils.dart';
 import 'package:flykeys/src/widget/custom_widgets.dart';
+import 'package:flykeys/src/page/music_parameter_page.dart';
 
 import 'bluetooth/connection_to_flykeys_object_page.dart';
 
@@ -342,11 +343,7 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              Icon(
-                Icons.tune,
-                size: 30,
-                color: Colors.white,
-              ),
+              _generateMusicParameterButton(),
               _generateBottomCenterButton(buttonState),
               InkWell(
                   focusColor: Colors.transparent,
@@ -691,7 +688,7 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
           ),
         ),
       );
-    //state==IDLE
+    //state==PAUSE (or initial state)
     return InkWell(
       onTap: () {
         _play();
@@ -713,6 +710,26 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
           size: 40,
           color: Colors.white,
         ),
+      ),
+    );
+  }
+
+  /**
+   * Generate the music parameter button
+   * When you click on it, it opens the MusicParameterPage
+   */
+  Widget _generateMusicParameterButton() {
+    return InkWell(
+      onTap: (){
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => MusicParameterPage()),
+        );
+      },
+      child: Icon(
+        Icons.tune,
+        size: 30,
+        color: Colors.white,
       ),
     );
   }

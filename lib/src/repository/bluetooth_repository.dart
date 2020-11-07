@@ -254,11 +254,11 @@ class BluetoothRepository {
   }
 
   Future<void> play() async {
-    await mainBluetoothCharacteristic.write([0xFC]); // PLAY
+    await mainBluetoothCharacteristic.write([0xFC]);
   }
 
   Future<void> stop() async {
-    await mainBluetoothCharacteristic.write([0xFB]); // PLAY
+    await mainBluetoothCharacteristic.write([0xFB]);
   }
 
   Future<void> lightningShow() async {
@@ -294,6 +294,24 @@ class BluetoothRepository {
       c.blue,
       c.red,
     ]); // PLAY
+  }
+
+  /**
+   * Utile pour le mode apprentissage, si je dois ou non attendre que
+   * l'utilisateur appuie sur une touche pour faire défiler
+   */
+  void askToWaitForUserInputInModeApprentissage() async {
+    print('I ask to wait');
+    await mainBluetoothCharacteristic.write([0xF9]);
+  }
+
+  /**
+   * Utile pour le mode apprentissage, si je dois ou non attendre que
+   * l'utilisateur appuie sur une touche pour faire défiler
+   */
+  void askToNotWaitForUserInputInModeApprentissage() async {
+    print('I ask to not wait');
+    await mainBluetoothCharacteristic.write([0xF8]);
   }
 
   Future<int> subscribeToTickCharacteristic(

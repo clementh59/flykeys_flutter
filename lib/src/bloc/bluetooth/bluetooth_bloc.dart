@@ -126,6 +126,16 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
       return;
     }
 
+    if (event is AskToWaitForTheUserInputEvent){
+    	bluetoothRepository.askToWaitForUserInputInModeApprentissage();
+    	return;
+		}
+
+		if (event is AskToNotWaitForTheUserInputEvent){
+			bluetoothRepository.askToNotWaitForUserInputInModeApprentissage();
+			return;
+		}
+
     if (event is SendNewTickEvent) {
       bool res = await bluetoothRepository.sendANewTick(event.tick);
       if (!res) {

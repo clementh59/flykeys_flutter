@@ -74,4 +74,14 @@ class Utils{
 		//print('saved $value');
 	}
 
+	static Future<bool> getBooleanFromSharedPreferences(String key) async {
+		final prefs = await SharedPreferences.getInstance();
+		return prefs.getBool(key);
+	}
+
+	static Future<void> saveBooleanFromSharedPreferences(String key, bool value) async {
+		final prefs = await SharedPreferences.getInstance();
+		prefs.setBool(key, value);
+	}
+
 }

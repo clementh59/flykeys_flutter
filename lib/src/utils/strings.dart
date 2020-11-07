@@ -23,4 +23,7 @@ class Strings{
 	static const String ERROR_INVALID_USER_TOKEN = "The user\'s credential is no longer valid. The user must sign in again.";
 	static const String ERROR_OPERATION_NOT_ALLOWED = "This operation is not allowed. You must enable this service in the console.";
 
+	/*****************************		SHARED  PREFS KEYS 	**********************/
+	static const String WAIT_FOR_USER_INPUT = "WAIT_FOR_USER_INPUT";
+
 }
