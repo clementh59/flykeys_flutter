@@ -262,7 +262,7 @@ class BluetoothRepository {
   }
 
   Future<void> lightningShow() async {
-    await mainBluetoothCharacteristic.write([0xFA]); // PLAY
+    await mainBluetoothCharacteristic.write([0xF6]); // PLAY
   }
 
   void sendDelay(double delayDouble) async {
