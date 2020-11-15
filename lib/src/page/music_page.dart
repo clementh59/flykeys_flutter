@@ -299,6 +299,9 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
 			//je lui envoi aussi si il doit attendre que j'appuie sur les touches ou non
 			envoiWaitForTheUserInput();
 
+			// Je lui envoi aussi mes couleurs
+      envoiMesCouleurs();
+
 			//De base je suis en pause
 			buttonState = PAUSE;
     } else if (widget.state is PlayingMusicState) {
@@ -781,6 +784,18 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
         BlocProvider.of<BluetoothBloc>(context).getDurationOfTheMorceau();
   }
 
+  /**
+   * Crée une action dans BluetoothBloc qui envoi mes couleurs
+   */
+  void envoiMesCouleurs() {
+    print("envoiMesCouleursEvent is pushed");
+    BlocProvider.of<BluetoothBloc>(context).add(EnvoiMesCouleursEvent());
+  }
+
+  /**
+   * Crée une action dans BluetoothBloc qui envoi mon choix pour
+   * waitForTheUserInput
+   */
   void envoiWaitForTheUserInput() async {
   	bool wait = await getWaitForUserInput();
   	if (wait)

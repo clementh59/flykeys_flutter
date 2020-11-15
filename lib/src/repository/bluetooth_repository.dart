@@ -6,6 +6,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flykeys/src/model/midiReader/note.dart';
+import 'package:flykeys/src/repository/bluetooth_constants.dart';
 
 class BluetoothRepository {
   static const int MTU_SIZE = 254;
@@ -52,25 +53,30 @@ class BluetoothRepository {
           if (n.getTimeOn() < actualTick && n.getTimeOff() >= actualTick) {
             //alors c'est visible
 
-            if (n.isAnotherColor) {
-              tramesAEnvoyer.add(n.key + 100); //je la met en rouge
+            if (n.isReleaseAndPush()) {
+              tramesAEnvoyer.add(n.key); //je la met en rouge
+              tramesAEnvoyer.add(BluetoothConstants.mapStringColorToCode[n.getColor()]);
             } else if (lastKeysOn[n.getKey()] != null &&
                 lastKeysOn[n.getKey()] != n &&
-                !lastKeysOn[n.getKey()].isAnotherColor) {
-              tramesAEnvoyer.add(n.key + 100); //je la met en rouge
-              n.setIsAnotherColor();
-            } else
+                !lastKeysOn[n.getKey()].isReleaseAndPush()) {
+              tramesAEnvoyer.add(n.key); //je la met en rouge
+              tramesAEnvoyer.add(BluetoothConstants.mapStringColorToCode[n.getColor()]);
+              n.setIsReleaseAndPushColor();
+            } else {
               tramesAEnvoyer.add(n.key); //Je l'envoi simplement
+              tramesAEnvoyer.add(BluetoothConstants.mapStringColorToCode[n.getColor()]); //avec sa couleur
+            }
             actualKeysOn[n.getKey()] = n;
           }
         }
       }
-      tramesAEnvoyer.add(189); //AFFICHAGE
+      tramesAEnvoyer.add(BluetoothConstants.CODE_NEW_TICK); //AFFICHAGE
       actualTick++;
       for (int i = 0; i < notesDejaEnvoyees.length; i++)
         listNotes.remove(notesDejaEnvoyees[i]);
       notesDejaEnvoyees.clear();
     }
+    print(tramesAEnvoyer);
     return tramesAEnvoyer;
   }
 
@@ -88,7 +94,7 @@ class BluetoothRepository {
         0; // Pour se repérer dans l'index du tableau de trame de BluetoothConstants.MTU_SIZE où on est
 
     await mainBluetoothCharacteristic
-        .write([0xFD]); //Je dis à l'esp que je lui envoi le morceau
+        .write([BluetoothConstants.CODE_MODE_APPRENTISSAGE_ENVOI_DU_MORCEAU]); //Je dis à l'esp que je lui envoi le morceau
 
     for (int i = 0; i < tramesAEnvoyer.length; i++) {
       trameDeMaxMTU.add(tramesAEnvoyer[i]);
@@ -254,18 +260,21 @@ class BluetoothRepository {
   }
 
   Future<void> play() async {
-    await mainBluetoothCharacteristic.write([0xFC]);
+    await mainBluetoothCharacteristic.write([BluetoothConstants.CODE_PLAY]);
   }
 
-  Future<void> stop() async {
-    await mainBluetoothCharacteristic.write([0xFB]);
+  Future<void> pause() async {
+    await mainBluetoothCharacteristic.write([BluetoothConstants.CODE_PAUSE]);
   }
 
+  /**
+   * Ask the BLE device to start the mode lightning show
+   */
   Future<void> lightningShow() async {
-    await mainBluetoothCharacteristic.write([0xF6]); // PLAY
+    await mainBluetoothCharacteristic.write([BluetoothConstants.CODE_MODE_LIGHTNING_SHOW]); // PLAY
   }
 
-  void sendDelay(double delayDouble) async {
+  Future<void> sendDelay(double delayDouble) async {
     //10011100010
     //je veux envoyer
     //11100010
@@ -278,38 +287,40 @@ class BluetoothRepository {
     byteData.setInt16(0, delay);
     //J'envoi les deux premier int qui correspondent à la partie entière de la vitesse puis une nombre de 0 à 99 qui correspond à la virgule
     await mainBluetoothCharacteristic.write([
-      0xFA,
+      BluetoothConstants.CODE_DELAY,
       byteData.getUint8(1),
       byteData.getUint8(0),
       virguleFois100
     ]); // PLAY
   }
 
-  void sendNewColor(Color c) async {
-    print("Sending new color : ${c.green}, ${c.blue}, ${c.red}");
-
-    await mainBluetoothCharacteristic.write([
-      0xEF,
-      c.green,
-      c.blue,
-      c.red,
-    ]); // PLAY
+  Future<void> sendColors() async {
+    await mainBluetoothCharacteristic.write([BluetoothConstants.CODE_I_SEND_COLOR,
+      BluetoothConstants.mapStringColorToCode['MD'],
+      79,235,52,79,235,52,79,235,52,79,235,52,79,235,52,79,235,52,79,235,52,79,235,52,
+      BluetoothConstants.mapStringColorToCode['MD_R&P'],
+      189,255,177,189,255,177,189,255,177,189,255,177,189,255,177,189,255,177,189,255,177,189,255,177,
+      BluetoothConstants.mapStringColorToCode['MG'],
+      52,152,235,52,152,235,52,152,235,52,152,235,52,152,235,52,152,235,52,152,235,52,152,235,
+      BluetoothConstants.mapStringColorToCode['MG_R&P'],
+      183,222,255,183,222,255,183,222,255,183,222,255,183,222,255,183,222,255,183,222,255,183,222,255,
+    ]);
   }
 
   /**
    * Utile pour le mode apprentissage, si je dois ou non attendre que
    * l'utilisateur appuie sur une touche pour faire défiler
    */
-  void askToWaitForUserInputInModeApprentissage() async {
-    await mainBluetoothCharacteristic.write([0xF9]);
+  Future<void> askToWaitForUserInputInModeApprentissage() async {
+    await mainBluetoothCharacteristic.write([BluetoothConstants.CODE_SET_I_HAVE_TO_WAIT_FOR_USER_INPUT]);
   }
 
   /**
    * Utile pour le mode apprentissage, si je dois ou non attendre que
    * l'utilisateur appuie sur une touche pour faire défiler
    */
-  void askToNotWaitForUserInputInModeApprentissage() async {
-    await mainBluetoothCharacteristic.write([0xF8]);
+  Future<void> askToNotWaitForUserInputInModeApprentissage() async {
+    await mainBluetoothCharacteristic.write([BluetoothConstants.CODE_SET_I_DONT_HAVE_TO_WAIT_FOR_USER_INPUT]);
   }
 
   Future<int> subscribeToTickCharacteristic(
@@ -374,7 +385,7 @@ class BluetoothRepository {
     print("tick to go is $tickToGo");
     for (int i = 0; i < bytesSent.length; i++) {
       if (tick == tickToGo) return i;
-      if (bytesSent[i] == 0xBD) {
+      if (bytesSent[i] == BluetoothConstants.CODE_NEW_TICK) {
         tick++;
       }
     }

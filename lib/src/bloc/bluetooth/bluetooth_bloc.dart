@@ -107,7 +107,7 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
     if (event is QuitMusicEvent) {
       valueNotifierStopSendingMorceau?.value = true; //si il y a un envoit, je l'arrete / sinon, ca change rien
       if (isPlaying)
-        await bluetoothRepository.stop();
+        await bluetoothRepository.pause();
       yield InitialBluetoothState();
     }
 
@@ -122,17 +122,22 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
 
     //interact with morceau
     if (event is SendSpeedEvent) {
-      bluetoothRepository.sendDelay(event.speed);
+      await bluetoothRepository.sendDelay(event.speed);
+      return;
+    }
+
+    if (event is EnvoiMesCouleursEvent){
+      await bluetoothRepository.sendColors(); // si je le met
       return;
     }
 
     if (event is AskToWaitForTheUserInputEvent){
-    	bluetoothRepository.askToWaitForUserInputInModeApprentissage();
+    	await bluetoothRepository.askToWaitForUserInputInModeApprentissage();
     	return;
 		}
 
 		if (event is AskToNotWaitForTheUserInputEvent){
-			bluetoothRepository.askToNotWaitForUserInputInModeApprentissage();
+			await bluetoothRepository.askToNotWaitForUserInputInModeApprentissage();
 			return;
 		}
 
@@ -141,7 +146,7 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
       if (!res) {
         yield TickNotPossibleState(new DateTime.now().millisecondsSinceEpoch);
         if (isPlaying) {
-          await bluetoothRepository.stop();
+          await bluetoothRepository.pause();
           isPlaying = false;
         }
         valueNotifierUpdateTickInPage.value = true;
@@ -163,7 +168,7 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
 
     if (event is StopEvent) {
       yield LoadingCommandMusicState();
-      await bluetoothRepository.stop();
+      await bluetoothRepository.pause();
       isPlaying = false;
       yield StoppedMusicState();
     }

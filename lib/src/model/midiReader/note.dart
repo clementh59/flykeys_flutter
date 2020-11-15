@@ -8,14 +8,10 @@ class Note{
 	int key;
 	int timeOn;
 	int timeOff;
-	bool _isAnotherColor;
+	String color;
 
-	Note(int key, int timeOn) {
-		this.key = key;
-		this.timeOn = timeOn;
-		timeOff = -1;
-		_isAnotherColor = false;
-	}
+	/// @param {String} color : ex -> "MD", "MG", ...
+	Note(this.key, this.timeOn, this.timeOff, this.color);
 
 	int getKey() {
 		return key;
@@ -33,17 +29,23 @@ class Note{
 		this.timeOff = timeOff;
 	}
 
+	String getColor(){
+		return this.color;
+	}
+
 	bool aDejaUneNoteOff(){
 		if (timeOff==-1)
 			return false;
 		return true;
 	}
 
+	bool isReleaseAndPush() {
+		return color.contains("_R&P");
+	}
 
-	bool get isAnotherColor => _isAnotherColor;
-
-  void setIsAnotherColor() {
-    _isAnotherColor = true;
+  void setIsReleaseAndPushColor() {
+		if (!isReleaseAndPush())
+    	color += "_R&P";
   }
 
   @override

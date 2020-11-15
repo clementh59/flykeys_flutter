@@ -18,13 +18,13 @@ class MidiReader{
 		List<String> lines = data.split("\n");
 		List<Note> notes = [];
 		for(String line in lines){
-			List<String> info = line.split("/");
-			if (info.length==3) {
+			List<String> info = line.split(" ");
+			if (info.length==4) {
 				//todo : changer le -12!!
-				Note n = Note(int.parse(info[0])-12, int.parse(info[1]));
-				n.setTimeOff(int.parse(info[2]));
+				Note n = Note(int.parse(info[0])-12, int.parse(info[1]), int.parse(info[2]), info[3]);
 				notes.add(n);
 			}
+
 		}
 		nbDeTickDuMorceau = getTickMaxDuMorceau(notes);
 		return notes;

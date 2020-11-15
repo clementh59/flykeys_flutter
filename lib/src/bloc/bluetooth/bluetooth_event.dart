@@ -84,7 +84,16 @@ class AskToNotWaitForTheUserInputEvent extends BluetoothEvent{
   List<Object> get props => [];
 }
 
+/**
+ * Envoi mes couleurs à l'esp32
+ */
+class EnvoiMesCouleursEvent extends BluetoothEvent{
 
+	EnvoiMesCouleursEvent();
+
+	@override
+	List<Object> get props => [];
+}
 
 class SendNewTickEvent extends BluetoothEvent{
 
