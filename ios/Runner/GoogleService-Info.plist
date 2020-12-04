@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>555670573637-9fa1rlk4kauk0ogitvggl0955c46a4r7.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.555670573637-9fa1rlk4kauk0ogitvggl0955c46a4r7</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>555670573637-h13bgc6479gc75odb6mh735mgu60lqi5.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDLSRQ_JBKkc4-3rQdVY0k_jnSxiVgusmI</string>
+	<key>GCM_SENDER_ID</key>
+	<string>555670573637</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.moundapp.flykeys</string>
+	<key>PROJECT_ID</key>
+	<string>flykeys-ccc77</string>
+	<key>STORAGE_BUCKET</key>
+	<string>flykeys-ccc77.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:555670573637:ios:f63a7dfa74e669eea0492c</string>
+	<key>DATABASE_URL</key>
+	<string>https://flykeys-ccc77.firebaseio.com</string>
+</dict>
+</plist>
