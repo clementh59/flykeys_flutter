@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:async/async.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flykeys/src/model/midiReader/midiReader.dart';
 import 'package:flykeys/src/model/midiReader/note.dart';
+import 'package:flykeys/src/repository/bluetooth_constants.dart';
 import 'package:flykeys/src/repository/bluetooth_repository.dart';
 import 'package:flykeys/src/repository/parsed_file_repository.dart';
 import 'bloc.dart';
@@ -63,7 +63,7 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
 
       yield SearchingForFlyKeysDeviceState();
       FlutterBlue.instance.startScan(
-          timeout: Duration(seconds: BluetoothRepository.SCAN_TIMEOUT));
+          timeout: Duration(seconds: BluetoothConstants.SCAN_TIMEOUT));
       bool deviceFound =
           await bluetoothRepository.findFlyKeysDevice(flutterBlue);
       if (!deviceFound) {
@@ -140,6 +140,21 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
 			await bluetoothRepository.askToNotWaitForUserInputInModeApprentissage();
 			return;
 		}
+
+    if (event is ShowMeTheTwoHands){
+      await bluetoothRepository.showTheTwoHands();
+      return;
+    }
+
+    if (event is ShowMeOnlyTheLeftHand){
+      await bluetoothRepository.showOnlyTheLeftHand();
+      return;
+    }
+
+    if (event is ShowMeOnlyTheRightHand){
+      await bluetoothRepository.showOnlyTheRightHand();
+      return;
+    }
 
     if (event is SendNewTickEvent) {
       bool res = await bluetoothRepository.sendANewTick(event.tick);

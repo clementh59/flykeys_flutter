@@ -85,6 +85,39 @@ class AskToNotWaitForTheUserInputEvent extends BluetoothEvent{
 }
 
 /**
+ * Si je souhaite que l'objet affiche les deux mains du morceau
+ */
+class ShowMeTheTwoHands extends BluetoothEvent{
+
+  ShowMeTheTwoHands();
+
+  @override
+  List<Object> get props => [];
+}
+
+/**
+ * Si je souhaite que l'objet affiche uniquement la main gauche du morceau
+ */
+class ShowMeOnlyTheLeftHand extends BluetoothEvent{
+
+  ShowMeOnlyTheLeftHand();
+
+  @override
+  List<Object> get props => [];
+}
+
+/**
+ * Si je souhaite que l'objet affiche uniquement la main droite du morceau
+ */
+class ShowMeOnlyTheRightHand extends BluetoothEvent{
+
+  ShowMeOnlyTheRightHand();
+
+  @override
+  List<Object> get props => [];
+}
+
+/**
  * Envoi mes couleurs à l'esp32
  */
 class EnvoiMesCouleursEvent extends BluetoothEvent{

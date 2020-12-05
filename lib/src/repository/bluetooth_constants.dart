@@ -1,5 +1,12 @@
 class BluetoothConstants {
 
+	static const int MTU_SIZE = 254;
+	static const int SCAN_TIMEOUT = 6; //time out de 6s pour le scan
+	static const String uuidOfMainCommunication =
+			"beb5483e-36e1-4688-b7f5-ea07361b26a8";
+	static const String uuidOfTickCommunication =
+			"beb5483e-36e1-4688-b7f5-ea07361b26a7";
+
 	static const CODE_MODE_APPRENTISSAGE_ENVOI_DU_MORCEAU = 0xFD;
 	static const CODE_PLAY = 0xFC;
 	static const CODE_PAUSE = 0xFB;
@@ -17,6 +24,11 @@ class BluetoothConstants {
 		'MG_R&P':0x06,
 	};
 
+
+	static const CODE_CHANGE_THE_SHOWN_HAND = 0xF5;
+	static const CODES_SHOW_THE_TWO_HANDS = [CODE_CHANGE_THE_SHOWN_HAND, 0];
+	static const CODES_SHOW_ONLY_THE_RIGHT_HAND = [CODE_CHANGE_THE_SHOWN_HAND, 1];
+	static const CODES_SHOW_ONLY_THE_LEFT_HAND = [CODE_CHANGE_THE_SHOWN_HAND, 2];
 
 
 }

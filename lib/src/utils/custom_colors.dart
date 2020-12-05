@@ -8,6 +8,7 @@ class CustomColors{
 	static Color white = Colors.white;
 	static Color black = Colors.black;
 	static Color blue = Color(0xff3369FF);
+	static Color darkerBlue = Color(0xff16284A);
 	static Color yellow = Color(0xffFFBB0C);
 	static Color grey = Color(0xffA3A3A3);
 	static Color lighterGrey = Color(0xffC3C3C3);

@@ -1,9 +1,8 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:flykeys/src/bloc/authentification/authentification_bloc.dart';
-import 'package:flykeys/src/bloc/authentification/authentification_event.dart';
 import 'package:flykeys/src/bloc/bluetooth/bloc.dart';
 import 'package:flykeys/src/utils/custom_colors.dart';
 import 'package:flykeys/src/utils/custom_size.dart';
@@ -11,16 +10,22 @@ import 'package:flykeys/src/utils/custom_style.dart';
 import 'package:flykeys/src/utils/strings.dart';
 import 'package:flykeys/src/utils/utils.dart';
 
+const MAIN_DROITE = 0;
+const MAIN_GAUCHE = 1;
+
 class MusicParameterPage extends StatefulWidget {
   @override
   _MusicParameterPageState createState() => _MusicParameterPageState();
 }
 
 class _MusicParameterPageState extends State<MusicParameterPage> {
+  bool waitForUserInput =
+      false; // state of the switch to know if I have to wait for the user input to make the morceau fall down or not
+  bool expandChooseHandParameter =
+      true; // If I expand the option block that allow me to choose the hand I want to play
+  List<bool> selectedHands = [false, false]; //[MAIN_DROITE, MAIN_GAUCHE]
 
-	bool waitForUserInput = false;
-
-	@override
+  @override
   void initState() {
     super.initState();
     initWaitForUserInput();
@@ -34,28 +39,31 @@ class _MusicParameterPageState extends State<MusicParameterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-			mainAxisSize: MainAxisSize.min,
-			crossAxisAlignment: CrossAxisAlignment.start,
-			children: [
-				SizedBox(
-					height: 20,
-				),
-				Padding(
-					padding: const EdgeInsets.symmetric(
-						horizontal: CustomSize.leftAndRightPadding),
-					child: _topBar("Settings"),
-				),
-				SizedBox(
-					height: 31,
-				),
-				Padding(
-					padding: const EdgeInsets.symmetric(
-						horizontal: CustomSize.leftAndRightPadding),
-					child: _tilesParameterWidget(),
-				),
-			],
-		),
+      backgroundColor: CustomColors.backgroundColor,
+      body: SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              height: 20,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: CustomSize.leftAndRightPadding),
+              child: _topBar("Settings"),
+            ),
+            SizedBox(
+              height: 31,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: CustomSize.leftAndRightPadding),
+              child: _tilesParameterWidget(),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -112,6 +120,132 @@ class _MusicParameterPageState extends State<MusicParameterPage> {
     );
   }
 
+  String getTextCorrespondingToHands() {
+    if (selectedHands[MAIN_GAUCHE] && selectedHands[MAIN_DROITE])
+      return 'les deux mains';
+    if (selectedHands[MAIN_DROITE]) return 'la main droite';
+    return 'la main gauche';
+  }
+
+  Widget _handCard(
+      String imageAsset, String handName, Function callback, bool selected) {
+    return InkWell(
+      onTap: callback,
+      focusColor: Colors.transparent,
+      hoverColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      splashColor: Colors.transparent,
+      child: Container(
+        width: 71,
+        decoration: BoxDecoration(
+          color: selected ? CustomColors.darkerBlue : Colors.transparent,
+          border: Border.all(
+              color: selected ? CustomColors.blue : Colors.transparent),
+          borderRadius: BorderRadius.circular(6),
+        ),
+        child: Column(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Image.asset(imageAsset),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 5.0),
+              child: Text(
+                handName,
+                style: CustomStyle.handNameMusicParameterPage,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _handsCards() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          _handCard('assets/images/icons/hands/left_hand.png', 'GAUCHE', () {
+            envoiLeChangementDeMain();
+            setState(() {
+              selectedHands[MAIN_GAUCHE] = !selectedHands[MAIN_GAUCHE];
+            });
+          }, selectedHands[MAIN_GAUCHE]),
+          SizedBox(
+            width: 18,
+          ),
+          _handCard('assets/images/icons/hands/right_hand.png', 'DROITE', () {
+            envoiLeChangementDeMain();
+            setState(() {
+              selectedHands[MAIN_DROITE] = !selectedHands[MAIN_DROITE];
+            });
+          }, selectedHands[MAIN_DROITE]),
+        ],
+      ),
+    );
+  }
+
+  Widget _chooseHandWidget() {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 9),
+      child: Column(
+        children: <Widget>[
+          InkWell(
+            onTap: () {
+              setState(() {
+                expandChooseHandParameter = !expandChooseHandParameter;
+              });
+            },
+            focusColor: Colors.transparent,
+            hoverColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+            splashColor: Colors.transparent,
+            child: Row(
+              children: <Widget>[
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Container(
+                    height: 32,
+                    width: 32,
+                    child: Image.asset(
+                        "assets/images/icons/parameter/hand_icon.png"),
+                  ),
+                ),
+                SizedBox(
+                  width: 15,
+                ),
+                Expanded(
+                    child: RichText(
+                  text: TextSpan(
+                    style: CustomStyle.notificationNameParameterPage,
+                    children: <TextSpan>[
+                      TextSpan(text: 'Je travaille '),
+                      TextSpan(
+                          text: getTextCorrespondingToHands(),
+                          style: TextStyle(fontWeight: CustomStyle.BOLD)),
+                    ],
+                  ),
+                )),
+                Transform.rotate(
+                  angle: expandChooseHandParameter ? -pi / 2 : pi / 2,
+                  child: Icon(
+                    Icons.arrow_forward_ios,
+                    color: CustomColors.white,
+                    size: 18,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (expandChooseHandParameter) _handsCards()
+        ],
+      ),
+    );
+  }
+
   Widget _topBar(String text) {
     return Stack(
       children: [
@@ -119,7 +253,7 @@ class _MusicParameterPageState extends State<MusicParameterPage> {
             alignment: Alignment.topLeft,
             child: InkWell(
               onTap: () {
-              	Navigator.of(context).pop();
+                Navigator.of(context).pop();
               },
               focusColor: Colors.transparent,
               hoverColor: Colors.transparent,
@@ -147,33 +281,55 @@ class _MusicParameterPageState extends State<MusicParameterPage> {
       children: [
         _tileParameterWidget(
             "Attendre que j'appuie pour continuer",
-            Image.asset("assets/images/icons/parameter/notification_icon.png"),
+            Image.asset(
+                "assets/images/icons/parameter/wait_for_user_input_icon.png"),
             clickOnWaitForUserInput,
             showSwitch: true,
             switchState: waitForUserInput),
+        _chooseHandWidget(),
       ],
     );
   }
 
   void clickOnWaitForUserInput() {
-  	if (waitForUserInput) {
-			BlocProvider.of<BluetoothBloc>(context).add(AskToNotWaitForTheUserInputEvent());
-		} else {
-			BlocProvider.of<BluetoothBloc>(context).add(AskToWaitForTheUserInputEvent());
-		}
+    if (waitForUserInput) {
+      BlocProvider.of<BluetoothBloc>(context)
+          .add(AskToNotWaitForTheUserInputEvent());
+    } else {
+      BlocProvider.of<BluetoothBloc>(context)
+          .add(AskToWaitForTheUserInputEvent());
+    }
 
-		setState(() {
-			waitForUserInput = !waitForUserInput;
-		});
+    setState(() {
+      waitForUserInput = !waitForUserInput;
+    });
 
-		Utils.saveBooleanFromSharedPreferences(Strings.WAIT_FOR_USER_INPUT, waitForUserInput);
-	}
+    Utils.saveBooleanFromSharedPreferences(
+        Strings.WAIT_FOR_USER_INPUT, waitForUserInput);
+  }
 
-	void initWaitForUserInput() async {
-		bool _tempoWaitForUserInput = await Utils.getBooleanFromSharedPreferences(Strings.WAIT_FOR_USER_INPUT, defaultValue: false);
-		setState(() {
-			waitForUserInput = _tempoWaitForUserInput;
-		});
-	}
+  void initWaitForUserInput() async {
+    bool _tempoWaitForUserInput = await Utils.getBooleanFromSharedPreferences(
+        Strings.WAIT_FOR_USER_INPUT,
+        defaultValue: false);
+    setState(() {
+      waitForUserInput = _tempoWaitForUserInput;
+    });
+  }
+
+  void envoiLeChangementDeMain() async {
+    if (selectedHands[MAIN_GAUCHE] && selectedHands[MAIN_DROITE]){
+      BlocProvider.of<BluetoothBloc>(context)
+          .add(ShowMeTheTwoHands());
+    }
+    else if (selectedHands[MAIN_DROITE]) {
+      BlocProvider.of<BluetoothBloc>(context)
+          .add(ShowMeOnlyTheRightHand());
+    }
+    else {
+      BlocProvider.of<BluetoothBloc>(context)
+          .add(ShowMeOnlyTheLeftHand());
+    }
+  }
 
 }

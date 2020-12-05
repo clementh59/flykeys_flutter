@@ -5,6 +5,8 @@ import 'package:flykeys/src/page/favorites_page.dart';
 import 'package:flykeys/src/page/home_page.dart';
 import 'package:flykeys/src/page/login_page.dart';
 import 'package:flykeys/src/page/main_page.dart';
+import 'package:flykeys/src/page/music_page.dart';
+import 'package:flykeys/src/page/music_parameter_page.dart';
 import 'package:flykeys/src/page/search_page.dart';
 import 'package:flykeys/src/repository/bluetooth_repository.dart';
 import 'package:flykeys/src/repository/database_repository.dart';
@@ -14,6 +16,7 @@ import 'package:flykeys/src/widget/custom_bottom_navigation_bar.dart';
 
 import 'bloc/bluetooth/bloc.dart';
 import 'bloc/favorites/bloc.dart';
+import 'model/music.dart';
 
 class App extends StatefulWidget {
   @override
@@ -40,12 +43,11 @@ class _AppState extends State<App> {
         BlocProvider<AuthentificationBloc>(create: (BuildContext context) {
           return AuthentificationBloc();
         }),
-
       ],
       child: MaterialApp(
         theme: ThemeData.dark(),
         debugShowCheckedModeBanner: false,
-        home: /*MainPage()*/LoginPage(),
+        home: MainPage()/*LoginPage()*/,
       ),
     );
   }

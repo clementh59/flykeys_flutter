@@ -283,6 +283,13 @@ class CustomStyle{
 		fontWeight: MEDIUM,
 	);
 
+	static TextStyle handNameMusicParameterPage = TextStyle(
+		color: CustomColors.white,
+		fontSize: 11,
+		fontFamily: 'Poppins',
+		fontWeight: BOLD,
+	);
+
 	/*************		LoginPage		************/
 
 	static TextStyle labelLoginPage = TextStyle(

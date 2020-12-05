@@ -9,14 +9,6 @@ import 'package:flykeys/src/model/midiReader/note.dart';
 import 'package:flykeys/src/repository/bluetooth_constants.dart';
 
 class BluetoothRepository {
-  static const int MTU_SIZE = 254;
-  static const int SCAN_TIMEOUT = 6; //time out de 6s pour le scan
-  static const String uuidOfMainCommunication =
-      "beb5483e-36e1-4688-b7f5-ea07361b26a8";
-  static const String uuidOfTickCommunication =
-      "beb5483e-36e1-4688-b7f5-ea07361b26a7";
-
-  List<int> console = [];//todo : remove, it's just for printing to the console all the bytes that I send
 
   BluetoothDevice flyKeysDevice;
   BluetoothCharacteristic mainBluetoothCharacteristic;
@@ -25,6 +17,8 @@ class BluetoothRepository {
   StreamSubscription deviceStateSubscription;
   List<int> bytesSent = [];
 
+  /// Create a List of byte that can be understood by the esp32 from a
+  /// list of note
   List<int> createTrameFromListeNote(List<Note> listNotes) {
     List<Note> notesDejaEnvoyees = [];
     List<int> tramesAEnvoyer = [];
@@ -80,13 +74,28 @@ class BluetoothRepository {
     return tramesAEnvoyer;
   }
 
-  /**
-	 * Envoi une liste de byte en trames de BluetoothConstants.MTU_SIZE bytes par BluetoothConstants.MTU_SIZE bytes
-	 * stream : indique par le biai du stream à quel niveau d'envoi elle est!
-	 */
+
+	/// Send a morceau to the esp32
+  ///
+  /// The [tramesAEnvoyer] needs to be a list of int. I reccomand you to create
+  /// it with createTrameFromListeNote()
+  ///
+  /// It can be stopped during its process by setting the value of
+  /// [valueNotifierStopSending] to true. The process will be stopped between
+  /// two frames to send.
+  ///
+  /// The frame is cut into smaller frame to send it.
+  /// Each time a smaller frame is sent, the function notifies it by sending the
+  /// progress by the stream. It sends the index in the [tramesAEnvoyer] that
+  /// it sends.
+  ///
+  /// For example, if your frame's length is 1000, and the smaller frames's
+  /// length are 150, the function will send via the stream :
+  /// - 150, once it will have sent the first frame
+  /// - 300, once it will have sent the second frame
+  /// ...
   Stream<int> envoiLaTrameMorceau(
       List<int> tramesAEnvoyer, ValueNotifier valueNotifierStopSending) async* {
-    int begin = new DateTime.now().millisecondsSinceEpoch;
     bytesSent = [];
     List<int> trameDeMaxMTU =
         []; // On envoi les bytes BluetoothConstants.MTU_SIZE par BluetoothConstants.MTU_SIZE, ce tableau les contient temporairement à chaque fois
@@ -99,7 +108,7 @@ class BluetoothRepository {
     for (int i = 0; i < tramesAEnvoyer.length; i++) {
       trameDeMaxMTU.add(tramesAEnvoyer[i]);
 
-      if (actualIndextrameDeMaxMTU == MTU_SIZE ||
+      if (actualIndextrameDeMaxMTU == BluetoothConstants.MTU_SIZE ||
           i == tramesAEnvoyer.length - 1) {
         //Si la trame est pleine, ou si on vient de remplir la dernière trame à envoyer
         actualIndextrameDeMaxMTU = 0;
@@ -118,25 +127,17 @@ class BluetoothRepository {
       }
     }
 
-    int end = new DateTime.now().millisecondsSinceEpoch;
-    print("TTS time to send : " + ((end - begin) / 1000).toString() + "s");
-    for (int i=0; i<console.length; i+=100){
-      String str = "";
-      for (int c = i; c<i+100 && c<console.length; c++){
-        str+=console[c].toString()+",";
-      }
-      print(str);
-    }
     return;
   }
 
   Future<Null> envoiLaTrameMTU(List<int> trame,
       BluetoothCharacteristic bluetoothCharacteristicToSend) async {
     //print("J'envoi la trame $trame");
-    console.addAll(trame);
     await bluetoothCharacteristicToSend.write(trame);
   }
 
+  /// return true and assign the device to the global field [flyKeysDevice]
+  /// if it finds the device - false otherwise
   Future<bool> findFlyKeysDevice(FlutterBlue flutterBlue) async {
     dev.log('begin', name: "findFlyKeysDevice");
 
@@ -156,14 +157,12 @@ class BluetoothRepository {
 
     BluetoothDevice flyKeysDevice;
 
-    int i = 0;
     bool isScanning = true;
     bool isCheckingResult = false;
 
     while (isScanning) {
       if (!isCheckingResult) {
         isCheckingResult = true;
-        i++;
         flutterBlue.scanResults.firstWhere((list) {
           for (ScanResult scanResult in list) {
             if (isFlyKeysDevice(scanResult.device)) {
@@ -192,21 +191,26 @@ class BluetoothRepository {
     return false;
   }
 
+  /// return true if [bluetoothDevice] is a Flykeys device
   bool isFlyKeysDevice(BluetoothDevice bluetoothDevice) {
-    //todo: check more...
     if (bluetoothDevice.name == "FLYKEYS") {
       dev.log('FlyKeys device found', name: "findFlyKeysDevice");
+      // todo: try to remove since I do this asignment in the parent function...
       flyKeysDevice = bluetoothDevice;
       return true;
     }
     return false;
   }
 
+  /// Connect to the flykeys device. To be called, the [flyKeysDevice] need
+  /// to contain a FlyKeys device. It can be done by calling FindFlyKeysDevice()
+  ///
+  /// The value notifier [onDisconnectNotifier] will be notified when the esp32
+  /// will be disconnected from the esp32
   Future<bool> connectToDevice(ValueNotifier onDisconnectNotifier) async {
     try {
       await flyKeysDevice.connect();
       subscribeToConnectionStateChanges(onDisconnectNotifier);
-
       return true;
     } catch (id) {
       print("error : " + id.toString());
@@ -219,6 +223,8 @@ class BluetoothRepository {
     }
   }
 
+  /// The value notifier [onDisconnectNotifier] will be notified when the esp32
+  /// will be disconnected from the esp32
   void subscribeToConnectionStateChanges(ValueNotifier onDisconnectNotifier) {
     deviceStateSubscription?.cancel();
     deviceStateSubscription = flyKeysDevice.state.listen((s) {
@@ -229,22 +235,21 @@ class BluetoothRepository {
     });
   }
 
-  /**
-	 * Récupère les deux characteristiques nécessaire et renvoie true si elles sont récupérée / renvoit false sinon
-	 */
+
+  /// Récupère les deux characteristiques nécessaires et renvoie true si elles
+  /// sont récupérées / renvoi false sinon
   Future<bool> hasTheRightCharacteristics() async {
     List<BluetoothService> services = await flyKeysDevice.discoverServices();
 
     for (BluetoothService service in services) {
       var characteristics = service.characteristics;
       for (BluetoothCharacteristic c in characteristics) {
-        print(c.uuid);
-        if (c.uuid.toString() == uuidOfMainCommunication) {
+        if (c.uuid.toString() == BluetoothConstants.uuidOfMainCommunication) {
           //todo:generate a new one for my purpose on a website generator
           mainBluetoothCharacteristic = c;
           dev.log("found the mainBluetoothCharacteristic",
               name: "hasTheGoodCharacteristics");
-        } else if (c.uuid.toString() == uuidOfTickCommunication) {
+        } else if (c.uuid.toString() == BluetoothConstants.uuidOfTickCommunication) {
           tickBluetoothCharacteristic = c;
           dev.log("found the tickBluetoothCharacteristic",
               name: "hasTheGoodCharacteristics");
@@ -259,26 +264,26 @@ class BluetoothRepository {
     return false;
   }
 
+  /// send the code that means PLAY to the esp32
   Future<void> play() async {
     await mainBluetoothCharacteristic.write([BluetoothConstants.CODE_PLAY]);
   }
 
+  /// send the code that means PAUSE to the esp32
   Future<void> pause() async {
     await mainBluetoothCharacteristic.write([BluetoothConstants.CODE_PAUSE]);
   }
 
-  /**
-   * Ask the BLE device to start the mode lightning show
-   */
+  /// send the code that means START THE LIGHTNING SHOW MODE to the esp32
   Future<void> lightningShow() async {
     await mainBluetoothCharacteristic.write([BluetoothConstants.CODE_MODE_LIGHTNING_SHOW]); // PLAY
   }
 
+  /// send the delay [delayDouble] to the esp32
   Future<void> sendDelay(double delayDouble) async {
-    //10011100010
-    //je veux envoyer
-    //11100010
-    //puis 100
+    // if the delay to send is 10011100010
+    // I need to cut it in two byte
+    // 11100010 and then 100
     int delay = delayDouble.floor();
     int virguleFois100 = ((delayDouble - delay) * 100).round();
 
@@ -307,24 +312,43 @@ class BluetoothRepository {
     ]);
   }
 
-  /**
-   * Utile pour le mode apprentissage, si je dois ou non attendre que
-   * l'utilisateur appuie sur une touche pour faire défiler
-   */
+
+  /// Utile pour le mode apprentissage, si je dois attendre que
+  /// l'utilisateur appuie sur une touche pour faire défiler
   Future<void> askToWaitForUserInputInModeApprentissage() async {
     await mainBluetoothCharacteristic.write([BluetoothConstants.CODE_SET_I_HAVE_TO_WAIT_FOR_USER_INPUT]);
   }
 
-  /**
-   * Utile pour le mode apprentissage, si je dois ou non attendre que
-   * l'utilisateur appuie sur une touche pour faire défiler
-   */
+  /// Utile pour le mode apprentissage, si je ne dois pas attendre que
+  /// l'utilisateur appuie sur une touche pour faire défiler
   Future<void> askToNotWaitForUserInputInModeApprentissage() async {
     await mainBluetoothCharacteristic.write([BluetoothConstants.CODE_SET_I_DONT_HAVE_TO_WAIT_FOR_USER_INPUT]);
   }
 
-  Future<int> subscribeToTickCharacteristic(
-      ValueNotifier valueNotifierActualTick) async {
+
+  /// Si je souhaite que l'objet affiche uniquement la main droite du morceau
+  Future<void> showOnlyTheRightHand() async {
+    await mainBluetoothCharacteristic.write(BluetoothConstants.CODES_SHOW_ONLY_THE_RIGHT_HAND);
+  }
+
+  /// Si je souhaite que l'objet affiche uniquement la main gauche du morceau
+  Future<void> showOnlyTheLeftHand() async {
+    await mainBluetoothCharacteristic.write(BluetoothConstants.CODES_SHOW_ONLY_THE_LEFT_HAND);
+  }
+
+  /// Si je souhaite que l'objet affiche les deux mains du morceau
+  Future<void> showTheTwoHands() async {
+    await mainBluetoothCharacteristic.write(BluetoothConstants.CODES_SHOW_THE_TWO_HANDS);
+  }
+
+  /// [valueNotifierActualTick] sera mis à jour à chaque fois que l'esp32 avance
+  /// d'un tick dans le morceau
+  ///
+  /// Pour ce faire, la fonction listen to [tickBluetoothCharacteristic] et se
+  /// met à jour [valueNotifierActualTick] en fonction de la nouvelle valeur.
+  /// Si la valeur dépasse un certain seul, [valueNotifierActualTick] sera mis à
+  /// -1, ce qui signifie que le morceau doit être considéré comme finis.
+  Future<int> subscribeToTickCharacteristic(ValueNotifier valueNotifierActualTick) async {
     await tickBluetoothCharacteristic.setNotifyValue(true);
     streamSubscriptionTickListening?.cancel();
     streamSubscriptionTickListening =
@@ -337,7 +361,7 @@ class BluetoothRepository {
 
         if (value > 1000000) {
           valueNotifierActualTick.value =
-              -1; //Je notifie que le morceau est finis, j'enlève le signe play et je le met sur pause
+              -1; //Je notifie que le morceau est finis
         } else
           valueNotifierActualTick.value = value;
       }
@@ -346,17 +370,16 @@ class BluetoothRepository {
     return 0;
   }
 
+  /// send to the esp32 the [tick] passed in parameter
+  ///
+  /// return true if it succeed
+  /// false otherwise
   Future<bool> sendANewTick(int tick) async {
     int index = findTheIndexCorrespondToTheTick(tick);
 
     if (index == -1) {
-      print("!!!!!!!!!!!!!!!ERROR!!!!!!!!!!!!!!!!!");
-      print("!!!!!!!!!!!!!!!ERROR!!!!!!!!!!!!!!!!!");
-      print("sendANewTick index is -1");
       print(tick);
       print(bytesSent);
-      print("!!!!!!!!!!!!!!!ERROR!!!!!!!!!!!!!!!!!");
-      print("!!!!!!!!!!!!!!!ERROR!!!!!!!!!!!!!!!!!");
       return false;
     }
 
@@ -380,16 +403,22 @@ class BluetoothRepository {
     return true;
   }
 
+  /// return the first index in the [bytesSent] corresponding to the [tickToGo]
+  /// return -1 if none index corresponds to the [tickToGo]
+  ///
+  /// Example :
+  /// If the [bytesSent] is
+  /// [CODE_NEW_TICK, x,x,x, CODE_NEW_TICK, x,x,x CODE_NEW_TICK, x,x,x]
+  /// And [tickToGo] is 2
+  /// The function would return 5
   int findTheIndexCorrespondToTheTick(int tickToGo) {
     int tick = 0;
-    print("tick to go is $tickToGo");
     for (int i = 0; i < bytesSent.length; i++) {
       if (tick == tickToGo) return i;
       if (bytesSent[i] == BluetoothConstants.CODE_NEW_TICK) {
         tick++;
       }
     }
-    print("tick max is $tick");
     return -1;
   }
 
@@ -399,4 +428,5 @@ class BluetoothRepository {
     streamSubscriptionTickListening?.cancel();
     deviceStateSubscription?.cancel();
   }
+
 }
