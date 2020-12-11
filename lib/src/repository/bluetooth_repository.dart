@@ -30,6 +30,8 @@ class BluetoothRepository {
     List<Note>
         actualKeysOn; //Pour savoir si on doit appuyer sur une touche deux fois alors que l'on voit juste deux LEDs
 
+    listNotes.forEach((element) {element.key -= 12;});//todo: remove and do it from the user params
+
     while (listNotes.length > 0) {
       lastKeysOn = actualKeysOn;
       actualKeysOn = List(128);
@@ -51,9 +53,9 @@ class BluetoothRepository {
               tramesAEnvoyer.add(n.key); //je la met en rouge
               tramesAEnvoyer.add(BluetoothConstants.mapStringColorToCode[n.getColor()]);
             } else if (lastKeysOn[n.getKey()] != null &&
-                lastKeysOn[n.getKey()] != n &&
-                !lastKeysOn[n.getKey()].isReleaseAndPush()) {
+                lastKeysOn[n.getKey()] != n && lastKeysOn[n.getKey()].getColor() == n.getColor()) {
               tramesAEnvoyer.add(n.key); //je la met en rouge
+              n.setIsReleaseAndPushColor();//todo: place above
               tramesAEnvoyer.add(BluetoothConstants.mapStringColorToCode[n.getColor()]);
               n.setIsReleaseAndPushColor();
             } else {
@@ -70,7 +72,6 @@ class BluetoothRepository {
         listNotes.remove(notesDejaEnvoyees[i]);
       notesDejaEnvoyees.clear();
     }
-    print(tramesAEnvoyer);
     return tramesAEnvoyer;
   }
 
@@ -308,7 +309,7 @@ class BluetoothRepository {
       BluetoothConstants.mapStringColorToCode['MG'],
       52,152,235,52,152,235,52,152,235,52,152,235,52,152,235,52,152,235,52,152,235,52,152,235,
       BluetoothConstants.mapStringColorToCode['MG_R&P'],
-      183,222,255,183,222,255,183,222,255,183,222,255,183,222,255,183,222,255,183,222,255,183,222,255,
+      255, 191, 28,255, 191, 28,255, 191, 28,255, 191, 28,255, 191, 28,255, 191, 28,255, 191, 28,255, 191, 28
     ]);
   }
 

@@ -5,24 +5,28 @@ import 'dart:typed_data';
 import 'package:flutter/services.dart';
 import 'note.dart';
 
-class MidiReader{
+class ParsedFileReader{
 
-	File midiFile;
 	File dataFile;
 	int nbDeTickDuMorceau = -1;
 
-	MidiReader({this.midiFile, this.dataFile});
+	ParsedFileReader({this.dataFile});
 
 	Future<List<Note>> readDataFile() async {
 		String data = dataFile.readAsStringSync();
 		List<String> lines = data.split("\n");
 		List<Note> notes = [];
+
+		String musicInfos = lines.removeAt(0);
+
 		for(String line in lines){
 			List<String> info = line.split(" ");
+
 			if (info.length==4) {
-				//todo : changer le -12!!
-				Note n = Note(int.parse(info[0])-12, int.parse(info[1]), int.parse(info[2]), info[3]);
+				Note n = Note(int.parse(info[0]), int.parse(info[1]), int.parse(info[2]), info[3]);
 				notes.add(n);
+			} else if (info.length != 0 && !(info.length == 1 && info[0]=='')){ // Si la ligne n'est pas vide mais quelle ne respecte pas le format (4 " "), c'est que le fichier n'est pas bon!
+				throw new Exception("The music file hasn't a good format (#2)");
 			}
 
 		}
@@ -48,7 +52,6 @@ class MidiReader{
 		}
 
 		return tickMax;
-
 	}
 
 }

@@ -48,6 +48,20 @@ class Note{
     	color += "_R&P";
   }
 
+	@override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Note &&
+          runtimeType == other.runtimeType &&
+          key == other.key &&
+          timeOn == other.timeOn &&
+          timeOff == other.timeOff &&
+          color == other.color;
+
+  @override
+  int get hashCode =>
+      key.hashCode ^ timeOn.hashCode ^ timeOff.hashCode ^ color.hashCode;
+
   @override
 	String toString() {
 		return "La note est (" + getKey().toString() + ") le temps de début est " + getTimeOn().toString() + " et la note dure " + (getTimeOff()-getTimeOn()).toString();

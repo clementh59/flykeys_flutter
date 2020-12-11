@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
-import 'package:flykeys/src/model/midiReader/midiReader.dart';
+import 'package:flykeys/src/model/midiReader/parsedFileReader.dart';
 import 'package:flykeys/src/model/midiReader/note.dart';
 import 'package:flykeys/src/repository/bluetooth_constants.dart';
 import 'package:flykeys/src/repository/bluetooth_repository.dart';
@@ -227,7 +227,7 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
     }
 
     yield DecodageMorceauState();
-    MidiReader midiReader = MidiReader(dataFile: parsedFile);
+    ParsedFileReader midiReader = ParsedFileReader(dataFile: parsedFile);
     List<Note> listNotes = await midiReader.readDataFile();
     nbDeTickMax = midiReader.getNbDeTickDuMorceau();
 
