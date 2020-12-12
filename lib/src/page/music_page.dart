@@ -734,7 +734,7 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
       onTap: (){
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => MusicParameterPage()),
+          MaterialPageRoute(builder: (context) => MusicParameterPage(widget.music)),
         );
       },
       child: Icon(
@@ -796,9 +796,15 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
   /**
    * Crée un event dans le BluetoothBloc pour dire de montrer les deux mains
    */
-  void envoiLaMainQueJeVeuxJouer() {
-    // todo: save in local storage the selected hand to keep it in mind for next time
-    BlocProvider.of<BluetoothBloc>(context).add(ShowMeTheTwoHands());
+  void envoiLaMainQueJeVeuxJouer() async {
+    bool MD = await Utils.getBooleanFromSharedPreferences(widget.music.id + '_MD', defaultValue: true);
+    bool MG = await Utils.getBooleanFromSharedPreferences(widget.music.id + '_MG', defaultValue: true);
+    if (MD && MG)
+      BlocProvider.of<BluetoothBloc>(context).add(ShowMeTheTwoHands());
+    else if (MD)
+      BlocProvider.of<BluetoothBloc>(context).add(ShowMeOnlyTheRightHand());
+    else
+      BlocProvider.of<BluetoothBloc>(context).add(ShowMeOnlyTheLeftHand());
   }
 
   /**

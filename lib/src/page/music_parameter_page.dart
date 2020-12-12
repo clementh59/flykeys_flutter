@@ -9,11 +9,16 @@ import 'package:flykeys/src/utils/custom_size.dart';
 import 'package:flykeys/src/utils/custom_style.dart';
 import 'package:flykeys/src/utils/strings.dart';
 import 'package:flykeys/src/utils/utils.dart';
+import 'package:flykeys/src/model/music.dart';
 
 const MAIN_DROITE = 0;
 const MAIN_GAUCHE = 1;
 
 class MusicParameterPage extends StatefulWidget {
+  final Music music;
+
+  const MusicParameterPage(this.music);
+
   @override
   _MusicParameterPageState createState() => _MusicParameterPageState();
 }
@@ -29,6 +34,7 @@ class _MusicParameterPageState extends State<MusicParameterPage> {
   void initState() {
     super.initState();
     initWaitForUserInput();
+    initLaMainSelectionnee();
   }
 
   @override
@@ -321,6 +327,11 @@ class _MusicParameterPageState extends State<MusicParameterPage> {
     });
   }
 
+  void initLaMainSelectionnee() async {
+    selectedHands[MAIN_DROITE] = await Utils.getBooleanFromSharedPreferences(widget.music.id + '_MD', defaultValue: true);
+    selectedHands[MAIN_GAUCHE] = await Utils.getBooleanFromSharedPreferences(widget.music.id + '_MG', defaultValue: true);
+  }
+
   void envoiLeChangementDeMain() async {
     if (selectedHands[MAIN_GAUCHE] && selectedHands[MAIN_DROITE]){
       BlocProvider.of<BluetoothBloc>(context)
@@ -334,6 +345,8 @@ class _MusicParameterPageState extends State<MusicParameterPage> {
       BlocProvider.of<BluetoothBloc>(context)
           .add(ShowMeOnlyTheLeftHand());
     }
+    Utils.saveBooleanFromSharedPreferences(widget.music.id + '_MD', selectedHands[MAIN_DROITE]);
+    Utils.saveBooleanFromSharedPreferences(widget.music.id + '_MG', selectedHands[MAIN_GAUCHE]);
   }
 
 }
