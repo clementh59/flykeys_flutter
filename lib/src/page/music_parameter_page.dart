@@ -23,7 +23,7 @@ class _MusicParameterPageState extends State<MusicParameterPage> {
       false; // state of the switch to know if I have to wait for the user input to make the morceau fall down or not
   bool expandChooseHandParameter =
       true; // If I expand the option block that allow me to choose the hand I want to play
-  List<bool> selectedHands = [false, false]; //[MAIN_DROITE, MAIN_GAUCHE]
+  List<bool> selectedHands = [true, true]; //[MAIN_DROITE, MAIN_GAUCHE]
 
   @override
   void initState() {
@@ -169,19 +169,23 @@ class _MusicParameterPageState extends State<MusicParameterPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           _handCard('assets/images/icons/hands/left_hand.png', 'GAUCHE', () {
-            envoiLeChangementDeMain();
             setState(() {
               selectedHands[MAIN_GAUCHE] = !selectedHands[MAIN_GAUCHE];
+              if (!selectedHands[MAIN_GAUCHE] && !selectedHands[MAIN_DROITE])
+                selectedHands[MAIN_DROITE] = true;
             });
+            envoiLeChangementDeMain();
           }, selectedHands[MAIN_GAUCHE]),
           SizedBox(
             width: 18,
           ),
           _handCard('assets/images/icons/hands/right_hand.png', 'DROITE', () {
-            envoiLeChangementDeMain();
             setState(() {
               selectedHands[MAIN_DROITE] = !selectedHands[MAIN_DROITE];
+              if (!selectedHands[MAIN_GAUCHE] && !selectedHands[MAIN_DROITE])
+                selectedHands[MAIN_GAUCHE] = true;
             });
+            envoiLeChangementDeMain();
           }, selectedHands[MAIN_DROITE]),
         ],
       ),

@@ -302,6 +302,8 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
 			// Je lui envoi aussi mes couleurs
       envoiMesCouleurs();
 
+      envoiLaMainQueJeVeuxJouer();
+
 			//De base je suis en pause
 			buttonState = PAUSE;
     } else if (widget.state is PlayingMusicState) {
@@ -788,8 +790,15 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
    * Crée une action dans BluetoothBloc qui envoi mes couleurs
    */
   void envoiMesCouleurs() {
-    print("envoiMesCouleursEvent is pushed");
     BlocProvider.of<BluetoothBloc>(context).add(EnvoiMesCouleursEvent());
+  }
+
+  /**
+   * Crée un event dans le BluetoothBloc pour dire de montrer les deux mains
+   */
+  void envoiLaMainQueJeVeuxJouer() {
+    // todo: save in local storage the selected hand to keep it in mind for next time
+    BlocProvider.of<BluetoothBloc>(context).add(ShowMeTheTwoHands());
   }
 
   /**
