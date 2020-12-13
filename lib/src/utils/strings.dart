@@ -24,6 +24,8 @@ class Strings{
 	static const String ERROR_OPERATION_NOT_ALLOWED = "This operation is not allowed. You must enable this service in the console.";
 
 	/*****************************		SHARED  PREFS KEYS 	**********************/
-	static const String WAIT_FOR_USER_INPUT = "WAIT_FOR_USER_INPUT";
+	static const String WAIT_FOR_USER_INPUT_SHARED_PREFS = "WAIT_FOR_USER_INPUT";
+	static const String COLOR_MD_SHARED_PREFS = "COLOR_MD";
+	static const String COLOR_MG_SHARED_PREFS = "COLOR_MG";
 
 }

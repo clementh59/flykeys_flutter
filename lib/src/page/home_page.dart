@@ -234,29 +234,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buttonLoadMorePopular() {
-    return InkWell(
-      onTap: (){
-        _trendingBloc.add(GetMoreTrendingMusic());
-      },
-      focusColor: Colors.transparent,
-      hoverColor: Colors.transparent,
-      highlightColor: Colors.transparent,
-      splashColor: Colors.transparent,
-      child: Container(
-        padding: EdgeInsets.all(12.0),
-        width: double.infinity,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(40),
-          border: Border.all(color: CustomColors.blue, width: 2),
-        ),
-        child: Center(
-          child: Text(
-            "MORE POPULAR SONGS",
-            style: CustomStyle.morePopularSongStyle,
-          ),
-        ),
-      ),
-    );
+    return CustomWidgets.buttonLoadMorePopularSongStyle('MORE POPULAR SONGS', (){_trendingBloc.add(GetMoreTrendingMusic());});
   }
 
   Widget gameTiles() {

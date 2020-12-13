@@ -314,13 +314,13 @@ class _MusicParameterPageState extends State<MusicParameterPage> {
       waitForUserInput = !waitForUserInput;
     });
 
-    Utils.saveBooleanFromSharedPreferences(
-        Strings.WAIT_FOR_USER_INPUT, waitForUserInput);
+    Utils.saveBooleanToSharedPreferences(
+        Strings.WAIT_FOR_USER_INPUT_SHARED_PREFS, waitForUserInput);
   }
 
   void initWaitForUserInput() async {
     bool _tempoWaitForUserInput = await Utils.getBooleanFromSharedPreferences(
-        Strings.WAIT_FOR_USER_INPUT,
+        Strings.WAIT_FOR_USER_INPUT_SHARED_PREFS,
         defaultValue: false);
     setState(() {
       waitForUserInput = _tempoWaitForUserInput;
@@ -349,8 +349,8 @@ class _MusicParameterPageState extends State<MusicParameterPage> {
       BlocProvider.of<BluetoothBloc>(context)
           .add(ShowMeOnlyTheLeftHand());
     }
-    Utils.saveBooleanFromSharedPreferences(widget.music.id + '_MD', selectedHands[MAIN_DROITE]);
-    Utils.saveBooleanFromSharedPreferences(widget.music.id + '_MG', selectedHands[MAIN_GAUCHE]);
+    Utils.saveBooleanToSharedPreferences(widget.music.id + '_MD', selectedHands[MAIN_DROITE]);
+    Utils.saveBooleanToSharedPreferences(widget.music.id + '_MG', selectedHands[MAIN_GAUCHE]);
   }
 
 }

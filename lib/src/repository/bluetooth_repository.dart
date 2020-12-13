@@ -7,6 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flykeys/src/model/midiReader/note.dart';
 import 'package:flykeys/src/repository/bluetooth_constants.dart';
+import 'package:flykeys/src/utils/constants.dart';
+import 'package:flykeys/src/utils/strings.dart';
+import 'package:flykeys/src/utils/utils.dart';
 
 class BluetoothRepository {
 
@@ -301,13 +304,15 @@ class BluetoothRepository {
   }
 
   Future<void> sendColors() async {
+    Color MD = await Utils.readColorFromSharedPreferences(Strings.COLOR_MD_SHARED_PREFS, Constants.DefaultMDColor);
+    Color MG = await Utils.readColorFromSharedPreferences(Strings.COLOR_MG_SHARED_PREFS, Constants.DefaultMGColor);
     await mainBluetoothCharacteristic.write([BluetoothConstants.CODE_I_SEND_COLOR,
       BluetoothConstants.mapStringColorToCode['MD'],
-      79,235,52,79,235,52,79,235,52,79,235,52,79,235,52,79,235,52,79,235,52,79,235,52,
+      MD.red,MD.green,MD.blue,MD.red,MD.green,MD.blue,MD.red,MD.green,MD.blue,MD.red,MD.green,MD.blue,MD.red,MD.green,MD.blue,MD.red,MD.green,MD.blue,MD.red,MD.green,MD.blue,MD.red,MD.green,MD.blue,
       BluetoothConstants.mapStringColorToCode['MD_R&P'],
       189,255,177,189,255,177,189,255,177,189,255,177,189,255,177,189,255,177,189,255,177,189,255,177,
       BluetoothConstants.mapStringColorToCode['MG'],
-      52,152,235,52,152,235,52,152,235,52,152,235,52,152,235,52,152,235,52,152,235,52,152,235,
+      MG.red,MG.green,MG.blue,MG.red,MG.green,MG.blue,MG.red,MG.green,MG.blue,MG.red,MG.green,MG.blue,MG.red,MG.green,MG.blue,MG.red,MG.green,MG.blue,MG.red,MG.green,MG.blue,MG.red,MG.green,MG.blue,
       BluetoothConstants.mapStringColorToCode['MG_R&P'],
       255, 191, 28,255, 191, 28,255, 191, 28,255, 191, 28,255, 191, 28,255, 191, 28,255, 191, 28,255, 191, 28
     ]);

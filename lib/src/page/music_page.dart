@@ -820,6 +820,6 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
 	}
 
 	Future<bool> getWaitForUserInput() async {
-		return await Utils.getBooleanFromSharedPreferences(Strings.WAIT_FOR_USER_INPUT, defaultValue: false);
+		return await Utils.getBooleanFromSharedPreferences(Strings.WAIT_FOR_USER_INPUT_SHARED_PREFS, defaultValue: false);
 	}
 }

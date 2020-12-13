@@ -4,11 +4,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flykeys/src/bloc/authentification/authentification_bloc.dart';
 import 'package:flykeys/src/bloc/authentification/authentification_event.dart';
+import 'package:flykeys/src/utils/constants.dart';
 import 'package:flykeys/src/utils/custom_colors.dart';
 import 'package:flykeys/src/utils/custom_size.dart';
 import 'package:flykeys/src/utils/custom_style.dart';
 import 'package:flykeys/src/utils/strings.dart';
 import 'package:flykeys/src/utils/utils.dart';
+import 'package:flykeys/src/widget/custom_widgets.dart';
 
 class ParameterPage extends StatefulWidget {
   @override
@@ -29,6 +31,7 @@ class _ParameterPageState extends State<ParameterPage> {
   void initState() {
     super.initState();
     notificationActive = true;
+    loadColorsFromSharedPrefs();
   }
 
   @override
@@ -41,23 +44,21 @@ class _ParameterPageState extends State<ParameterPage> {
     return Scaffold(
       backgroundColor: CustomColors.backgroundColor,
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: WillPopScope(
-            onWillPop: () async {
-              if (_indexedStackIndex == parameterIndex) return true;
-              setState(() {
-                _indexedStackIndex = parameterIndex;
-              });
-              return false;
-            },
-            child: IndexedStack(
-              index: _indexedStackIndex,
-              children: [
-                parameterPage(),
-                choixDesCouleursPage(),
-                profilPage(),
-              ],
-            ),
+        child: WillPopScope(
+          onWillPop: () async {
+            if (_indexedStackIndex == parameterIndex) return true;
+            setState(() {
+              _indexedStackIndex = parameterIndex;
+            });
+            return false;
+          },
+          child: IndexedStack(
+            index: _indexedStackIndex,
+            children: [
+              SingleChildScrollView(child: parameterPage()),
+              choixDesCouleursPage(),
+              profilPage(),
+            ],
           ),
         ),
       ),
@@ -289,31 +290,41 @@ class _ParameterPageState extends State<ParameterPage> {
   /***************    CHOIX DES COULEURS PAGE   *************/
 
   //pour la page couleur
-  Color couleurPrincipale = Colors.blue;
-  Color couleurSecondaire = Colors.red;
+  Color couleurMD = Colors.blue;
+  Color couleurMG = Colors.red;
 
   Widget choixDesCouleursPage() {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(
-          height: 20,
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: CustomSize.leftAndRightPadding),
-          child: _topBar("Notifications"),
-        ),
-        SizedBox(
-          height: 31,
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: CustomSize.leftAndRightPadding),
-          child: _tilesChoixCouleurWidget(),
-        ),
-      ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: CustomSize.leftAndRightPadding),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisSize: MainAxisSize.max,
+        children: <Widget>[
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                height: 20,
+              ),
+              _topBar("Choix des couleurs"),
+              SizedBox(
+                height: 31,
+              ),
+              _tilesChoixCouleurWidget(),
+            ],
+          ),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              CustomWidgets.buttonLoadMorePopularSongStyle("SAUVEGARDER MES COULEURS", saveColorChanges, biggerFont: true),
+              SizedBox(
+                height: 31,
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -321,11 +332,11 @@ class _ParameterPageState extends State<ParameterPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _tileChoixCouleur("Couleur principale", couleurPrincipale,(color){setState(() {
-          couleurPrincipale = color;
+        _tileChoixCouleur("Couleur main droite", couleurMD,(color){setState(() {
+          couleurMD = color;
         });}),
-        _tileChoixCouleur("Couleur secondaire", couleurSecondaire,(color){setState(() {
-          couleurSecondaire = color;
+        _tileChoixCouleur("Couleur main gauche", couleurMG,(color){setState(() {
+          couleurMG = color;
         });}),
       ],
     );
@@ -368,6 +379,28 @@ class _ParameterPageState extends State<ParameterPage> {
         },
       );
     },);
+  }
+
+  /// save the colors to shared prefs
+  void saveColorChanges() async {
+    Utils.saveStringToSharedPreferences(Strings.COLOR_MD_SHARED_PREFS, couleurMD.toString());
+    Utils.saveStringToSharedPreferences(Strings.COLOR_MG_SHARED_PREFS, couleurMG.toString());
+    Scaffold.of(context).showSnackBar(SnackBar(
+      content: Text('Les couleurs sont sauvegardées'),
+    ));
+    setState(() {
+      _indexedStackIndex = parameterIndex;
+    });
+  }
+
+  /// load the colors from shared prefs
+  void loadColorsFromSharedPrefs() async {
+    Color colorMd = await Utils.readColorFromSharedPreferences(Strings.COLOR_MD_SHARED_PREFS, Constants.DefaultMDColor);
+    Color colorMg = await Utils.readColorFromSharedPreferences(Strings.COLOR_MG_SHARED_PREFS, Constants.DefaultMGColor);
+    setState(() {
+      couleurMD = colorMd;
+      couleurMG = colorMg;
+    });
   }
 
   /***************    PROFIL PAGE   *************/

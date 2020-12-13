@@ -414,6 +414,36 @@ class CustomWidgets {
     );
   }
 
+  static Widget buttonLoadMorePopularSongStyle(String text, Function callback, {biggerFont = false}) {
+
+    TextStyle style = CustomStyle.morePopularSongStyle;
+
+    if (biggerFont)
+      style = style.copyWith(fontSize: 14);
+
+    return InkWell(
+      onTap: callback,
+      focusColor: Colors.transparent,
+      hoverColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      splashColor: Colors.transparent,
+      child: Container(
+        padding: EdgeInsets.all(12.0),
+        width: double.infinity,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(40),
+          border: Border.all(color: CustomColors.blue, width: 2),
+        ),
+        child: Center(
+          child: Text(
+            text,
+            style: style,
+          ),
+        ),
+      ),
+    );
+  }
+
   static Widget textWithLoadingIndicator(String text) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
