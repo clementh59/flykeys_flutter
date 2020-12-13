@@ -328,8 +328,12 @@ class _MusicParameterPageState extends State<MusicParameterPage> {
   }
 
   void initLaMainSelectionnee() async {
-    selectedHands[MAIN_DROITE] = await Utils.getBooleanFromSharedPreferences(widget.music.id + '_MD', defaultValue: true);
-    selectedHands[MAIN_GAUCHE] = await Utils.getBooleanFromSharedPreferences(widget.music.id + '_MG', defaultValue: true);
+    bool md = await Utils.getBooleanFromSharedPreferences(widget.music.id + '_MD', defaultValue: true);
+    bool mg = await Utils.getBooleanFromSharedPreferences(widget.music.id + '_MG', defaultValue: true);
+    setState(() {
+      selectedHands[MAIN_DROITE] = md;
+      selectedHands[MAIN_GAUCHE] = mg;
+    });
   }
 
   void envoiLeChangementDeMain() async {
