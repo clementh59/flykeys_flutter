@@ -83,6 +83,7 @@ flutter:
     - assets/images/games/
     - assets/images/temporary/
     - assets/images/splash_screen/
+    - assets/images/onboarding/
     - assets/flare/
 
   fonts:

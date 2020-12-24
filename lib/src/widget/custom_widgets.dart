@@ -414,12 +414,12 @@ class CustomWidgets {
     );
   }
 
-  static Widget buttonLoadMorePopularSongStyle(String text, Function callback, {biggerFont = false}) {
+  static Widget buttonLoadMorePopularSongStyle(String text, Function callback, {fontSize = 0}) {
 
     TextStyle style = CustomStyle.morePopularSongStyle;
 
-    if (biggerFont)
-      style = style.copyWith(fontSize: 14);
+    if (fontSize!=0)
+      style = style.copyWith(fontSize: fontSize);
 
     return InkWell(
       onTap: callback,
@@ -482,6 +482,20 @@ class CustomWidgets {
       text,
       textAlign: TextAlign.center,
       style: CustomStyle.loadingTextMusicPage,
+    );
+  }
+
+  /// returns a Row containing two images showing what is a MIDI port
+  static Widget midiImages() {
+    return Row(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        SizedBox(),
+        Image.asset('assets/images/onboarding/midi-input.png', width: 94),
+        Image.asset('assets/images/onboarding/midi-cable.png', width: 108),
+        SizedBox(),
+      ],
     );
   }
 
