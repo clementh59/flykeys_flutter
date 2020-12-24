@@ -6,7 +6,7 @@ class Utils{
 
 	static const String app_version = "1.0";
 	static const String app_name = "FlyKeys";
-	static const String legalPhrase = "Thanks to : \nMatt Wojtaś for the app design inspiration\n";
+	static const String legalPhrase = "Thanks to : \nMatt Wojtaś for the app design inspiration\nDinosoftLabs, Flat icons, for icons";
 	static const int numberOfMusicLoadedFirstTrending = 4;
 	static const int numberOfMusicLoadedWhenCLickLoadMoreMusic = 6;
 	static const int numberOfElementLoadedWhenSearch = 5;
