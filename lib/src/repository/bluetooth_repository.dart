@@ -17,6 +17,7 @@ class BluetoothRepository {
   BluetoothCharacteristic mainBluetoothCharacteristic;
   BluetoothCharacteristic tickBluetoothCharacteristic;
   StreamSubscription streamSubscriptionTickListening;
+  StreamSubscription streamSubscriptionNotePushedListening;
   StreamSubscription deviceStateSubscription;
   List<int> bytesSent = [];
 
@@ -117,7 +118,7 @@ class BluetoothRepository {
         //Si la trame est pleine, ou si on vient de remplir la dernière trame à envoyer
         actualIndextrameDeMaxMTU = 0;
         await envoiLaTrameMTU(trameDeMaxMTU,
-            mainBluetoothCharacteristic); //Je dis à l'esp que je lui envoi le morceau
+            mainBluetoothCharacteristic); // J'envoi la trame
         bytesSent.addAll(trameDeMaxMTU);
         trameDeMaxMTU =
             []; //sinon la dernière trame peut contenir des valeurs indésirables
@@ -239,7 +240,6 @@ class BluetoothRepository {
     });
   }
 
-
   /// Récupère les deux characteristiques nécessaires et renvoie true si elles
   /// sont récupérées / renvoi false sinon
   Future<bool> hasTheRightCharacteristics() async {
@@ -283,6 +283,11 @@ class BluetoothRepository {
     await mainBluetoothCharacteristic.write([BluetoothConstants.CODE_MODE_LIGHTNING_SHOW]); // PLAY
   }
 
+  /// send the code that means START THE SET UP MIDI LIMIT to the esp32
+  Future<void> setUpMidiKeyboardLimit() async {
+    await mainBluetoothCharacteristic.write([BluetoothConstants.CODE_SET_UP_MIDI_KEYBOARD_LIMIT]); // PLAY
+  }
+
   /// send the delay [delayDouble] to the esp32
   Future<void> sendDelay(double delayDouble) async {
     // if the delay to send is 10011100010
@@ -318,7 +323,6 @@ class BluetoothRepository {
     ]);
   }
 
-
   /// Utile pour le mode apprentissage, si je dois attendre que
   /// l'utilisateur appuie sur une touche pour faire défiler
   Future<void> askToWaitForUserInputInModeApprentissage() async {
@@ -330,7 +334,6 @@ class BluetoothRepository {
   Future<void> askToNotWaitForUserInputInModeApprentissage() async {
     await mainBluetoothCharacteristic.write([BluetoothConstants.CODE_SET_I_DONT_HAVE_TO_WAIT_FOR_USER_INPUT]);
   }
-
 
   /// Si je souhaite que l'objet affiche uniquement la main droite du morceau
   Future<void> showOnlyTheRightHand() async {
@@ -347,14 +350,39 @@ class BluetoothRepository {
     await mainBluetoothCharacteristic.write(BluetoothConstants.CODES_SHOW_THE_TWO_HANDS);
   }
 
+  /// Je demande à l'esp32 d'allumer une liste de LEDs
+  Future<void> lightLeds(List<int> ledsToLight) async {
+
+    List<int> trame = [BluetoothConstants.CODE_LIGHT_LEDS];
+
+    ledsToLight.forEach((element) {
+      ByteData byteData = new ByteData(2);
+      byteData.setInt16(0, element);
+      trame.add(byteData.getUint8(1));
+      trame.add(byteData.getUint8(0));
+    });
+
+    if (trame.length >= BluetoothConstants.MTU_SIZE) {
+      print('La liste de LEDs à allumer est trop longue!');
+      return;
+    }
+    await mainBluetoothCharacteristic.write(trame);
+  }
+
+  /// Je demande à l'esp32 d'éteindre toute les LEDs
+  Future<void> clearLeds() async {
+    print('I clear LEDS');
+    await mainBluetoothCharacteristic.write([BluetoothConstants.CODE_CLEAR_LEDS]);
+  }
+
   /// [valueNotifierActualTick] sera mis à jour à chaque fois que l'esp32 avance
   /// d'un tick dans le morceau
   ///
-  /// Pour ce faire, la fonction listen to [tickBluetoothCharacteristic] et se
+  /// Pour ce faire, la fonction listen to [tickBluetoothCharacteristic] et
   /// met à jour [valueNotifierActualTick] en fonction de la nouvelle valeur.
   /// Si la valeur dépasse un certain seul, [valueNotifierActualTick] sera mis à
   /// -1, ce qui signifie que le morceau doit être considéré comme finis.
-  Future<int> subscribeToTickCharacteristic(ValueNotifier valueNotifierActualTick) async {
+  Future<int> subscribeWhenTickIsUpdated(ValueNotifier valueNotifierActualTick) async {
     await tickBluetoothCharacteristic.setNotifyValue(true);
     streamSubscriptionTickListening?.cancel();
     streamSubscriptionTickListening =
@@ -374,6 +402,38 @@ class BluetoothRepository {
     });
 
     return 0;
+  }
+
+  /// [valueNotifierNotePushed] sera mis à jour à chaque fois que l'esp32 indique
+  /// une note pushed
+  ///
+  /// Pour ce faire, la fonction listen to [tickBluetoothCharacteristic] et
+  /// met à jour [valueNotifierNotePushed] en fonction de la nouvelle valeur.
+  Future<int> subscribeWhenNoteIsPushed(ValueNotifier valueNotifierNotePushed) async {
+    print('subscribe when note is pushed');
+    await tickBluetoothCharacteristic.setNotifyValue(true);
+    streamSubscriptionNotePushedListening?.cancel();
+    streamSubscriptionNotePushedListening =
+      tickBluetoothCharacteristic.value.listen((event) {
+        dev.log("Value changed : " + tickBluetoothCharacteristic.value.toString(),
+          name: "Note is pushed");
+
+        if (event.length == 1) { // I receive a Note Pushed info
+          int value = event[0];
+          print('I received '+value.toString());
+          valueNotifierNotePushed.value = value;
+        }
+      });
+
+    return 0;
+  }
+
+  void stopListeningToNotePushed() {
+    try {
+      streamSubscriptionNotePushedListening?.cancel();
+    } catch (e) {
+      print('error while cancelling streamSubscriptionNotePushedListening');
+    }
   }
 
   /// send to the esp32 the [tick] passed in parameter
@@ -432,6 +492,7 @@ class BluetoothRepository {
     mainBluetoothCharacteristic = null;
     tickBluetoothCharacteristic = null;
     streamSubscriptionTickListening?.cancel();
+    streamSubscriptionNotePushedListening?.cancel();
     deviceStateSubscription?.cancel();
   }
 

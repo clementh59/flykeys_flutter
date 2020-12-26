@@ -12,21 +12,15 @@ class LightningShowPage extends StatefulWidget {
 }
 
 class _LightningShowPageState extends State<LightningShowPage> {
-
-	//J'ignore le close_sink ce dessous car sinon, je ne pourrais plus utiliser BluetoothBloc.of(context) dans toute l'appli car je l'aurais close!
+  //J'ignore le close_sink ce dessous car sinon, je ne pourrais plus utiliser BluetoothBloc.of(context) dans toute l'appli car je l'aurais close!
 // ignore: close_sinks
-	BluetoothBloc bluetoothBloc;
-
-  @override
-  void initState() {
-    super.initState();
-  }
+  BluetoothBloc bluetoothBloc;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-		bluetoothBloc = BlocProvider.of<BluetoothBloc>(context);
-	}
+    bluetoothBloc = BlocProvider.of<BluetoothBloc>(context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,23 +42,22 @@ class _LightningShowPageState extends State<LightningShowPage> {
               builder: (c, snapshot) {
                 final state = snapshot.data;
                 if (state == BluetoothState.on) {
-									BlocProvider.of<BluetoothBloc>(context).add(FindFlyKeysDevice());
+                  BlocProvider.of<BluetoothBloc>(context).add(FindFlyKeysDevice()); //changer la place de ça parce que ça nique tout lorsque ça rebuild
 
                   return BlocBuilder<BluetoothBloc, MyBluetoothState>(
                     builder: (BuildContext context, MyBluetoothState state) {
-
-											if (state is BluetoothMainStateSettingUp) {
-												return Stack(
-													children: <Widget>[
-														Center(
-															child:
-															SettingUpBluetoothPage(state, () {
-																BlocProvider.of<BluetoothBloc>(context)
-																	.add(LightningShowEvent());
-															})),
-													],
-												);
-											}
+                      if (state is BluetoothMainStateSettingUp) {
+                        return Stack(
+                          children: <Widget>[
+                            Center(
+                                child: SettingUpBluetoothPage(state, () {
+                              BlocProvider.of<BluetoothBloc>(context).add(LightningShowEvent());
+                            }, () {
+                              Navigator.of(context).pop();
+                            })),
+                          ],
+                        );
+                      }
 
                       if (state is LightningShowModeState) {
                         return LightningShowModePage();
@@ -73,8 +66,7 @@ class _LightningShowPageState extends State<LightningShowPage> {
                       return Container(
                         width: MediaQuery.of(context).size.width,
                         child: Center(
-                          child: CustomWidgets.textWithLoadingIndicator(
-                              "Chargement du mode en cours ... ($state)"),
+                          child: CustomWidgets.textWithLoadingIndicator("Chargement du mode en cours ..."),
                         ),
                       );
                     },
@@ -88,7 +80,6 @@ class _LightningShowPageState extends State<LightningShowPage> {
       )),
     );
   }
-
 }
 
 class LightningShowModePage extends StatelessWidget {
@@ -97,8 +88,7 @@ class LightningShowModePage extends StatelessWidget {
     return Container(
       width: MediaQuery.of(context).size.width,
       child: Center(
-        child: CustomWidgets.textWithoutLoadingIndicator(
-            "Mode animation visuelle"),
+        child: CustomWidgets.textWithoutLoadingIndicator("Mode animation visuelle"),
       ),
     );
   }

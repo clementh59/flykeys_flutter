@@ -35,56 +35,54 @@ class ValidateTheChoiceOfKindOfPiano extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 30),
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 28),
-                  child: RichText(
-                    textAlign: TextAlign.center,
-                    text: TextSpan(children: [
-                      TextSpan(
-                        text: 'Ton type de piano est ',
-                        style: CustomStyle.bigTextOnBoardingPage,
-                      ),
-                      TextSpan(
-                        text: pianoTypeStrings[info['kindOfPiano']],
-                        style: CustomStyle.bigTextOnBoardingPage
-                            .copyWith(fontWeight: CustomStyle.BOLD),
-                      ),
-                    ]),
-                  ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 30),
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 28),
+                child: RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(children: [
+                    TextSpan(
+                      text: 'Ton type de piano est ',
+                      style: CustomStyle.bigTextOnBoardingPage,
+                    ),
+                    TextSpan(
+                      text: pianoTypeStrings[info['kindOfPiano']],
+                      style: CustomStyle.bigTextOnBoardingPage
+                          .copyWith(fontWeight: CustomStyle.BOLD),
+                    ),
+                  ]),
                 ),
-                SizedBox(height: 26),
-                Text(
-                  explanationText[info['kindOfPiano']],
-                  style: CustomStyle.smallTextOnBoardingPage,
-                  textAlign: TextAlign.left,
-                ),
-                SizedBox(height: 31),
-                CustomWidgets.midiImages(),
-                SizedBox(height: 31),
-              ],
-            ),
-            Column(
-              children: <Widget>[
-                button(buttonsText[info['kindOfPiano']][0], CustomColors.blue, (){info['midiPort']=true;}),
-                SizedBox(height: 10),
-                button(buttonsText[info['kindOfPiano']][1], CustomColors.red, (){info['midiPort']=false;}),
-                SizedBox(height: 20),
-              ],
-            ),
-          ],
-        ),
+              ),
+              SizedBox(height: 26),
+              Text(
+                explanationText[info['kindOfPiano']],
+                style: CustomStyle.smallTextOnBoardingPage,
+                textAlign: TextAlign.left,
+              ),
+              SizedBox(height: 31),
+              CustomWidgets.midiImages(),
+              SizedBox(height: 31),
+            ],
+          ),
+          Column(
+            children: <Widget>[
+              button(buttonsText[info['kindOfPiano']][0], CustomColors.blue, (){info['midiPort']=true;}),
+              SizedBox(height: 10),
+              button(buttonsText[info['kindOfPiano']][1], CustomColors.red, (){info['midiPort']=false;}),
+              SizedBox(height: 20),
+            ],
+          ),
+        ],
       ),
     );
   }

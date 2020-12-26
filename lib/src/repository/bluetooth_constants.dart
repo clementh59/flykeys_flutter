@@ -15,6 +15,10 @@ class BluetoothConstants {
 	static const CODE_SET_I_DONT_HAVE_TO_WAIT_FOR_USER_INPUT = 0xF8;
 	static const CODE_I_SEND_COLOR = 0xF7;
 	static const CODE_MODE_LIGHTNING_SHOW = 0xF6;
+	static const CODE_SET_UP_MIDI_KEYBOARD_LIMIT = 0xF4;
+	static const CODE_LIGHT_LEDS = 0xF3;
+	static const CODE_CLEAR_LEDS = 0xF2;
+
 	static const CODE_NEW_TICK = 0xBD;
 
 	static const mapStringColorToCode = {

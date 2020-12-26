@@ -8,6 +8,7 @@ import 'package:flykeys/src/bloc/bluetooth/bloc.dart';
 import 'package:flykeys/src/bloc/favorites/bloc.dart';
 import 'package:flykeys/src/bloc/music/bloc.dart';
 import 'package:flykeys/src/model/music.dart';
+import 'package:flykeys/src/page/music_parameter_page.dart';
 import 'package:flykeys/src/repository/database_repository.dart';
 import 'package:flykeys/src/utils/custom_colors.dart';
 import 'package:flykeys/src/utils/custom_size.dart';
@@ -15,7 +16,6 @@ import 'package:flykeys/src/utils/custom_style.dart';
 import 'package:flykeys/src/utils/strings.dart';
 import 'package:flykeys/src/utils/utils.dart';
 import 'package:flykeys/src/widget/custom_widgets.dart';
-import 'package:flykeys/src/page/music_parameter_page.dart';
 
 import 'bluetooth/connection_to_flykeys_object_page.dart';
 
@@ -64,8 +64,7 @@ class _MusicPageState extends State<MusicPage> {
               if (widget.music.iLoadedAllInfos) {
                 return WillPopScope(
                   onWillPop: () async {
-                    BlocProvider.of<BluetoothBloc>(context)
-                        .add(QuitMusicEvent());
+                    BlocProvider.of<BluetoothBloc>(context).add(QuitMusicEvent());
                     return true;
                   },
                   child: Container(
@@ -81,8 +80,7 @@ class _MusicPageState extends State<MusicPage> {
                             bluetoothBloc.add(FindFlyKeysDevice());
 
                             return BlocBuilder<BluetoothBloc, MyBluetoothState>(
-                              builder: (BuildContext context,
-                                  MyBluetoothState state) {
+                              builder: (BuildContext context, MyBluetoothState state) {
                                 dev.log("state is $state", name: "Blocbuilder");
 
                                 if (state is BluetoothMainStateSettingUp) {
@@ -90,11 +88,10 @@ class _MusicPageState extends State<MusicPage> {
                                     children: <Widget>[
                                       _topbar(),
                                       Center(
-                                          child:
-                                              SettingUpBluetoothPage(state, () {
-                                        BlocProvider.of<BluetoothBloc>(context)
-                                            .add(SendMorceauEvent(
-                                                widget.music.id));
+                                          child: SettingUpBluetoothPage(state, () {
+                                        BlocProvider.of<BluetoothBloc>(context).add(SendMorceauEvent(widget.music.id));
+                                      }, () {
+                                        Navigator.of(context).pop();
                                       })),
                                     ],
                                   );
@@ -104,24 +101,20 @@ class _MusicPageState extends State<MusicPage> {
                                   return Stack(
                                     children: <Widget>[
                                       _topbar(),
-                                      Center(
-                                          child: SendingMorceauPage(
-                                              state, widget.music)),
+                                      Center(child: SendingMorceauPage(state, widget.music)),
                                     ],
                                   );
                                 }
 
                                 if (state is BluetoothInteractWithMusic) {
-                                  return InteractWithMorceauPage(
-                                      state, widget.music);
+                                  return InteractWithMorceauPage(state, widget.music);
                                 }
 
                                 return SizedBox();
                               },
                             );
                           } else if (state == BluetoothState.off) {
-                            BlocProvider.of<BluetoothBloc>(context)
-                                .onDisconnect();
+                            BlocProvider.of<BluetoothBloc>(context).onDisconnect();
                           }
                           return CustomWidgets.bluetoothIsOff();
                         }),
@@ -177,8 +170,7 @@ class SendingMorceauPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (state is FetchingMorceauState)
-      return CustomWidgets.textWithLoadingIndicator(
-          "Téléchargement du morceau");
+      return CustomWidgets.textWithLoadingIndicator("Téléchargement du morceau");
     else if (state is DecodageMorceauState)
       return CustomWidgets.textWithLoadingIndicator("Decodage du morceau");
     else if (state is TraitementMorceauState)
@@ -188,8 +180,7 @@ class SendingMorceauPage extends StatelessWidget {
       return envoiEnCoursPage(context, _state.avancement);
     }
 
-    print(
-        "!!!!!!!!!!!ERROR!!!!!!!!!! NOT HANDLED CASE IN SettingUpBluetoothPage");
+    print("!!!!!!!!!!!ERROR!!!!!!!!!! NOT HANDLED CASE IN SettingUpBluetoothPage");
     return SizedBox();
   }
 
@@ -209,8 +200,7 @@ class SendingMorceauPage extends StatelessWidget {
               decoration: BoxDecoration(color: Colors.black.withOpacity(0.1)),
             ),
             Container(
-              width: (MediaQuery.of(context).size.width - 100) *
-                  min(1, avancement),
+              width: (MediaQuery.of(context).size.width - 100) * min(1, avancement),
               height: 40,
               decoration: BoxDecoration(color: Colors.blue),
             ),
@@ -227,8 +217,7 @@ class SendingMorceauPage extends StatelessWidget {
           child: Container(
               margin: EdgeInsets.only(top: 30),
               padding: EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                  color: Colors.blue, borderRadius: BorderRadius.circular(15)),
+              decoration: BoxDecoration(color: Colors.blue, borderRadius: BorderRadius.circular(15)),
               child: Text("Jouer que cette partie!")),
           onTap: () {
             _stopSendingMorceau(context);
@@ -254,8 +243,7 @@ class InteractWithMorceauPage extends StatefulWidget {
   InteractWithMorceauPage(this.state, this.music);
 
   @override
-  _InteractWithMorceauPageState createState() =>
-      _InteractWithMorceauPageState();
+  _InteractWithMorceauPageState createState() => _InteractWithMorceauPageState();
 }
 
 class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
@@ -267,12 +255,11 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
   ValueNotifier<bool> valueNotifierUpdateTickInPage;
   Duration durationOfTheMorceau;
 
-	bool waitForUserInput;
-	double vitesseFactor = 1;
+  bool waitForUserInput;
+  double vitesseFactor = 1;
   double minSlideVitesse = 0.1;
   double maxSlideVitesse = 2;
-  double lastDelaySent =
-      -1; //Je l'initialise à -1 pour bien dire que je n'ai pas encore envoyé de delai lors de l'initialisation
+  double lastDelaySent = -1; //Je l'initialise à -1 pour bien dire que je n'ai pas encore envoyé de delai lors de l'initialisation
 
   //lorsque j'essaie d'aller à une partie du morceau que je n'ai pas je montre
   //une snackbar, le soucis c'est que parfois, j'appelle une snackbar plusieurs
@@ -296,16 +283,16 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
       //Je viens d'envoyer le morceau, je lui envoi donc le delay
       _sendDelay(widget.music.speed);
 
-			//je lui envoi aussi si il doit attendre que j'appuie sur les touches ou non
-			envoiWaitForTheUserInput();
+      //je lui envoi aussi si il doit attendre que j'appuie sur les touches ou non
+      envoiWaitForTheUserInput();
 
-			// Je lui envoi aussi mes couleurs
+      // Je lui envoi aussi mes couleurs
       envoiMesCouleurs();
 
       envoiLaMainQueJeVeuxJouer();
 
-			//De base je suis en pause
-			buttonState = PAUSE;
+      //De base je suis en pause
+      buttonState = PAUSE;
     } else if (widget.state is PlayingMusicState) {
       buttonState = PLAYING;
     } else if (widget.state is StoppedMusicState) {
@@ -321,12 +308,7 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
         if (state is TickNotPossibleState) {
           if (!_imActuallyShowingASnackbar) {
             _imActuallyShowingASnackbar = true;
-            Scaffold.of(context)
-                .showSnackBar(SnackBar(
-                    content:
-                        Text("Cette partie du morceau n'a pas été envoyée!")))
-                .closed
-                .then((value) {
+            Scaffold.of(context).showSnackBar(SnackBar(content: Text("Cette partie du morceau n'a pas été envoyée!"))).closed.then((value) {
               _imActuallyShowingASnackbar = false;
             });
           }
@@ -366,18 +348,15 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
                       setState(() {
                         widget.music.liked = false;
                       });
-                      BlocProvider.of<FavoritesBloc>(context)
-                        ..add(RemoveAFavoriteMusic(widget.music));
+                      BlocProvider.of<FavoritesBloc>(context)..add(RemoveAFavoriteMusic(widget.music));
                     } else {
                       setState(() {
                         widget.music.liked = true;
                       });
-                      BlocProvider.of<FavoritesBloc>(context)
-                        ..add(AddAFavoriteMusic(widget.music));
+                      BlocProvider.of<FavoritesBloc>(context)..add(AddAFavoriteMusic(widget.music));
                     }
                   },
-                  child: BlocBuilder<FavoritesBloc, FavoritesState>(
-                      builder: (BuildContext context, FavoritesState state) {
+                  child: BlocBuilder<FavoritesBloc, FavoritesState>(builder: (BuildContext context, FavoritesState state) {
                     if (state is ListsLoadedState) {
                       if (state.musicsId.contains(widget.music.id)) {
                         widget.music.liked = true;
@@ -454,9 +433,7 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
               width: 5,
             ),
             Text(
-              "[" +
-                  Utils.showNumber(widget.music.numberOfVotes.toString()) +
-                  "]",
+              "[" + Utils.showNumber(widget.music.numberOfVotes.toString()) + "]",
               style: CustomStyle.numberOfVote,
             )
           ],
@@ -524,8 +501,7 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
 
         if (nbMinutes > nbMinutesMax) nbMinutes = nbMinutesMax;
 
-        if (nbSeconds > nbSecondsMax && nbMinutes == nbMinutesMax)
-          nbSeconds = nbSecondsMax;
+        if (nbSeconds > nbSecondsMax && nbMinutes == nbMinutesMax) nbSeconds = nbSecondsMax;
 
         if (nbSeconds < 0) nbSeconds = 0;
 
@@ -540,12 +516,8 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  CustomWidgets.numberSlideBarText(nbMinutes.toString() +
-                      ":" +
-                      intSecondsToStringDuration(nbSeconds).toString()),
-                  CustomWidgets.numberSlideBarText(nbMinutesMax.toString() +
-                      ":" +
-                      intSecondsToStringDuration(nbSecondsMax).toString()),
+                  CustomWidgets.numberSlideBarText(nbMinutes.toString() + ":" + intSecondsToStringDuration(nbSeconds).toString()),
+                  CustomWidgets.numberSlideBarText(nbMinutesMax.toString() + ":" + intSecondsToStringDuration(nbSecondsMax).toString()),
                 ],
               ),
             ),
@@ -567,19 +539,14 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
                   },
                   divisions: durationOfTheMorceau.inSeconds,
                   //pour eviter erreur
-                  value: min(durationOfTheMorceau.inSeconds.toDouble(),
-                      (nbMinutes * 60 + nbSeconds).toDouble()),
+                  value: min(durationOfTheMorceau.inSeconds.toDouble(), (nbMinutes * 60 + nbSeconds).toDouble()),
                   onChanged: (newTime) {
-                    if (valueNotifierUpdateTickInPage.value)
-                      valueNotifierUpdateTickInPage.value = false;
-                    valueNotifierActualDuration.value =
-                        new Duration(seconds: newTime.floor());
+                    if (valueNotifierUpdateTickInPage.value) valueNotifierUpdateTickInPage.value = false;
+                    valueNotifierActualDuration.value = new Duration(seconds: newTime.floor());
                   },
                   min: 0,
                   max: durationOfTheMorceau.inSeconds.toDouble(),
-                  label: nbMinutes.toString() +
-                      ":" +
-                      intSecondsToStringDuration(nbSeconds).toString(),
+                  label: nbMinutes.toString() + ":" + intSecondsToStringDuration(nbSeconds).toString(),
                 ),
               ),
             ),
@@ -599,10 +566,8 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              CustomWidgets.numberSlideBarText(
-                  "x" + minSlideVitesse.toString()),
-              CustomWidgets.numberSlideBarText(
-                  "x" + maxSlideVitesse.toString()),
+              CustomWidgets.numberSlideBarText("x" + minSlideVitesse.toString()),
+              CustomWidgets.numberSlideBarText("x" + maxSlideVitesse.toString()),
             ],
           ),
         ),
@@ -642,8 +607,7 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
 
   Widget _topBar(context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(
-          horizontal: CustomSize.leftAndRightPadding),
+      padding: const EdgeInsets.symmetric(horizontal: CustomSize.leftAndRightPadding),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
@@ -726,12 +690,12 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
   }
 
   /**
-   * Generate the music parameter button
-   * When you click on it, it opens the MusicParameterPage
-   */
+	 * Generate the music parameter button
+	 * When you click on it, it opens the MusicParameterPage
+	 */
   Widget _generateMusicParameterButton() {
     return InkWell(
-      onTap: (){
+      onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => MusicParameterPage(widget.music)),
@@ -776,26 +740,22 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
   }
 
   void initLaRecuperationDuActualTime() {
-    BlocProvider.of<BluetoothBloc>(context)
-      ..setSpeedX1(widget.music.speed); //je lui indique la speed_x1
-    BlocProvider.of<BluetoothBloc>(context)
-      ..setValueNotifierActualDuration(valueNotifierActualDuration);
-    BlocProvider.of<BluetoothBloc>(context)
-      ..setValueNotifierUpdateTickInPage(valueNotifierUpdateTickInPage);
-    durationOfTheMorceau =
-        BlocProvider.of<BluetoothBloc>(context).getDurationOfTheMorceau();
+    BlocProvider.of<BluetoothBloc>(context)..setSpeedX1(widget.music.speed); //je lui indique la speed_x1
+    BlocProvider.of<BluetoothBloc>(context)..setValueNotifierActualDuration(valueNotifierActualDuration);
+    BlocProvider.of<BluetoothBloc>(context)..setValueNotifierUpdateTickInPage(valueNotifierUpdateTickInPage);
+    durationOfTheMorceau = BlocProvider.of<BluetoothBloc>(context).getDurationOfTheMorceau();
   }
 
   /**
-   * Crée une action dans BluetoothBloc qui envoi mes couleurs
-   */
+	 * Crée une action dans BluetoothBloc qui envoi mes couleurs
+	 */
   void envoiMesCouleurs() {
     BlocProvider.of<BluetoothBloc>(context).add(EnvoiMesCouleursEvent());
   }
 
   /**
-   * Crée un event dans le BluetoothBloc pour dire de montrer les deux mains
-   */
+	 * Crée un event dans le BluetoothBloc pour dire de montrer les deux mains
+	 */
   void envoiLaMainQueJeVeuxJouer() async {
     bool MD = await Utils.getBooleanFromSharedPreferences(widget.music.id + '_MD', defaultValue: true);
     bool MG = await Utils.getBooleanFromSharedPreferences(widget.music.id + '_MG', defaultValue: true);
@@ -808,18 +768,18 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
   }
 
   /**
-   * Crée une action dans BluetoothBloc qui envoi mon choix pour
-   * waitForTheUserInput
-   */
+	 * Crée une action dans BluetoothBloc qui envoi mon choix pour
+	 * waitForTheUserInput
+	 */
   void envoiWaitForTheUserInput() async {
-  	bool wait = await getWaitForUserInput();
-  	if (wait)
-			BlocProvider.of<BluetoothBloc>(context).add(AskToWaitForTheUserInputEvent());
-  	else
-			BlocProvider.of<BluetoothBloc>(context).add(AskToNotWaitForTheUserInputEvent());
-	}
+    bool wait = await getWaitForUserInput();
+    if (wait)
+      BlocProvider.of<BluetoothBloc>(context).add(AskToWaitForTheUserInputEvent());
+    else
+      BlocProvider.of<BluetoothBloc>(context).add(AskToNotWaitForTheUserInputEvent());
+  }
 
-	Future<bool> getWaitForUserInput() async {
-		return await Utils.getBooleanFromSharedPreferences(Strings.WAIT_FOR_USER_INPUT_SHARED_PREFS, defaultValue: false);
-	}
+  Future<bool> getWaitForUserInput() async {
+    return await Utils.getBooleanFromSharedPreferences(Strings.WAIT_FOR_USER_INPUT_SHARED_PREFS, defaultValue: false);
+  }
 }

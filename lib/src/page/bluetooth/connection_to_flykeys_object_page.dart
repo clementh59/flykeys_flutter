@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flykeys/src/bloc/bluetooth/bloc.dart';
 import 'package:flykeys/src/bloc/bluetooth/bluetooth_state.dart';
-import 'package:flykeys/src/model/music.dart';
 import 'dart:developer' as dev;
 
 import 'package:flykeys/src/widget/custom_widgets.dart';
@@ -13,8 +12,9 @@ import 'package:flykeys/src/widget/custom_widgets.dart';
 class SettingUpBluetoothPage extends StatefulWidget {
 	final MyBluetoothState state;
 	final Function onConnected;
+	final Function onDisconnected;
 
-	SettingUpBluetoothPage(this.state, this.onConnected);
+	SettingUpBluetoothPage(this.state, this.onConnected, this.onDisconnected);
 
 	@override
 	_SettingUpBluetoothPageState createState() => _SettingUpBluetoothPageState();
@@ -58,7 +58,7 @@ class _SettingUpBluetoothPageState extends State<SettingUpBluetoothPage> {
 				// Cependant le state change tout de suite et passe à findFlyKeys device state
 				// Le if suivant ne se fait donc pas
 				if (widget.state is FlyKeysDeviceDisconnectedState)
-					Navigator.of(context).pop();
+					widget.onDisconnected();
 			});
 			return CustomWidgets.textWithLoadingIndicator(
 				"Une deconnexion est survenu!");

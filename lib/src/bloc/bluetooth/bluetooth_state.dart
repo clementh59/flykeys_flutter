@@ -200,3 +200,12 @@ class LightningShowModeState extends BluetoothInteractWithMusic{
   @override
   List<Object> get props => [];
 }
+
+/// When I setup the limit of the keyboard during the on boarding
+class SetLimitOfKeyboardState extends BluetoothInteractWithMusic{
+
+  SetLimitOfKeyboardState();
+
+  @override
+  List<Object> get props => [];
+}

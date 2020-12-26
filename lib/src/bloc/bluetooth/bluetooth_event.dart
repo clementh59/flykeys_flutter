@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/cupertino.dart';
 
 abstract class BluetoothEvent extends Equatable {
   BluetoothEvent();
@@ -149,6 +150,41 @@ class DisconnectEvent extends BluetoothEvent{
 class LightningShowEvent extends BluetoothEvent{
 
   LightningShowEvent();
+
+  @override
+  List<Object> get props => [];
+
+}
+
+/// I ask the esp32 to pass in a mode where the user will set up the limit of the keyboard
+class SetUpMidiKeyboardLimitEvent extends BluetoothEvent{
+
+  final ValueNotifier<int> valueNotifierNotePushed;
+
+  SetUpMidiKeyboardLimitEvent(this.valueNotifierNotePushed);
+
+  @override
+  List<Object> get props => [valueNotifierNotePushed];
+
+}
+
+/// I ask the esp32 to light a list of LEDs
+class LightLedsEvent extends BluetoothEvent{
+
+  final ledsToLight; //a list of unsigned int
+  final bool clearLeds;
+
+  LightLedsEvent(this.ledsToLight, this.clearLeds);
+
+  @override
+  List<Object> get props => [ledsToLight, clearLeds];
+
+}
+
+/// I ask the esp32 to clear LEDs
+class ClearLedsEvent extends BluetoothEvent{
+
+  ClearLedsEvent();
 
   @override
   List<Object> get props => [];

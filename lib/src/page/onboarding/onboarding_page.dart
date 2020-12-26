@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flykeys/src/page/onboarding/choose_the_kind_of_piano.dart';
-import 'package:flykeys/src/page/onboarding/set_the_limit_of_the_piano_with_midi.dart';
+import 'package:flykeys/src/page/onboarding/ask_to_plug_the_cable.dart';
+import 'package:flykeys/src/page/onboarding/set_limit_of_keyboard_midi.dart';
 import 'package:flykeys/src/page/onboarding/validate_the_choice_of_kind_of_piano.dart';
 import 'package:flykeys/src/utils/custom_colors.dart';
 import 'package:flykeys/src/utils/custom_style.dart';
@@ -13,8 +14,16 @@ class OnBoardingPage extends StatefulWidget {
 class _OnBoardingPageState extends State<OnBoardingPage> {
 
   Map info = {}; // This map will contains the info passed by the child pages
+  // e.g {
+  //    'kindOfPiano': 'numeric',
+  //    'midiPort': true,
+  //    'leftLimit': 21,
+  //    'rightLimit': 109,
+  // }
+
   Map onBoardingSteps; // All the possible steps
   Map step; // The actual step
+  var history = []; // The history of the steps, to where how to go back
 
   @override
   void initState() {
@@ -26,6 +35,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
        *    'page': {Widget} the Widget that will be shown
        *    'next': {String|Function} - the key of next page (if function - it should return the key of the next page)
        *    'helpPage': {Widget} the widget that is show when click on help (if null, help icon isn't shown)
+       *    'isScrollable': {boolean} true if the page has to be wrapped into a SingleChildScrollView
        *  }
        **/
       'chooseTheKindOfPiano': {
@@ -37,26 +47,36 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
       'validateTheChoiceOfKindOfPiano': {
         'index': 1,
         'page': ValidateTheChoiceOfKindOfPiano(info,goToNextStep),
-        'previous': 'chooseTheKindOfPiano',
-        'next': (){if (info['midiPort']) return 'setTheLimitOfThePiano'; return 'explanationModeApprentissage';},
+        'next': (){if (info['midiPort']) return 'askToPlugTheCable'; return 'setLimitOfKeyboardManually';},
+        'isScrollable': true,
       },
-      'setTheLimitOfThePiano': {
+      'askToPlugTheCable': {
         'index': 2,
-        'page': SetTheLimitOfThePianoWithMidi(info,goToNextStep),
-        'previous': 'validateTheChoiceOfKindOfPiano',
+        'page': AskToPlugTheCable(goToNextStep),
+        'next': 'setLimitOfKeyboardMidi',
+      },
+      'setLimitOfKeyboardMidi': {
+        'index': 3,
+        'page': SetLimitOfKeyboardMidi(info, goToNextStep, goToPreviousStep),
+        'next': 'explanationModeApprentissage'
+      },
+      'setLimitOfKeyboardManually': {
+        'index': 3,
+        'page': SetLimitOfKeyboardMidi(info, goToNextStep, goToPreviousStep),
         'next': 'explanationModeApprentissage'
       },
       'explanationModeApprentissage': {
-        'index': 3,
-        'previous': 'validateTheChoiceOfKindOfPiano',
-        'next': 'explanationModeLightningShow'
+        'index': 6,
+        'next': 'explanationModeLightningShow',
+        'isScrollable': true,
       },
       'explanationModeLightningShow': {
-        'index': 4,
-        'previous': 'explanationModeApprentissage'
+        'index': 7,
+        'isScrollable': true,
       },
     };
-    step = onBoardingSteps['setTheLimitOfThePiano'];
+    step = onBoardingSteps['chooseTheKindOfPiano'];
+    history.add(step);
   }
 
   @override
@@ -78,9 +98,9 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                 Expanded(
                   child: Column(
                     mainAxisSize: MainAxisSize.max,
-                    children: <Widget>[
+                    children: [
                       header(),
-                      step['page'],
+                      body(),
                     ],
                   ),
                 ),
@@ -97,7 +117,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
 
   Widget header() {
 
-    bool showBackIcon = step['previous']!=null;
+    bool showBackIcon = history.length>1;
 
     return Container(
       padding: const EdgeInsets.only(top: 30.0, bottom: 34),
@@ -137,12 +157,27 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
     );
   }
 
+  Widget body() {
+
+    if (step['isScrollable']==true) {
+      return Expanded(
+        child: SingleChildScrollView(
+          child: step['page'],
+        ),
+      );
+    }
+
+    return Expanded(
+      child: step['page'],
+    );
+  }
+
   Widget footer() {
 
     bool showHelpIcon = step['helpPage']!=null;
 
     return Container(
-      padding: const EdgeInsets.only(bottom: 30.0),
+      padding: const EdgeInsets.only(bottom: 30.0, top: 10),
       width: MediaQuery.of(context).size.width,
       child: Stack(
         children: <Widget>[
@@ -201,10 +236,12 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
   /// Go to the previous step of the onboarding process
   /// Returns false if there isn't previous step - true otherwise
   bool goToPreviousStep() {
-    if (step['previous']==null) return false;
+    if (history.length==0) return false;
+
+    history.removeLast();
 
     setState(() {
-      step = onBoardingSteps[step['previous']];
+      step = history[history.length-1];
     });
 
     return true;
@@ -225,6 +262,8 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
     setState(() {
       step = onBoardingSteps[next];
     });
+
+    history.add(step);
 
     return true;
   }
