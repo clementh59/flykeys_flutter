@@ -40,7 +40,7 @@ class AskToPlugTheCable extends StatelessWidget {
             ],
           ),
           Padding(
-            padding: const EdgeInsets.only(bottom: 20.0),
+            padding: const EdgeInsets.symmetric(vertical: 20.0),
             child: CustomWidgets.buttonLoadMorePopularSongStyle("C'est fait", onChoice, fontSize: 16.0),
           ),
         ],

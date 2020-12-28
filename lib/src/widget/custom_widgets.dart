@@ -4,13 +4,11 @@ import 'package:flykeys/src/bloc/image_loading/bloc.dart';
 import 'package:flykeys/src/page/parameter_page.dart';
 import 'package:flykeys/src/utils/custom_colors.dart';
 import 'package:flykeys/src/utils/custom_style.dart';
-import 'package:flykeys/src/utils/utils.dart';
 
 class CustomWidgets {
-
   static Widget settingsIcon(context) {
     return InkWell(
-      onTap: (){
+      onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => ParameterPage()),
@@ -26,7 +24,7 @@ class CustomWidgets {
 
   static Widget backArrowIcon(context) {
     return InkWell(
-      onTap: (){
+      onTap: () {
         Navigator.of(context).pop();
       },
       focusColor: Colors.transparent,
@@ -58,7 +56,7 @@ class CustomWidgets {
     );
   }
 
-  static Widget ytWidget(double height){
+  static Widget ytWidget(double height) {
     return Image.asset(
       "assets/images/icons/logo_yt.png",
       height: height,
@@ -86,10 +84,10 @@ class CustomWidgets {
     List<Widget> stars = [];
 
     for (int i = 1; i <= 5; i++) {
-    	if (starsNumber>i)
-      	stars.add(_starWidget(1,11));
-    	else
-    		stars.add(_starWidget(starsNumber-(i-1),11));
+      if (starsNumber > i)
+        stars.add(_starWidget(1, 11));
+      else
+        stars.add(_starWidget(starsNumber - (i - 1), 11));
     }
 
     return Row(
@@ -102,10 +100,10 @@ class CustomWidgets {
     List<Widget> stars = [];
 
     for (int i = 1; i <= 5; i++) {
-    	if (starsNumber>i)
-      	stars.add(_starWidget(1,14));
-    	else
-    		stars.add(_starWidget(starsNumber-(i-1),14));
+      if (starsNumber > i)
+        stars.add(_starWidget(1, 14));
+      else
+        stars.add(_starWidget(starsNumber - (i - 1), 14));
     }
 
     return Row(
@@ -115,23 +113,23 @@ class CustomWidgets {
   }
 
   static Widget _starWidget(double remplissage, double size) {
-  	if (remplissage >0.66)
-    	return Icon(
-      Icons.star,
+    if (remplissage > 0.66)
+      return Icon(
+        Icons.star,
+        color: CustomColors.yellow,
+        size: size,
+      );
+    if (remplissage < 0.33)
+      return Icon(
+        Icons.star_border,
+        color: CustomColors.yellow,
+        size: size,
+      );
+    return Icon(
+      Icons.star_half,
       color: CustomColors.yellow,
       size: size,
     );
-  	if (remplissage <0.33)
-  		return Icon(
-				Icons.star_border,
-				color: CustomColors.yellow,
-				size: size,
-			);
-		return Icon(
-			Icons.star_half,
-			color: CustomColors.yellow,
-			size: size,
-		);
   }
 
   static Widget noteWidget(int difficulty) {
@@ -162,7 +160,7 @@ class CustomWidgets {
 
   static Widget _noteWidget(double height) {
     return Padding(
-      padding: const EdgeInsets.only(left : 3.0),
+      padding: const EdgeInsets.only(left: 3.0),
       child: Image.asset(
         "assets/images/icons/note_icon.png",
         height: height,
@@ -170,7 +168,7 @@ class CustomWidgets {
     );
   }
 
-  static Widget heartIcon(bool liked){
+  static Widget heartIcon(bool liked) {
     if (liked)
       return Icon(
         Icons.favorite,
@@ -183,18 +181,12 @@ class CustomWidgets {
     );
   }
 
-  static Widget blueNumberIndicator(String number, bool fill){
+  static Widget blueNumberIndicator(String number, bool fill) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10),
-      decoration: fill? BoxDecoration(
-        color: CustomColors.blue,
-        borderRadius: BorderRadius.circular(15)
-      ) : BoxDecoration(
-        border: Border.all(
-          color: CustomColors.grey
-        ),
-        borderRadius: BorderRadius.circular(15)
-      ),
+      decoration: fill
+          ? BoxDecoration(color: CustomColors.blue, borderRadius: BorderRadius.circular(15))
+          : BoxDecoration(border: Border.all(color: CustomColors.grey), borderRadius: BorderRadius.circular(15)),
       child: Center(
         child: Text(
           number,
@@ -204,9 +196,9 @@ class CustomWidgets {
     );
   }
 
-  static Widget tileFollowButton(Function onTap){
+  static Widget tileFollowButton(Function onTap) {
     return InkWell(
-      onTap: (){
+      onTap: () {
         onTap();
       },
       focusColor: Colors.transparent,
@@ -214,11 +206,8 @@ class CustomWidgets {
       highlightColor: Colors.transparent,
       splashColor: Colors.transparent,
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: 3,horizontal: 10),
-        decoration: BoxDecoration(
-          color: CustomColors.blue,
-          borderRadius: BorderRadius.circular(20)
-        ),
+        padding: EdgeInsets.symmetric(vertical: 3, horizontal: 10),
+        decoration: BoxDecoration(color: CustomColors.blue, borderRadius: BorderRadius.circular(20)),
         child: Text(
           "Follow",
           style: CustomStyle.followTextTileTranscriber,
@@ -227,9 +216,9 @@ class CustomWidgets {
     );
   }
 
-  static Widget tileUnfollowButton(Function onTap){
+  static Widget tileUnfollowButton(Function onTap) {
     return InkWell(
-      onTap: (){
+      onTap: () {
         onTap();
       },
       focusColor: Colors.transparent,
@@ -237,11 +226,8 @@ class CustomWidgets {
       highlightColor: Colors.transparent,
       splashColor: Colors.transparent,
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: 3,horizontal: 10),
-        decoration: BoxDecoration(
-          border: Border.all(color: CustomColors.grey),
-          borderRadius: BorderRadius.circular(20)
-        ),
+        padding: EdgeInsets.symmetric(vertical: 3, horizontal: 10),
+        decoration: BoxDecoration(border: Border.all(color: CustomColors.grey), borderRadius: BorderRadius.circular(20)),
         child: Text(
           "Unfollow",
           style: CustomStyle.followTextTileTranscriber,
@@ -250,9 +236,9 @@ class CustomWidgets {
     );
   }
 
-  static Widget detailPageFollowButton(Function onTap){
+  static Widget detailPageFollowButton(Function onTap) {
     return InkWell(
-      onTap: (){
+      onTap: () {
         onTap();
       },
       focusColor: Colors.transparent,
@@ -261,10 +247,7 @@ class CustomWidgets {
       splashColor: Colors.transparent,
       child: Container(
         height: 44,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(25),
-          color: CustomColors.blue
-        ),
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(25), color: CustomColors.blue),
         child: Center(
           child: Text(
             "Follow",
@@ -275,9 +258,9 @@ class CustomWidgets {
     );
   }
 
-  static Widget detailPageUnfollowButton(Function onTap){
+  static Widget detailPageUnfollowButton(Function onTap) {
     return InkWell(
-      onTap: (){
+      onTap: () {
         onTap();
       },
       focusColor: Colors.transparent,
@@ -300,44 +283,39 @@ class CustomWidgets {
     );
   }
 
-  static Widget detailPageBackgroundImage(ImageLoadingBloc imageLoadingBloc, context){
+  static Widget detailPageBackgroundImage(ImageLoadingBloc imageLoadingBloc, context) {
     return Stack(
       children: [
         BlocBuilder<ImageLoadingBloc, ImageLoadingState>(
-          bloc: imageLoadingBloc,
-          builder: (BuildContext context,
-            ImageLoadingState state) {
-            Widget image;
+            bloc: imageLoadingBloc,
+            builder: (BuildContext context, ImageLoadingState state) {
+              Widget image;
 
-            if (state is ImageLoadedState) {
-              image = state.image;
-            } else
-              image = null;
+              if (state is ImageLoadedState) {
+                image = state.image;
+              } else
+                image = null;
 
-            if (image != null) {
-              return image;
-            }
-            return SizedBox();
-          }),
+              if (image != null) {
+                return image;
+              }
+              return SizedBox();
+            }),
         Positioned.fill(
-          child: Container(decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
                 CustomColors.backgroundColor.withOpacity(0.7),
                 CustomColors.backgroundColor.withOpacity(1),
-              ]
+              ]),
             ),
-          ),),
+          ),
         ),
-        Positioned(//Sinon j'ai une petite ligne non voulu en bas de la stack
+        Positioned(
+          //Sinon j'ai une petite ligne non voulu en bas de la stack
           bottom: 0,
           child: Container(
-            width: MediaQuery
-              .of(context)
-              .size
-              .width,
+            width: MediaQuery.of(context).size.width,
             height: 2,
             color: CustomColors.backgroundColor,
           ),
@@ -346,7 +324,7 @@ class CustomWidgets {
     );
   }
 
-  static Widget detailPageNumberCategories(String text1, String category1, String text2, String category2){
+  static Widget detailPageNumberCategories(String text1, String category1, String text2, String category2) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       mainAxisSize: MainAxisSize.max,
@@ -365,7 +343,7 @@ class CustomWidgets {
     );
   }
 
-  static Widget detailPageNumberCategory(String text, String category){
+  static Widget detailPageNumberCategory(String text, String category) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -384,7 +362,7 @@ class CustomWidgets {
     );
   }
 
-  static Widget numberSlideBarText(String text){
+  static Widget numberSlideBarText(String text) {
     return Text(
       text,
       style: CustomStyle.numberSlideBarMusicPage,
@@ -415,11 +393,9 @@ class CustomWidgets {
   }
 
   static Widget buttonLoadMorePopularSongStyle(String text, Function callback, {fontSize = 0}) {
-
     TextStyle style = CustomStyle.morePopularSongStyle;
 
-    if (fontSize!=0)
-      style = style.copyWith(fontSize: fontSize);
+    if (fontSize != 0) style = style.copyWith(fontSize: fontSize);
 
     return InkWell(
       onTap: callback,
@@ -463,7 +439,7 @@ class CustomWidgets {
     );
   }
 
-  static Widget circularProgressIndicator(){
+  static Widget circularProgressIndicator() {
     return CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(CustomColors.blue));
   }
 
@@ -485,6 +461,21 @@ class CustomWidgets {
     );
   }
 
+  static Widget playIconWithBlueCircle() {
+    return Container(
+      height: 45,
+      width: 45,
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(150), border: Border.all(color: CustomColors.blue, width: 1.25)),
+      child: Center(
+        child: Container(
+          width: 22,
+          height: 22,
+          child: Image.asset('assets/images/icons/play_icon.png')
+        )
+      ),
+    );
+  }
+
   /// returns a Row containing two images showing what is a MIDI port
   static Widget midiImages() {
     return Row(
@@ -499,4 +490,51 @@ class CustomWidgets {
     );
   }
 
+  static Widget button(String text, Color borderColor, Function callback, {double width = double.infinity}) {
+    return InkWell(
+      onTap: callback,
+      focusColor: Colors.transparent,
+      hoverColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      splashColor: Colors.transparent,
+      child: Container(
+        width: width,
+        decoration: BoxDecoration(
+          border: Border.all(color: borderColor),
+          borderRadius: BorderRadius.circular(31),
+        ),
+        padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+        child: Text(
+          text,
+          style: CustomStyle.smallButtonTextOnBoardingPage,
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
+  }
+
+  /// returns a ScrollView that can contain things like Column with max size, Expanded, ...
+  /// And of course, the scrollView will be scrollable only if the items are overflowing the screen.
+  static Widget scrollViewWithBoundedHeight({child, scrollController}) {
+
+    if (scrollController==null)
+      scrollController = new ScrollController();
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SingleChildScrollView(
+          controller: scrollController,
+          child: ConstrainedBox(
+            constraints: constraints.copyWith(
+              minHeight: constraints.maxHeight,
+              maxHeight: double.infinity,
+            ),
+            child: IntrinsicHeight(
+              child: child,
+            ),
+          ),
+        );
+      },
+    );
+  }
 }

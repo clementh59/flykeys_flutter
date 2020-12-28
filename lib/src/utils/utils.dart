@@ -133,6 +133,26 @@ class Utils{
 		return noteNames[key%12];
 	}
 
+	/// [firstKey] e.g 21
+	/// [lastKey] e.g 108
+	/// [returns] a Map with 'noires' and 'blanches' that are the numbers of corresponding keys
+	static Map getNumberOfTouches(int firstKey, int lastKey) {
+
+		int numberOfTouchesNoires = 0;
+		int numberOfTouchesBlanches = 0;
+
+		for(int key = firstKey; key<=lastKey; key++) {
+			String nameOfNote = noteNames[key%12];
+			if (nameOfNote.contains('#'))
+				numberOfTouchesNoires++;
+			else
+				numberOfTouchesBlanches++;
+		}
+
+		return {'noires':numberOfTouchesNoires,'blanches':numberOfTouchesBlanches};
+
+	}
+
 	//endregion
 
 }

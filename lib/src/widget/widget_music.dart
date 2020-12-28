@@ -7,7 +7,6 @@ import 'package:flykeys/src/model/artist.dart';
 import 'package:flykeys/src/model/music.dart';
 import 'package:flykeys/src/page/music_page.dart';
 import 'package:flykeys/src/repository/image_provider_repository.dart';
-import 'package:flykeys/src/utils/custom_colors.dart';
 import 'package:flykeys/src/utils/custom_size.dart';
 import 'package:flykeys/src/utils/custom_style.dart';
 import 'package:flykeys/src/widget/custom_widgets.dart';
@@ -60,7 +59,7 @@ class _WidgetMusicState extends State<WidgetMusic> {
                       Widget image;
 
                       if (widget.music.imageName == "") {
-                        image = _getDefaultImage();
+                        image = CustomWidgets.playIconWithBlueCircle();
                       } else if (widget.music.image == null) {
                         if (state is ImageLoadedState) {
                           image = state.image;
@@ -68,7 +67,7 @@ class _WidgetMusicState extends State<WidgetMusic> {
                         } else if (state is LoadingImageState)
                           image = _getLoadingImageWidget();
                         else
-                          image = _getDefaultImage();
+                          image = CustomWidgets.playIconWithBlueCircle();
                       } else
                         image = widget.music.image;
 
@@ -253,18 +252,6 @@ class _MusicListWidgetState extends State<MusicListWidget> {
       children: musicWidgets,
     );
   }
-}
-
-Widget _getDefaultImage() {
-  return Container(
-    decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(150),
-        border: Border.all(color: CustomColors.blue, width: 1.25)),
-    child: Icon(
-      Icons.play_arrow,
-      color: Colors.white,
-    ),
-  );
 }
 
 Widget _getLoadingImageWidget() {

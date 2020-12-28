@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flykeys/src/page/onboarding/choose_the_kind_of_piano.dart';
 import 'package:flykeys/src/page/onboarding/ask_to_plug_the_cable.dart';
+import 'package:flykeys/src/page/onboarding/choose_the_kind_of_piano.dart';
 import 'package:flykeys/src/page/onboarding/set_limit_of_keyboard_midi.dart';
 import 'package:flykeys/src/page/onboarding/validate_the_choice_of_kind_of_piano.dart';
 import 'package:flykeys/src/utils/custom_colors.dart';
 import 'package:flykeys/src/utils/custom_style.dart';
+import 'package:flykeys/src/widget/custom_widgets.dart';
 
 class OnBoardingPage extends StatefulWidget {
   @override
@@ -12,13 +13,12 @@ class OnBoardingPage extends StatefulWidget {
 }
 
 class _OnBoardingPageState extends State<OnBoardingPage> {
-
   Map info = {}; // This map will contains the info passed by the child pages
   // e.g {
   //    'kindOfPiano': 'numeric',
   //    'midiPort': true,
   //    'leftLimit': 21,
-  //    'rightLimit': 109,
+  //    'rightLimit': 108,
   // }
 
   Map onBoardingSteps; // All the possible steps
@@ -30,25 +30,27 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
     super.initState();
     onBoardingSteps = {
       /**
-       * 'key' : {
-       *    'index': {int} number of the page,
-       *    'page': {Widget} the Widget that will be shown
-       *    'next': {String|Function} - the key of next page (if function - it should return the key of the next page)
-       *    'helpPage': {Widget} the widget that is show when click on help (if null, help icon isn't shown)
-       *    'isScrollable': {boolean} true if the page has to be wrapped into a SingleChildScrollView
-       *  }
-       **/
+			 * 'key' : {
+			 *    'index': {int} number of the page,
+			 *    'page': {Widget} the Widget that will be shown
+			 *    'next': {String|Function} - the key of next page (if function - it should return the key of the next page)
+			 *    'helpPage': {Widget} the widget that is show when click on help (if null, help icon isn't shown)
+			 *    'customScroll' : {bool} if the page will handle itself the scroll of the page
+			 *  }
+			 **/
       'chooseTheKindOfPiano': {
         'index': 0,
-        'page': ChooseTheKindOfPiano(info,goToNextStep),
+        'page': ChooseTheKindOfPiano(info, goToNextStep),
         'next': 'validateTheChoiceOfKindOfPiano',
         /*'helpPage': ChooseTheKindOfPianoPage(),*/ //TODO: help page
       },
       'validateTheChoiceOfKindOfPiano': {
         'index': 1,
-        'page': ValidateTheChoiceOfKindOfPiano(info,goToNextStep),
-        'next': (){if (info['midiPort']) return 'askToPlugTheCable'; return 'setLimitOfKeyboardManually';},
-        'isScrollable': true,
+        'page': ValidateTheChoiceOfKindOfPiano(info, goToNextStep),
+        'next': () {
+          if (info['midiPort']) return 'askToPlugTheCable';
+          return 'setLimitOfKeyboardManually';
+        },
       },
       'askToPlugTheCable': {
         'index': 2,
@@ -58,21 +60,20 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
       'setLimitOfKeyboardMidi': {
         'index': 3,
         'page': SetLimitOfKeyboardMidi(info, goToNextStep, goToPreviousStep),
-        'next': 'explanationModeApprentissage'
+        'next': 'explanationModeApprentissage',
+        'customScroll': true,
       },
       'setLimitOfKeyboardManually': {
         'index': 3,
         'page': SetLimitOfKeyboardMidi(info, goToNextStep, goToPreviousStep),
-        'next': 'explanationModeApprentissage'
+        'next': 'explanationModeApprentissage',
       },
       'explanationModeApprentissage': {
         'index': 6,
         'next': 'explanationModeLightningShow',
-        'isScrollable': true,
       },
       'explanationModeLightningShow': {
         'index': 7,
-        'isScrollable': true,
       },
     };
     step = onBoardingSteps['chooseTheKindOfPiano'];
@@ -116,8 +117,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
   /***************      WIDGETS   ********************/
 
   Widget header() {
-
-    bool showBackIcon = history.length>1;
+    bool showBackIcon = history.length > 1;
 
     return Container(
       padding: const EdgeInsets.only(top: 30.0, bottom: 34),
@@ -128,7 +128,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
             Align(
               alignment: Alignment.centerLeft,
               child: InkWell(
-                onTap: (){
+                onTap: () {
                   goToPreviousStep();
                 },
                 focusColor: Colors.transparent,
@@ -136,7 +136,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                 highlightColor: Colors.transparent,
                 splashColor: Colors.transparent,
                 child: Padding(
-                  padding: const EdgeInsets.only(left:31.0),
+                  padding: const EdgeInsets.only(left: 31.0),
                   child: Icon(
                     Icons.arrow_back_ios,
                     color: Colors.white,
@@ -159,22 +159,18 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
 
   Widget body() {
 
-    if (step['isScrollable']==true) {
-      return Expanded(
-        child: SingleChildScrollView(
-          child: step['page'],
-        ),
-      );
+    if (step['customScroll']==true) {
+      print('OUI');
+      return step['page'];
     }
 
     return Expanded(
-      child: step['page'],
+      child: CustomWidgets.scrollViewWithBoundedHeight(child: step['page']),
     );
   }
 
   Widget footer() {
-
-    bool showHelpIcon = step['helpPage']!=null;
+    bool showHelpIcon = step['helpPage'] != null;
 
     return Container(
       padding: const EdgeInsets.only(bottom: 30.0, top: 10),
@@ -189,11 +185,17 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   bottomPoint(0),
-                  SizedBox(width: 5,),
+                  SizedBox(
+                    width: 5,
+                  ),
                   bottomPoint(1),
-                  SizedBox(width: 5,),
+                  SizedBox(
+                    width: 5,
+                  ),
                   bottomPoint(2),
-                  SizedBox(width: 5,),
+                  SizedBox(
+                    width: 5,
+                  ),
                   bottomPoint(3),
                 ],
               ),
@@ -209,9 +211,16 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                     'AIDE',
                     style: CustomStyle.smallTextOnBoardingPage,
                   ),
-                  SizedBox(width: 9,),
-                  Image.asset('assets/images/onboarding/help_icon.png', width: 20,),
-                  SizedBox(width: 31,),
+                  SizedBox(
+                    width: 9,
+                  ),
+                  Image.asset(
+                    'assets/images/onboarding/help_icon.png',
+                    width: 20,
+                  ),
+                  SizedBox(
+                    width: 31,
+                  ),
                 ],
               ),
             ),
@@ -220,12 +229,12 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
     );
   }
 
-  Widget bottomPoint(int num){
+  Widget bottomPoint(int num) {
     return Container(
       width: 8,
       height: 8,
       decoration: BoxDecoration(
-        color: num==step['index']? CustomColors.blue : CustomColors.grey,
+        color: num == step['index'] ? CustomColors.blue : CustomColors.grey,
         borderRadius: BorderRadius.circular(8),
       ),
     );
@@ -236,12 +245,12 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
   /// Go to the previous step of the onboarding process
   /// Returns false if there isn't previous step - true otherwise
   bool goToPreviousStep() {
-    if (history.length==0) return false;
+    if (history.length == 0) return false;
 
     history.removeLast();
 
     setState(() {
-      step = history[history.length-1];
+      step = history[history.length - 1];
     });
 
     return true;
@@ -250,7 +259,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
   /// Go to the previous step of the onboarding process
   /// Returns false if there isn't next step - true otherwise
   bool goToNextStep() {
-    if (step['next']==null) return false;
+    if (step['next'] == null) return false;
 
     String next;
 

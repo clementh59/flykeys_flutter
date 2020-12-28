@@ -142,5 +142,15 @@ void main() {
       expect(Utils.getNoteNameFromKey(59),'Si');
     });
 
+    test('It should return the number of black and whites keys', () async {
+
+      expect(Utils.getNumberOfTouches(24,26),{'noires':1,'blanches':2});
+      expect(Utils.getNumberOfTouches(24,24),{'noires':0,'blanches':1});
+      expect(Utils.getNumberOfTouches(24,25),{'noires':1,'blanches':1});
+      expect(Utils.getNumberOfTouches(24,35),{'noires':5,'blanches':7});
+      expect(Utils.getNumberOfTouches(21,50),{'noires':12,'blanches':18});
+      expect(Utils.getNumberOfTouches(21,108),{'noires':36,'blanches':52});
+    });
+
   });
 }

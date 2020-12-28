@@ -16,18 +16,11 @@ const pianoTypeStrings = {
 };
 
 const buttonsText = {
-  'acoustic': [
-    'Si, mon piano possède un port pour brancher ce type de câble',
-    'Non, mon piano ne possède pas de port pour brancher ce type de câble'
-  ],
-  'numeric': [
-    'Oui, mon piano possède un port pour brancher ce type de câble',
-    'Non, mon piano ne possède pas de port pour brancher ce type de câble'
-  ],
+  'acoustic': ['Si, mon piano possède un port pour brancher ce type de câble', 'Non, mon piano ne possède pas de port pour brancher ce type de câble'],
+  'numeric': ['Oui, mon piano possède un port pour brancher ce type de câble', 'Non, mon piano ne possède pas de port pour brancher ce type de câble'],
 };
 
 class ValidateTheChoiceOfKindOfPiano extends StatelessWidget {
-
   final Map info;
   final Function onChoice;
 
@@ -57,8 +50,7 @@ class ValidateTheChoiceOfKindOfPiano extends StatelessWidget {
                     ),
                     TextSpan(
                       text: pianoTypeStrings[info['kindOfPiano']],
-                      style: CustomStyle.bigTextOnBoardingPage
-                          .copyWith(fontWeight: CustomStyle.BOLD),
+                      style: CustomStyle.bigTextOnBoardingPage.copyWith(fontWeight: CustomStyle.BOLD),
                     ),
                   ]),
                 ),
@@ -76,9 +68,15 @@ class ValidateTheChoiceOfKindOfPiano extends StatelessWidget {
           ),
           Column(
             children: <Widget>[
-              button(buttonsText[info['kindOfPiano']][0], CustomColors.blue, (){info['midiPort']=true;}),
+              CustomWidgets.button(buttonsText[info['kindOfPiano']][0], CustomColors.blue, () {
+                info['midiPort'] = true;
+                onChoice();
+              }),
               SizedBox(height: 10),
-              button(buttonsText[info['kindOfPiano']][1], CustomColors.red, (){info['midiPort']=false;}),
+              CustomWidgets.button(buttonsText[info['kindOfPiano']][1], CustomColors.red, () {
+                info['midiPort'] = false;
+                onChoice();
+              }),
               SizedBox(height: 20),
             ],
           ),
@@ -86,30 +84,4 @@ class ValidateTheChoiceOfKindOfPiano extends StatelessWidget {
       ),
     );
   }
-
-  Widget button(String text, Color borderColor, Function onClick) {
-    return InkWell(
-      onTap: () {
-        onClick();
-        onChoice();
-      },
-      focusColor: Colors.transparent,
-      hoverColor: Colors.transparent,
-      highlightColor: Colors.transparent,
-      splashColor: Colors.transparent,
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: borderColor),
-          borderRadius: BorderRadius.circular(31),
-        ),
-        padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-        child: Text(
-          text,
-          style: CustomStyle.smallButtonTextOnBoardingPage,
-          textAlign: TextAlign.center,
-        ),
-      ),
-    );
-  }
-
 }
