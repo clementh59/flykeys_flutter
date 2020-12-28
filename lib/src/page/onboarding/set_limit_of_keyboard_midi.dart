@@ -268,7 +268,8 @@ class _SetLimitOfKeyboardMidiState extends State<SetLimitOfKeyboardMidi> {
 
   /// The page corresponding to Steps.verification
   Widget finalVerificationPage() {
-    Map touches = Utils.getNumberOfTouches(widget.info['leftLimit'], widget.info['rightLimit']);
+    Map touches = Utils.getNumberOfTouches(20, 25);
+//    Map touches = Utils.getNumberOfTouches(widget.info['leftLimit'], widget.info['rightLimit']);
     int nbTouchesBlanches = touches['blanches'];
     int nbTouchesNoires = touches['noires'];
     int nbTouches = nbTouchesBlanches + nbTouchesNoires;
@@ -345,6 +346,7 @@ class _SetLimitOfKeyboardMidiState extends State<SetLimitOfKeyboardMidi> {
             SizedBox(height: 10),
             CustomWidgets.button('Non, le son est différent', CustomColors.red, () {
               // todo:
+              _showMaterialDialog();
             }),
             SizedBox(height: 20),
           ],
@@ -429,6 +431,40 @@ class _SetLimitOfKeyboardMidiState extends State<SetLimitOfKeyboardMidi> {
     setState(() {
       lastKeyPushed = valueNotifierNotePushed.value;
     });
+  }
+
+  void _showMaterialDialog() {
+    showDialog(
+        context: context,
+        builder: (_) => new AlertDialog(
+              title: new Text("Veuillez réessayer de paramétrer les limites du piano"),
+              content: new Text("Si vous n'arrivez toujours pas à paramétrer les limites, veuillez envoye une photo de votre piano par mail à " +
+                  Utils.contact_mail),
+              actions: <Widget>[
+                FlatButton(
+                  child: Icon(Icons.arrow_back),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                FlatButton(
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 7, horizontal: 12),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      color: Colors.red
+                    ),
+                    child: Text('Ok'),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    setState(() {
+                      step = Steps.setUpLeftLimit;
+                    });
+                  },
+                ),
+              ],
+            ));
   }
 
 //endregion

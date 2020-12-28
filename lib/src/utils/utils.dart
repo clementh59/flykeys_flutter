@@ -5,6 +5,7 @@ class Utils{
 
 	static const String app_version = "1.0";
 	static const String app_name = "FlyKeys";
+	static const String contact_mail = "flykeyspro@gmail.com"; // todo: change
 	static const String legalPhrase = "Thanks to : \nMatt Wojtaś for the app design inspiration\nDinosoftLabs, Flat icons, Icongeek26, Freepik,  for icons";
 	static const int numberOfMusicLoadedFirstTrending = 4;
 	static const int numberOfMusicLoadedWhenCLickLoadMoreMusic = 6;
