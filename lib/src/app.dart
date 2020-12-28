@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flykeys/src/bloc/authentification/authentification_bloc.dart';
 import 'package:flykeys/src/page/home_page.dart';
 import 'package:flykeys/src/page/login_page.dart';
+import 'package:flykeys/src/page/main_page.dart';
 import 'package:flykeys/src/page/onboarding/onboarding_page.dart';
 import 'package:flykeys/src/repository/bluetooth_repository.dart';
 import 'package:flykeys/src/repository/database_repository.dart';
@@ -24,6 +26,12 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
+
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+
     return MultiBlocProvider(
       providers: [
         BlocProvider<BluetoothBloc>(create: (BuildContext context) {
@@ -39,7 +47,7 @@ class _AppState extends State<App> {
       child: MaterialApp(
         theme: ThemeData.dark(),
         debugShowCheckedModeBanner: false,
-        home: OnBoardingPage()/*LoginPage()*/,
+        home: MainPage()/*LoginPage()*/,
       ),
     );
   }
