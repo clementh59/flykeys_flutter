@@ -8,6 +8,8 @@ class AuthentificationRepository {
   final GoogleSignIn googleSignIn = GoogleSignIn();
   FirebaseUser _user;
 
+  //region Sign in / up
+  //region Google
   Future<int> signInWithGoogle() async {
     final GoogleSignInAccount googleSignInAccount = await googleSignIn.signIn();
     final GoogleSignInAuthentication googleSignInAuthentication =
@@ -31,13 +33,9 @@ class AuthentificationRepository {
 
     return 0;
   }
+  //endregion
 
-  void signOutGoogle() async {
-    await googleSignIn.signOut();
-
-    print("User Sign Out");
-  }
-
+  //region Email/password
   Future<String> handleSignInEmail(String email, String password) async {
     try {
       AuthResult result;
@@ -82,7 +80,22 @@ class AuthentificationRepository {
 
     return Strings.la_creation_de_compte_a_echoue;
   }
+  //endregion
+  //endregion
 
+  //region Disconnection
+  Future<void> disconnect() async {
+    await FirebaseAuth.instance.signOut();
+  }
+
+  void signOutGoogle() async {
+    await googleSignIn.signOut();
+
+    print("User Sign Out");
+  }
+  //endregion
+
+  //region Utils
   String getErrorString(String code) {
     switch (code) {
       case "ERROR_INVALID_CUSTOM_TOKEN":
@@ -132,10 +145,7 @@ class AuthentificationRepository {
      return false;
     return true;
   }
-
-  Future<void> disconnect() async {
-    await FirebaseAuth.instance.signOut();
-  }
+  //endregion
 
 }
 

@@ -247,6 +247,7 @@ class InteractWithMorceauPage extends StatefulWidget {
 }
 
 class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
+  //region Variables
   static const int LOADING = 0;
   static const int PLAYING = 1;
   static const int PAUSE = 2;
@@ -266,7 +267,9 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
   //fois avant même que la premiere soit montrée, j'ai donc plusieurs snackbars
   //qui attendent de se montrer et qui se montre lorsque la précédente disparait
   bool _imActuallyShowingASnackbar = false;
+  //endregion
 
+  //region Overrides
   @override
   void initState() {
     super.initState();
@@ -317,7 +320,9 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
       child: _generatePage(buttonState),
     );
   }
+  //endregion
 
+  //region Widget
   Widget _generatePage(int buttonState) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -708,12 +713,14 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
       ),
     );
   }
+  //endregion
 
+  //region Logic
   /**
-	 * Convertis un nombre en string
-	 * ex : si nb de second = 4, string = "04"
-	 * si nb de second = 15, str = "15"
-	 */
+   * Convertis un nombre en string
+   * ex : si nb de second = 4, string = "04"
+   * si nb de second = 15, str = "15"
+   */
   String intSecondsToStringDuration(int seconds) {
     if (seconds < 10) return "0" + seconds.toString();
     return seconds.toString();
@@ -782,4 +789,5 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
   Future<bool> getWaitForUserInput() async {
     return await Utils.getBooleanFromSharedPreferences(Strings.WAIT_FOR_USER_INPUT_SHARED_PREFS, defaultValue: false);
   }
+//endregion
 }

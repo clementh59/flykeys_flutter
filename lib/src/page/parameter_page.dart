@@ -273,8 +273,8 @@ class _ParameterPageState extends State<ParameterPage> {
             Image.asset("assets/images/icons/parameter/info_icon.png"), () {
           showAboutDialog(
               context: context,
-              applicationLegalese: Utils.legalPhrase,
-              applicationVersion: Utils.app_version,
+              applicationLegalese: Constants.legalPhrase,
+              applicationVersion: Constants.app_version,
               applicationName: 'FlyKeys');
         }),
       ],

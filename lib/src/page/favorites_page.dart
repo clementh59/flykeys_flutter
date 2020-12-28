@@ -18,6 +18,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
 
 	int _selectedCategory = 0;
 
+	//region Overrides
 	@override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -64,7 +65,9 @@ class _FavoritesPageState extends State<FavoritesPage> {
 			],
 		);
   }
+	//endregion
 
+	//region Widgets
 	Widget _searchTypeBar(){
 		return Padding(
 			padding: EdgeInsets.symmetric(vertical: 10),
@@ -81,12 +84,6 @@ class _FavoritesPageState extends State<FavoritesPage> {
 				],
 			),
 		);
-	}
-
-	void changeSelectedCategory(int category){
-		setState(() {
-			_selectedCategory = category;
-		});
 	}
 
 	Widget _likedMusicsView(){
@@ -134,5 +131,14 @@ class _FavoritesPageState extends State<FavoritesPage> {
 			}
 		);
 	}
+	//endregion
+
+	//region Logic
+	void changeSelectedCategory(int category){
+		setState(() {
+			_selectedCategory = category;
+		});
+	}
+	//endregion
 
 }

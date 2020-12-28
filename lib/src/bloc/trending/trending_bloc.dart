@@ -2,9 +2,8 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:flykeys/src/bloc/music/bloc.dart';
 import 'package:flykeys/src/bloc/transcribers/bloc.dart';
-import 'package:flykeys/src/model/transcriber.dart';
 import 'package:flykeys/src/repository/database_repository.dart';
-import 'package:flykeys/src/utils/utils.dart';
+import 'package:flykeys/src/utils/constants.dart';
 import './bloc.dart';
 
 class TrendingBloc extends Bloc<TrendingEvent, TrendingState> {
@@ -43,7 +42,7 @@ class TrendingBloc extends Bloc<TrendingEvent, TrendingState> {
           trendingMusicsIds.add(i);
         }
 
-        for (int i=0; i<trendingMusicsIds.length && i<Utils.numberOfMusicLoadedFirstTrending; i++){
+        for (int i=0; i<trendingMusicsIds.length && i<Constants.numberOfMusicLoadedFirstTrending; i++){
           musicsIdsToFetch.add(trendingMusicsIds[i]);
         }
 
@@ -65,7 +64,7 @@ class TrendingBloc extends Bloc<TrendingEvent, TrendingState> {
         if (!musicsIdsFetched.contains(i)){
           musicsIdsToFetch.add(i);
           musicAdded++;
-          if (musicAdded==Utils.numberOfMusicLoadedWhenCLickLoadMoreMusic)
+          if (musicAdded==Constants.numberOfMusicLoadedWhenCLickLoadMoreMusic)
             break;
         }
       }

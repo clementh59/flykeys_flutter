@@ -439,7 +439,7 @@ class _SetLimitOfKeyboardMidiState extends State<SetLimitOfKeyboardMidi> {
         builder: (_) => new AlertDialog(
               title: new Text("Veuillez réessayer de paramétrer les limites du piano"),
               content: new Text("Si vous n'arrivez toujours pas à paramétrer les limites, veuillez envoye une photo de votre piano par mail à " +
-                  Utils.contact_mail),
+                  Constants.contact_mail),
               actions: <Widget>[
                 FlatButton(
                   child: Icon(Icons.arrow_back),

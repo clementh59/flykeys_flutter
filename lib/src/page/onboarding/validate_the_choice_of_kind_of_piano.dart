@@ -3,6 +3,7 @@ import 'package:flykeys/src/utils/custom_colors.dart';
 import 'package:flykeys/src/utils/custom_style.dart';
 import 'package:flykeys/src/widget/custom_widgets.dart';
 
+//region Global variables
 const explanationText = {
   'acoustic':
       'Cela signifie que tu n’as pas besoin de brancher ton piano pour le faire fonctionner (ou de le recharger).\n\nCela signifie également que tu n’as pas de port comme celui-ci sur ton piano pour relier l’objet Flykeys au piano.',
@@ -19,6 +20,7 @@ const buttonsText = {
   'acoustic': ['Si, mon piano possède un port pour brancher ce type de câble', 'Non, mon piano ne possède pas de port pour brancher ce type de câble'],
   'numeric': ['Oui, mon piano possède un port pour brancher ce type de câble', 'Non, mon piano ne possède pas de port pour brancher ce type de câble'],
 };
+//endregion
 
 class ValidateTheChoiceOfKindOfPiano extends StatelessWidget {
   final Map info;

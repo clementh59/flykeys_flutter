@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flykeys/src/page/login_page.dart';
-import 'package:flykeys/src/page/music_page.dart';
-import 'package:flykeys/src/page/parameter_page.dart';
 import 'package:flykeys/src/utils/custom_colors.dart';
 
 class CustomStyle{
 
+	//region Font weights
 	static const FontWeight EXTRALIGHT = FontWeight.w100;
 	static const FontWeight THIN = FontWeight.w200;
 	static const FontWeight LIGHT = FontWeight.w300;
@@ -15,7 +13,9 @@ class CustomStyle{
 	static const FontWeight BOLD = FontWeight.w700;
 	static const FontWeight EXTRABOLD = FontWeight.w800;
 	static const FontWeight BLACK = FontWeight.w900;
+	//endregion
 
+	//region titles and subtitles
 	static TextStyle pageTitle = TextStyle(
 		color: CustomColors.white,
 		fontSize: 20,
@@ -36,18 +36,9 @@ class CustomStyle{
 		fontFamily: 'Poppins',
 		fontWeight: REGULAR,
 	);
+	//endregion
 
-	/**************		BottomNavigationBar	***************/
-
-	static TextStyle bottomNavBarTitle = TextStyle(
-		color: CustomColors.white,
-		fontSize: 10,
-		fontFamily: 'Poppins',
-		fontWeight: CustomStyle.LIGHT,
-	);
-
-	/***************		Music Tile	********************/
-
+	//region Music tiles
 	static TextStyle musicTileName = TextStyle(
 		color: CustomColors.white,
 		fontSize: 14,
@@ -61,9 +52,9 @@ class CustomStyle{
 		fontFamily: 'Poppins',
 		fontWeight: MEDIUM,
 	);
+	//endregion
 
-	/****************		Game Tile		**************************/
-
+	//region Game tile
 	static TextStyle gameTileName = TextStyle(
 		color: CustomColors.white,
 		fontSize: 11,
@@ -77,17 +68,9 @@ class CustomStyle{
 		fontFamily: 'Poppins',
 		fontWeight: MEDIUM,
 	);
+	//endregion
 
-	/****************		Button more popular song ***************/
-
-	static TextStyle morePopularSongStyle = TextStyle(
-		color: CustomColors.white,
-		fontSize: 12,
-		fontFamily: 'Poppins',
-		fontWeight: BOLD,
-	);
-
-	/***************	 Transcriber tile		*********************/
+	//region Transcribers
 	static TextStyle transcriberTileName = TextStyle(
 		color: CustomColors.white,
 		fontSize: 17,
@@ -115,11 +98,9 @@ class CustomStyle{
 		fontFamily: 'Poppins',
 		fontWeight: LIGHT,
 	);
+	//endregion
 
-
-
-	/***************		SEARCH PAGE		**************/
-
+	//region Search page
 	//search field hint text
 	static TextStyle searchFieldHintText = TextStyle(
 		color: CustomColors.grey,
@@ -163,8 +144,7 @@ class CustomStyle{
 		fontWeight: MEDIUM,
 	);
 
-	/***********		Blue number with background		*************/
-
+	//region Blue number with background
 	static TextStyle numberResultChosen = TextStyle(
 		color: CustomColors.white,
 		fontSize: 11,
@@ -178,9 +158,10 @@ class CustomStyle{
 		fontFamily: 'Poppins',
 		fontWeight: SEMIBOLD,
 	);
+	//endregion
+	//endregion
 
-/***********		Detail page		*************/
-
+	//region Detail page
 	static TextStyle detailPageName = TextStyle(
 		color: CustomColors.white,
 		fontSize: 22,
@@ -215,9 +196,9 @@ class CustomStyle{
 		fontFamily: 'Poppins',
 		fontWeight: SEMIBOLD,
 	);
+	//endregion
 
-	/**********			MusicPage		*************/
-
+	//region Music page
 	static TextStyle loadingTextMusicPage = TextStyle(
 		color: CustomColors.white,
 		fontSize: 20,
@@ -259,9 +240,9 @@ class CustomStyle{
 		fontFamily: 'Poppins',
 		fontWeight: SEMIBOLD,
 	);
+	//endregion
 
-	/************		ParameterPage		*****************/
-
+	//region Parameter page
 	static TextStyle personNameParameterPage = TextStyle(
 		color: CustomColors.white,
 		fontSize: 20,
@@ -289,9 +270,9 @@ class CustomStyle{
 		fontFamily: 'Poppins',
 		fontWeight: BOLD,
 	);
+	//endregion
 
-	/*************		LoginPage		************/
-
+	//region Login page
 	static TextStyle labelLoginPage = TextStyle(
 		color: CustomColors.white,
 		fontSize: 12,
@@ -305,8 +286,6 @@ class CustomStyle{
 		fontFamily: 'Poppins',
 		fontWeight: REGULAR
 	);
-
-
 
 	static BoxDecoration boxDecorationStyleLoginPage = BoxDecoration(
 		color: CustomColors.white.withOpacity(0.10),
@@ -339,14 +318,14 @@ class CustomStyle{
 		fontSize: 25.0,
 		fontWeight: FontWeight.bold,
 	);
+	//endregion
 
-	/***************	 OnBoarding Page		*********************/
-
+	//region OnBoarding page
 	static TextStyle titleOnBoardingPage = TextStyle(
-			color: CustomColors.white,
-			fontSize: 16,
-			fontFamily: 'Poppins',
-			fontWeight: REGULAR,
+		color: CustomColors.white,
+		fontSize: 16,
+		fontFamily: 'Poppins',
+		fontWeight: REGULAR,
 	);
 
 	static TextStyle bigTextOnBoardingPage = TextStyle(
@@ -377,7 +356,14 @@ class CustomStyle{
 		fontFamily: 'Poppins',
 		fontWeight: BOLD,
 	);
+	//endregion
 
-
-
+	//region buttons
+	static TextStyle morePopularSongStyle = TextStyle(
+		color: CustomColors.white,
+		fontSize: 12,
+		fontFamily: 'Poppins',
+		fontWeight: BOLD,
+	);
+	//endregion
 }

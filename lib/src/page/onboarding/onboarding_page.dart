@@ -13,6 +13,7 @@ class OnBoardingPage extends StatefulWidget {
 }
 
 class _OnBoardingPageState extends State<OnBoardingPage> {
+  //region Variables
   Map info = {}; // This map will contains the info passed by the child pages
   // e.g {
   //    'kindOfPiano': 'numeric',
@@ -24,7 +25,9 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
   Map onBoardingSteps; // All the possible steps
   Map step; // The actual step
   var history = []; // The history of the steps, to where how to go back
+  //endregion
 
+  //region Overrided
   @override
   void initState() {
     super.initState();
@@ -113,9 +116,9 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
       ),
     );
   }
+  //endregion
 
-  /***************      WIDGETS   ********************/
-
+  //region Widgets
   Widget header() {
     bool showBackIcon = history.length > 1;
 
@@ -239,9 +242,9 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
       ),
     );
   }
+  //endregion
 
-  /***************      STEPS LOGIC   ********************/
-
+  //region Logic
   /// Go to the previous step of the onboarding process
   /// Returns false if there isn't previous step - true otherwise
   bool goToPreviousStep() {
@@ -276,4 +279,5 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
 
     return true;
   }
+//endregion
 }
