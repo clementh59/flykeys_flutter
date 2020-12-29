@@ -11,32 +11,46 @@ import 'package:flykeys/src/utils/custom_style.dart';
 import 'package:flykeys/src/utils/utils.dart';
 import 'package:flykeys/src/widget/custom_widgets.dart';
 
-enum Steps { checkConnection, setUpLeftLimit, setUpRightLimit, verification }
+enum StepsForMidi { checkConnection, setUpLeftLimit, setUpRightLimit, verification }
+enum StepsForAcoustic { placeTheObject, setUpFirstKey, verification }
 
-class SetLimitOfKeyboardMidi extends StatefulWidget {
+var possibleNumberOfTouchesValues = List<int>.generate(77, (int index) => index + 12); // from 12 to 88
+
+var possibleFirstKeyValues = List<int>.generate(88, (int index) => index + 12);
+
+class SetLimitOfKeyboard extends StatefulWidget {
   final Function onChoice;
   final Function goBack;
   final Map info;
 
-  SetLimitOfKeyboardMidi(this.info, this.onChoice, this.goBack);
+  SetLimitOfKeyboard(this.info, this.onChoice, this.goBack);
 
   @override
-  _SetLimitOfKeyboardMidiState createState() => _SetLimitOfKeyboardMidiState();
+  _SetLimitOfKeyboardState createState() => _SetLimitOfKeyboardState();
 }
 
-class _SetLimitOfKeyboardMidiState extends State<SetLimitOfKeyboardMidi> {
+class _SetLimitOfKeyboardState extends State<SetLimitOfKeyboard> {
   //region Variables
+
+  ScrollController _scrollController = new ScrollController(); // To make the page scroll to the top when go to last page
+  var step; // to know at which step I am
 
   //J'ignore le close_sink ce dessous car sinon, je ne pourrais plus utiliser BluetoothBloc.of(context) dans toute l'appli car je l'aurais close!
   // ignore: close_sinks
   BluetoothBloc bluetoothBloc;
+  bool iAskedToBeConnectedToFlykeysDevice = false; // To know if I have already ask to be connected to the Flykeys device
+
+  //region Midi
   ValueNotifier<int> valueNotifierNotePushed;
-  var step = Steps.checkConnection; // to know at which step I am
   int lastKeyPushed = 0;
-  bool iAskToBeConnectedToFlykeysDevice = false; // To know if I have already ask to be connected to the Flykeys device
   bool lightTheLeftLineOfLed = true; // To know if I have already light the line positioned on the left of the Flykeys device
   bool lightTheRightLineOfLed = true; // To know if I have already light the line positioned on the right of the Flykeys device
-  ScrollController _scrollController = new ScrollController(); // To make the page scroll to the top when go to last page
+  //endregion
+
+  //region Acoustic
+  Map dropdownValues = new Map();
+
+  //endregion
 
   //endregion
 
@@ -47,6 +61,10 @@ class _SetLimitOfKeyboardMidiState extends State<SetLimitOfKeyboardMidi> {
     super.initState();
     valueNotifierNotePushed = new ValueNotifier(0);
     valueNotifierNotePushed.addListener(onNotePushed);
+    if (widget.info['midiPort'])
+      step = StepsForMidi.checkConnection;
+    else
+      step = StepsForAcoustic.placeTheObject;
   }
 
   @override
@@ -68,8 +86,8 @@ class _SetLimitOfKeyboardMidiState extends State<SetLimitOfKeyboardMidi> {
               builder: (c, snapshot) {
                 final state = snapshot.data;
                 if (state == BluetoothState.on) {
-                  if (!iAskToBeConnectedToFlykeysDevice) {
-                    iAskToBeConnectedToFlykeysDevice = true;
+                  if (!iAskedToBeConnectedToFlykeysDevice) {
+                    iAskedToBeConnectedToFlykeysDevice = true;
                     bluetoothBloc.add(FindFlyKeysDevice());
                   }
 
@@ -80,7 +98,10 @@ class _SetLimitOfKeyboardMidiState extends State<SetLimitOfKeyboardMidi> {
                           children: <Widget>[
                             Center(
                                 child: SettingUpBluetoothPage(state, () {
-                              bluetoothBloc.add(SetUpMidiKeyboardLimitEvent(valueNotifierNotePushed));
+                              if (widget.info['midiPort'])
+                                bluetoothBloc.add(SetUpMidiKeyboardLimitEvent(valueNotifierNotePushed));
+                              else
+                                bluetoothBloc.add(SetUpAcousticKeyboardLimitEvent());
                             }, () {
                               widget.goBack();
                             })),
@@ -88,16 +109,26 @@ class _SetLimitOfKeyboardMidiState extends State<SetLimitOfKeyboardMidi> {
                         );
                       }
 
-                      if (state is SetLimitOfKeyboardState) {
-                        print(step);
+                      if (widget.info['midiPort'] && (state is SetLimitOfKeyboardState)) {
                         switch (step) {
-                          case Steps.checkConnection: // I ask to press a key to check if the connection is working
+                          case StepsForMidi.checkConnection: // I ask to press a key to check if the connection is working
                             return objectInteractionPageIntroduction();
-                          case Steps.setUpLeftLimit:
+                          case StepsForMidi.setUpLeftLimit:
                             return objectInteractionPageSetUpLimit(true);
-                          case Steps.setUpRightLimit:
+                          case StepsForMidi.setUpRightLimit:
                             return objectInteractionPageSetUpLimit(false);
-                          case Steps.verification:
+                          case StepsForMidi.verification:
+                            return finalVerificationPage();
+                        }
+                      }
+
+                      if (!widget.info['midiPort'] && (state is SetLimitOfKeyboardState)) {
+                        switch (step) {
+                          case StepsForAcoustic.placeTheObject:
+                            return placeTheObjectCorrectlyPage();
+                          case StepsForAcoustic.setUpFirstKey:
+                            return setUpFirstKeyPage();
+                          case StepsForAcoustic.verification:
                             return finalVerificationPage();
                         }
                       }
@@ -123,7 +154,6 @@ class _SetLimitOfKeyboardMidiState extends State<SetLimitOfKeyboardMidi> {
   @override
   void dispose() {
     super.dispose();
-    print('dispose set_limit_of_keyboard_midi');
     bluetoothBloc.stopListeningToNotePushed();
     valueNotifierNotePushed?.removeListener(onNotePushed);
     valueNotifierNotePushed?.dispose();
@@ -132,6 +162,7 @@ class _SetLimitOfKeyboardMidiState extends State<SetLimitOfKeyboardMidi> {
   //endregion
 
   //region Pages
+  //region With Midi
   /// The page corresponding to Steps.checkConnection
   Widget objectInteractionPageIntroduction() {
     return Column(
@@ -248,7 +279,7 @@ class _SetLimitOfKeyboardMidiState extends State<SetLimitOfKeyboardMidi> {
           child: CustomWidgets.buttonLoadMorePopularSongStyle("C'est fait", () {
             if (left) {
               setState(() {
-                step = Steps.setUpRightLimit;
+                step = StepsForMidi.setUpRightLimit;
               });
               _scrollController.animateTo(0, duration: Duration(milliseconds: 250), curve: Curves.easeIn);
               widget.info['leftLimit'] = lastKeyPushed;
@@ -256,7 +287,7 @@ class _SetLimitOfKeyboardMidiState extends State<SetLimitOfKeyboardMidi> {
               widget.info['rightLimit'] = lastKeyPushed;
               bluetoothBloc.add(ClearLedsEvent());
               setState(() {
-                step = Steps.verification;
+                step = StepsForMidi.verification;
               });
               _scrollController.animateTo(0, duration: Duration(milliseconds: 250), curve: Curves.easeIn);
             }
@@ -266,14 +297,126 @@ class _SetLimitOfKeyboardMidiState extends State<SetLimitOfKeyboardMidi> {
     );
   }
 
+  //endregion
+
+  //region Without midi
+  Widget placeTheObjectCorrectlyPage() {
+    const i = 1;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Text(
+            'Positionnement de l\'objet',
+            style: CustomStyle.bigTextOnBoardingPage,
+            textAlign: TextAlign.center,
+          ),
+        ),
+        SizedBox(height: 26),
+        RichText(
+          text: TextSpan(
+            children: [
+              TextSpan(
+                text: "Maintenant, positionnez l’objet Flykeys comme présenté sur les schémas (selon votre cas).",
+                style: CustomStyle.smallTextOnBoardingPage,
+              ),
+              TextSpan(
+                text: " La première touche doit être aligné avec la ligne éclairée sur l’objet Flykeys.",
+                style: CustomStyle.smallTextOnBoardingPage.copyWith(fontWeight: CustomStyle.BOLD),
+              ),
+            ],
+          ),
+          textAlign: TextAlign.left,
+        ),
+        SizedBox(height: 31),
+        schemaWithExplanation(1, 'L\'objet fait exactement la taille du piano', 'assets/images/onboarding/schema' + i.toString() + '.png'),
+        schemaWithExplanation(2, 'L\'objet est plus grand que mon piano', 'assets/images/onboarding/schema' + (i + 1).toString() + '.png'),
+        schemaWithExplanation(3, 'L\'objet est plus petit que mon piano', 'assets/images/onboarding/schema' + (i + 2).toString() + '.png'),
+        SizedBox(height: 11),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 20.0),
+          child: CustomWidgets.buttonLoadMorePopularSongStyle("C'est fait", () {
+            bluetoothBloc.add(ClearLedsEvent());
+            setState(() {
+              step = StepsForAcoustic.setUpFirstKey;
+            });
+            _scrollController.animateTo(0, duration: Duration(milliseconds: 250), curve: Curves.easeIn);
+          }, fontSize: 16.0),
+        ),
+      ],
+    );
+  }
+
+  Widget setUpFirstKeyPage() {
+    return Column(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                'Positionnement de l\'objet',
+                style: CustomStyle.bigTextOnBoardingPage,
+                textAlign: TextAlign.center,
+              ),
+            ),
+            SizedBox(height: 26),
+            Text(
+              "Vous allez maintenant devoir savoir quel est la première note de votre piano. Si vous le savez, vous pouvez remplir le champs ci-dessous. Si ce n’est pas le cas, vous pouvez nous envoyer un mail à " +
+                  Constants.contact_mail +
+                  " avec une photo de votre piano. On vous dira la valeur qu’il faut mettre.\n\nLa première note de mon piano est : ",
+              style: CustomStyle.smallTextOnBoardingPage,
+            ),
+            _textInput('firstKey', possibleFirstKeyValues, (value) {
+              return Utils.getNoteNameFromKey(value) + ' ' + Utils.getDecade(value).toString();
+            }, 'Première touche'),
+            Container(
+              width: double.infinity,
+              child: Text(
+                "\nMon piano comporte :",
+                style: CustomStyle.smallTextOnBoardingPage,
+                textAlign: TextAlign.left,
+              ),
+            ),
+            _textInput('numberOfKeys', possibleNumberOfTouchesValues, (value) {
+              return value.toString() + ' touches';
+            }, 'Nombre de touches'),
+          ],
+        ),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 20.0, top: 20),
+          child: CustomWidgets.buttonLoadMorePopularSongStyle("C'est fait", () {
+            print(dropdownValues);
+            if (dropdownValues.containsKey('firstKey') && dropdownValues.containsKey('numberOfKeys')) {
+              widget.info['leftLimit'] = dropdownValues['firstKey'];
+              widget.info['rightLimit'] = dropdownValues['firstKey'] + dropdownValues['numberOfKeys'] - 1;
+              setState(() {
+                step = StepsForAcoustic.verification;
+              });
+            } else {
+              Scaffold.of(context).showSnackBar(SnackBar(content: Text('Vous devez remplir tous les champs!')));
+            }
+          }, fontSize: 16.0),
+        ),
+      ],
+    );
+  }
+
+  //endregion
+
   /// The page corresponding to Steps.verification
   Widget finalVerificationPage() {
-    Map touches = Utils.getNumberOfTouches(20, 25);
-//    Map touches = Utils.getNumberOfTouches(widget.info['leftLimit'], widget.info['rightLimit']);
+    Map touches = Utils.getNumberOfTouches(widget.info['leftLimit'], widget.info['rightLimit']);
     int nbTouchesBlanches = touches['blanches'];
     int nbTouchesNoires = touches['noires'];
     int nbTouches = nbTouchesBlanches + nbTouchesNoires;
-
     return Column(
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -345,7 +488,6 @@ class _SetLimitOfKeyboardMidiState extends State<SetLimitOfKeyboardMidi> {
             }),
             SizedBox(height: 10),
             CustomWidgets.button('Non, le son est différent', CustomColors.red, () {
-              // todo:
               _showMaterialDialog();
             }),
             SizedBox(height: 20),
@@ -404,6 +546,10 @@ class _SetLimitOfKeyboardMidiState extends State<SetLimitOfKeyboardMidi> {
             onTap: () {
               //todo: play midi sound
             },
+            focusColor: Colors.transparent,
+            hoverColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+            splashColor: Colors.transparent,
             child: CustomWidgets.playIconWithBlueCircle()),
         SizedBox(
           width: 16,
@@ -420,6 +566,42 @@ class _SetLimitOfKeyboardMidiState extends State<SetLimitOfKeyboardMidi> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _textInput(dropdownValueIndex, possibilities, mapValueToText, hintText) {
+    return DropdownButton<int>(
+      dropdownColor: CustomColors.darkerBlue,
+      value: dropdownValues[dropdownValueIndex],
+      icon: Icon(Icons.arrow_drop_down),
+      iconSize: 24,
+      elevation: 16,
+      style: TextStyle(color: CustomColors.white),
+      underline: Container(
+        height: 2,
+        color: CustomColors.yellow,
+      ),
+      isExpanded: true,
+      hint: Center(
+          child: Text(
+        hintText,
+        style: CustomStyle.smallTextOnBoardingPage.copyWith(color: CustomColors.grey),
+      )),
+      onChanged: (int newValue) {
+        setState(() {
+          dropdownValues[dropdownValueIndex] = newValue;
+        });
+      },
+      items: possibilities.map<DropdownMenuItem<int>>((int value) {
+        return DropdownMenuItem<int>(
+          value: value,
+          child: Center(
+              child: Text(
+            mapValueToText(value),
+            style: CustomStyle.smallTextOnBoardingPage.copyWith(fontWeight: CustomStyle.BOLD),
+          )),
+        );
+      }).toList(),
     );
   }
 
@@ -450,16 +632,16 @@ class _SetLimitOfKeyboardMidiState extends State<SetLimitOfKeyboardMidi> {
                 FlatButton(
                   child: Container(
                     padding: EdgeInsets.symmetric(vertical: 7, horizontal: 12),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      color: Colors.red
-                    ),
+                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), color: Colors.red),
                     child: Text('Ok'),
                   ),
                   onPressed: () {
                     Navigator.of(context).pop();
                     setState(() {
-                      step = Steps.setUpLeftLimit;
+                      if (widget.info['midiPort'])
+                        step = StepsForMidi.setUpLeftLimit;
+                      else
+                        step = StepsForAcoustic.setUpFirstKey;
                     });
                   },
                 ),

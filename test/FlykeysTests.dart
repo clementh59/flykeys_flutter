@@ -142,6 +142,17 @@ void main() {
       expect(Utils.getNoteNameFromKey(59),'Si');
     });
 
+    test('It should return the decade of the note corresponding to the MIDI key', () async {
+
+      expect(Utils.getDecade(24),1);
+      expect(Utils.getDecade(23),0);
+      expect(Utils.getDecade(26),1);
+      expect(Utils.getDecade(59),3);
+      expect(Utils.getDecade(60),4);
+      expect(Utils.getDecade(14),0);
+      expect(Utils.getDecade(9),-1);
+    });
+
     test('It should return the number of black and whites keys', () async {
 
       expect(Utils.getNumberOfTouches(24,26),{'noires':1,'blanches':2});

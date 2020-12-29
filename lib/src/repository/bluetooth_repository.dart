@@ -473,9 +473,7 @@ class BluetoothRepository {
   void stopListeningToNotePushed() {
     try {
       streamSubscriptionNotePushedListening?.cancel();
-    } catch (e) {
-      print('error while cancelling streamSubscriptionNotePushedListening');
-    }
+    } catch (e) {}
   }
   //endregion
 

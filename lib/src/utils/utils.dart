@@ -127,6 +127,10 @@ class Utils{
 		return noteNames[key%12];
 	}
 
+	static int getDecade(int key) {
+		return (key/12).floor()-1;
+	}
+
 	/// [firstKey] e.g 21
 	/// [lastKey] e.g 108
 	/// [returns] a Map with 'noires' and 'blanches' that are the numbers of corresponding keys

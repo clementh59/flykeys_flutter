@@ -102,16 +102,19 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
           true; //si il y a un envoit, je l'arrete / sinon, ca change rien
       onDisconnect();
       yield FlyKeysDeviceDisconnectedState();
+      return;
     }
     //endregion
 
     //region Sending morceau
     if (event is SendMorceauEvent) {
       yield* reactToSendMorceauEvent(event);
+      return;
     }
 
     if (event is StopSendingMorceauEvent) {
       valueNotifierStopSendingMorceau.value = true;
+      return;
     }
     //endregion
 
@@ -174,6 +177,7 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
       await bluetoothRepository
           .subscribeWhenTickIsUpdated(valueNotifierActualTick);
       updateDurationListenerWhenTickListenerUpdate();
+      return;
     }
 
     if (event is StopEvent) {
@@ -181,11 +185,13 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
       await bluetoothRepository.pause();
       isPlaying = false;
       yield StoppedMusicState();
+      return;
     }
 
     if (event is MorceauIsFinishEvent) {
       yield StoppedMusicState();
       isPlaying = false;
+      return;
     }
     //endregion
 
@@ -195,23 +201,30 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
       true; //si il y a un envoit, je l'arrete / sinon, ca change rien
       if (isPlaying) await bluetoothRepository.pause();
       yield InitialBluetoothState();
+      return;
     }
     //endregion
 
-    //region Other Modes (Lightning show, Set up midi limit, ...)
+    //region Other Modes (Lightning show, Set up limit of keyboard, ...)
     if (event is LightningShowEvent) {
-      yield LoadingCommandMusicState();
       await bluetoothRepository.lightningShow();
       yield LightningShowModeState();
+      return;
     }
 
     if (event is SetUpMidiKeyboardLimitEvent) {
-      yield LoadingCommandMusicState();
 			valueNotifierNotePushed = event.valueNotifierNotePushed;
       await bluetoothRepository.setUpMidiKeyboardLimit();
       await bluetoothRepository
           .subscribeWhenNoteIsPushed(valueNotifierNotePushed);
       yield SetLimitOfKeyboardState();
+      return;
+    }
+
+    if (event is SetUpAcousticKeyboardLimitEvent) {
+      await bluetoothRepository.lightLeds([0,1,2,3,4,5,6,7]);
+      yield SetLimitOfKeyboardState();
+      return;
     }
     //endregion
 
