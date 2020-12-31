@@ -47,7 +47,7 @@ class _AppState extends State<App> {
       child: MaterialApp(
         theme: ThemeData.dark(),
         debugShowCheckedModeBanner: false,
-        home: MainPage()/*LoginPage()*/,
+        home: OnBoardingPage()/*LoginPage()*/,
       ),
     );
   }

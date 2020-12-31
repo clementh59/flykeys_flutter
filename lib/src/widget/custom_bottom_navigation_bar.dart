@@ -5,6 +5,15 @@ import 'package:flykeys/src/utils/custom_style.dart';
 
 typedef callBackFunction = void Function(int);
 
+//region Bottom nav bar
+TextStyle bottomNavBarTitle = TextStyle(
+  color: CustomColors.white,
+  fontSize: 10,
+  fontFamily: 'Poppins',
+  fontWeight: CustomStyle.LIGHT,
+);
+//endregion
+
 class CustomBottomNavigationBar extends StatefulWidget {
 
   final callBackFunction callBack;
@@ -121,7 +130,7 @@ class CustomNavBarItem extends StatelessWidget {
         ),
         Text(
           label,
-          style: CustomStyle.bottomNavBarTitle,
+          style: bottomNavBarTitle,
         ),
         SizedBox(
           height: 4,

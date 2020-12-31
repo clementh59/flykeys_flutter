@@ -156,7 +156,7 @@ class LightningShowEvent extends BluetoothEvent{
 
 }
 
-/// I ask the esp32 to pass in a mode where the user will set up the limit of the keyboard
+/// I ask the esp32 to pass in a mode where the user will set up the limit of the midi keyboard
 class SetUpMidiKeyboardLimitEvent extends BluetoothEvent{
 
   final ValueNotifier<int> valueNotifierNotePushed;
@@ -165,6 +165,16 @@ class SetUpMidiKeyboardLimitEvent extends BluetoothEvent{
 
   @override
   List<Object> get props => [valueNotifierNotePushed];
+
+}
+
+/// I ask the esp32 to pass in a mode where the user will set up the limit of the acoustic keyboard
+class SetUpAcousticKeyboardLimitEvent extends BluetoothEvent{
+
+  SetUpAcousticKeyboardLimitEvent();
+
+  @override
+  List<Object> get props => [];
 
 }
 

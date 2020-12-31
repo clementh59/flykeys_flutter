@@ -28,7 +28,6 @@ class BluetoothConstants {
 		'MG_R&P':0x06,
 	};
 
-
 	static const CODE_CHANGE_THE_SHOWN_HAND = 0xF5;
 	static const CODES_SHOW_THE_TWO_HANDS = [CODE_CHANGE_THE_SHOWN_HAND, 0];
 	static const CODES_SHOW_ONLY_THE_RIGHT_HAND = [CODE_CHANGE_THE_SHOWN_HAND, 1];

@@ -56,7 +56,7 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
     dev.log("new event : $event", name: "Bluetooth bloc");
     print("Bluetooth bloc : $event");
 
-    //find device
+    //region Connection / disconnection
     if (event is FindFlyKeysDevice) {
       valueNotifierOnDisconnect = ValueNotifier(false);
 
@@ -102,25 +102,23 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
           true; //si il y a un envoit, je l'arrete / sinon, ca change rien
       onDisconnect();
       yield FlyKeysDeviceDisconnectedState();
+      return;
     }
+    //endregion
 
-    if (event is QuitMusicEvent) {
-      valueNotifierStopSendingMorceau?.value =
-          true; //si il y a un envoit, je l'arrete / sinon, ca change rien
-      if (isPlaying) await bluetoothRepository.pause();
-      yield InitialBluetoothState();
-    }
-
-    //sending morceau
+    //region Sending morceau
     if (event is SendMorceauEvent) {
       yield* reactToSendMorceauEvent(event);
+      return;
     }
 
     if (event is StopSendingMorceauEvent) {
       valueNotifierStopSendingMorceau.value = true;
+      return;
     }
+    //endregion
 
-    //interact with morceau
+    //region Interact with morceau
     if (event is SendSpeedEvent) {
       await bluetoothRepository.sendDelay(event.speed);
       return;
@@ -179,6 +177,7 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
       await bluetoothRepository
           .subscribeWhenTickIsUpdated(valueNotifierActualTick);
       updateDurationListenerWhenTickListenerUpdate();
+      return;
     }
 
     if (event is StopEvent) {
@@ -186,30 +185,50 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
       await bluetoothRepository.pause();
       isPlaying = false;
       yield StoppedMusicState();
+      return;
     }
 
     if (event is MorceauIsFinishEvent) {
       yield StoppedMusicState();
       isPlaying = false;
+      return;
     }
+    //endregion
 
-    //other modes!!
+    //region Quit morceau
+    if (event is QuitMusicEvent) {
+      valueNotifierStopSendingMorceau?.value =
+      true; //si il y a un envoit, je l'arrete / sinon, ca change rien
+      if (isPlaying) await bluetoothRepository.pause();
+      yield InitialBluetoothState();
+      return;
+    }
+    //endregion
 
+    //region Other Modes (Lightning show, Set up limit of keyboard, ...)
     if (event is LightningShowEvent) {
-      yield LoadingCommandMusicState();
       await bluetoothRepository.lightningShow();
       yield LightningShowModeState();
+      return;
     }
 
     if (event is SetUpMidiKeyboardLimitEvent) {
-      yield LoadingCommandMusicState();
 			valueNotifierNotePushed = event.valueNotifierNotePushed;
       await bluetoothRepository.setUpMidiKeyboardLimit();
       await bluetoothRepository
           .subscribeWhenNoteIsPushed(valueNotifierNotePushed);
       yield SetLimitOfKeyboardState();
+      return;
     }
 
+    if (event is SetUpAcousticKeyboardLimitEvent) {
+      await bluetoothRepository.lightLeds([0,1,2,3,4,5,6,7]);
+      yield SetLimitOfKeyboardState();
+      return;
+    }
+    //endregion
+
+    //region Control leds events
     if (event is LightLedsEvent) {
       if (event.clearLeds)
         await bluetoothRepository.clearLeds();
@@ -219,9 +238,9 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
 		if (event is ClearLedsEvent) {
 			await bluetoothRepository.clearLeds();
 		}
+    //endregion
 
-    ///private events that are send in this class
-
+    //region Private events
     //private event that is send when the stream in reactToSendMorceauEvent have a new value
     if (event is _SendingMorceauStepEvent) {
       yield SendingMorceauState(event.progress);
@@ -230,6 +249,7 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
     if (event is _SendingMorceauFinishEvent) {
       yield MorceauSentState();
     }
+    //endregion
   }
 
   Stream<MyBluetoothState> reactToSendMorceauEvent(
@@ -285,15 +305,9 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
     return;
   }
 
-  /**
-	 *  Des que ActualTick change, j'update ActualTime pour que la page puisse mettre à jour sa timeBar
-	 */
+	/// Des que ActualTick change, j'update ActualTime pour que la page puisse mettre à jour sa timeBar
   void updateDurationListenerWhenTickListenerUpdate() {
     valueNotifierActualTick.addListener(valueNotifierActualTickListener);
-  }
-
-  void setSpeedX1(double speed) {
-    speed_x1 = speed;
   }
 
   void stopSendingMorceau() {
@@ -306,6 +320,22 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
     return duration;
   }
 
+  /// Lorsque je bouge la time bar, je n'ai plus la réelle seconde à laquelle je suis dans le morceau.
+  /// C'est pour cela que cette fonction me renvoi cette info
+  /// Je l'utilise lorsque la seconde à laquelle j'essaie d'aller n'est pas chargé dans le device (Je n'ai pas envoyé tout le morceau)
+  void updateTimeBarWithLastSecondsSentByTheDevice() {
+    if (valueNotifierUpdateTickInPage.value) {
+      if (lastSecondSentToMusicPage == null) lastSecondSentToMusicPage = 0;
+      valueNotifierActualDuration.value =
+      new Duration(seconds: lastSecondSentToMusicPage);
+    }
+  }
+
+  //region Setters
+  void setSpeedX1(double speed) {
+    speed_x1 = speed;
+  }
+
   void setValueNotifierActualDuration(
       ValueNotifier<Duration> valueNotifierActualDuration) {
     this.valueNotifierActualDuration = valueNotifierActualDuration;
@@ -315,22 +345,9 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
       ValueNotifier<bool> valueNotifierUpdateTickInPage) {
     this.valueNotifierUpdateTickInPage = valueNotifierUpdateTickInPage;
   }
+  //endregion
 
-  /**
-	 * Lorsque je bouge la time bar, je n'ai plus la réelle seconde à laquelle je suis dans le morceau.
-	 * C'est pour cela que cette fonction me renvoi cette info
-	 * Je l'utilise lorsque la seconde à laquelle j'essaie d'aller n'est pas chargé dans le device (Je n'ai pas envoyé tout le morceau)
-	 */
-  void updateTimeBarWithLastSecondsSentByTheDevice() {
-    if (valueNotifierUpdateTickInPage.value) {
-      if (lastSecondSentToMusicPage == null) lastSecondSentToMusicPage = 0;
-      valueNotifierActualDuration.value =
-          new Duration(seconds: lastSecondSentToMusicPage);
-    }
-  }
-
-  /****************		ValueNotifier Handlers	*********************/
-
+  //region Value notifier handlers
   valueNotifierOnDisconnectListener() {
     dev.log("Value changed : " + valueNotifierOnDisconnect.value.toString(),
         name: "valueNotifierOnDisconnect");
@@ -359,10 +376,10 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
 			}
 		}
 	}
+  //endregion
 
-	/****************		 Stop properly		**********************/
-
-	void stopListeningToNotePushed() {
+  //region Stop properly
+  void stopListeningToNotePushed() {
   	bluetoothRepository.stopListeningToNotePushed();
 	}
 
@@ -378,10 +395,10 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
     valueNotifierActualTick?.removeListener(valueNotifierActualTickListener);
     streamSubscription?.cancel();
   }
+//endregion
 }
 
-/****************     PRIVATE EVENTS    ******************/
-
+//region Private events
 class _SendingMorceauStepEvent extends BluetoothEvent {
   final double progress;
 
@@ -400,3 +417,4 @@ class _SendingMorceauFinishEvent extends BluetoothEvent {
   @override
   List<Object> get props => [];
 }
+//endregion

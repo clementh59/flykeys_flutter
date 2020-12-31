@@ -4,8 +4,8 @@ import 'package:flykeys/src/bloc/music/bloc.dart';
 import 'package:flykeys/src/bloc/transcribers/bloc.dart';
 import 'package:flykeys/src/bloc/trending/bloc.dart';
 import 'package:flykeys/src/model/game.dart';
-import 'package:flykeys/src/model/music.dart';
 import 'package:flykeys/src/repository/database_repository.dart';
+import 'package:flykeys/src/utils/constants.dart';
 import 'package:flykeys/src/utils/custom_colors.dart';
 import 'package:flykeys/src/utils/custom_size.dart';
 import 'package:flykeys/src/utils/custom_style.dart';
@@ -14,7 +14,6 @@ import 'package:flykeys/src/widget/profile_image.dart';
 import 'package:flykeys/src/widget/custom_widgets.dart';
 import 'package:flykeys/src/widget/widget_music.dart';
 import 'package:flykeys/src/widget/widget_transcriber.dart';
-import 'package:flykeys/src/model/transcriber.dart';
 import 'package:flykeys/database.dart';
 
 class HomePage extends StatefulWidget {
@@ -215,9 +214,9 @@ class _HomePageState extends State<HomePage> {
             .heightBetweenButtonLoadMorePopularSongsAndMusicTile +
             CustomSize.heightBetweenButtonLoadMorePopularSongsAndPlayForFun +
             CustomSize.heightOfMusicTile *
-              Utils.numberOfMusicLoadedFirstTrending +
+              Constants.numberOfMusicLoadedFirstTrending +
             CustomSize.heightBetweenMusicTiles *
-              (Utils.numberOfMusicLoadedFirstTrending -
+              (Constants.numberOfMusicLoadedFirstTrending -
                 1); //il manque la height du button load more songs mais comme je n'ai pas proprement défini de height, je le prend pas en compte
           return Container(width: MediaQuery
             .of(context)

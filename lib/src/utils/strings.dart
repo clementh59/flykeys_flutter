@@ -1,5 +1,6 @@
 class Strings{
 
+	//region Login / Signup
 	static const String mdp_too_short = "Le mot de passe doit faire au moins 6 caractères";
 	static const String la_creation_de_compte_a_echoue = "La création du compte a échoué";
 	static const String email_non_valide = "L'email n'est pas valide";
@@ -10,6 +11,7 @@ class Strings{
 	static const String entre_ton_email_pour_reinitialiser = "Entre ton email pour pouvoir réinitialiser ton mot de passe!";
 	static const String deconnection = "Déconnexion";
 
+	//region Errors Firebase connection
 	static const String ERROR_INVALID_CUSTOM_TOKEN =  "The custom token format is incorrect. Please check the documentation.";
 	static const String ERROR_CUSTOM_TOKEN_MISMATCH = "The custom token corresponds to a different audience.";
 	static const String ERROR_INVALID_CREDENTIAL = "The supplied auth credential is malformed or has expired.";
@@ -22,10 +24,14 @@ class Strings{
 	static const String ERROR_USER_NOT_FOUND = "There is no user record corresponding to this identifier. The user may have been deleted.";
 	static const String ERROR_INVALID_USER_TOKEN = "The user\'s credential is no longer valid. The user must sign in again.";
 	static const String ERROR_OPERATION_NOT_ALLOWED = "This operation is not allowed. You must enable this service in the console.";
+	//endregion
 
-	/*****************************		SHARED  PREFS KEYS 	**********************/
+	//endregion
+
+	//region Shared Prefs
 	static const String WAIT_FOR_USER_INPUT_SHARED_PREFS = "WAIT_FOR_USER_INPUT";
 	static const String COLOR_MD_SHARED_PREFS = "COLOR_MD";
 	static const String COLOR_MG_SHARED_PREFS = "COLOR_MG";
+	//endregion
 
 }

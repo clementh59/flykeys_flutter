@@ -24,6 +24,7 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
 
+  //region Variables
   String _searchtext = "";
   MusicBloc _musicBloc;
   TranscriberBloc _transcriberBloc;
@@ -33,7 +34,9 @@ class _SearchPageState extends State<SearchPage> {
   int _selectedCategory = 0;
 
   List<bool> _categoryIsAlreadyLoaded;
+  //endregion
 
+  //region Overrides
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -107,7 +110,9 @@ class _SearchPageState extends State<SearchPage> {
       ),
     );
   }
+  //endregion
 
+  //region Widget
   Widget _searchBar() {
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -294,6 +299,73 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
+  Widget _searchTypeBar(){
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 10),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SearchTypeElement("SONGS", _selectedCategory == 0, () {
+            changeSelectedCategory(0);
+          }),
+          SizedBox(
+            width: 31,
+          ),
+          SearchTypeElement("TRANSCRIBERS", _selectedCategory == 1, () {
+            changeSelectedCategory(1);
+          }),
+          SizedBox(
+            width: 31,
+          ),
+          SearchTypeElement("ARTISTS", _selectedCategory == 2, () {
+            changeSelectedCategory(2);
+          }),
+          SizedBox(
+            width: 31,
+          ),
+          SearchTypeElement("FILMS", _selectedCategory == 3, () {
+            changeSelectedCategory(3);
+          }),
+          SizedBox(
+            width: 31,
+          ),
+          SearchTypeElement("SERIES", _selectedCategory == 4, () {
+            changeSelectedCategory(4);
+          }),
+          SizedBox(
+            width: 31,
+          ),
+          SearchTypeElement("ANIMES", _selectedCategory == 5, () {
+            changeSelectedCategory(5);
+          }),
+          SizedBox(
+            width: 31,
+          ),
+          SearchTypeElement("JEUX", _selectedCategory == 6, () {
+            changeSelectedCategory(6);
+          }),
+          SizedBox(
+            width: 31,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _searchMessage(String text){
+    return Container(
+      height: 150,
+      child: Center(
+        child: Text(
+          text,
+          style: CustomStyle.noResultText,
+        ),
+      ),
+    );
+  }
+  //endregion
+
+  //region Logic
   void _search(String text) {
     if (text.length < 2) {
       Scaffold.of(context).showSnackBar(SnackBar(
@@ -350,76 +422,12 @@ class _SearchPageState extends State<SearchPage> {
     }
   }
 
-  Widget _searchTypeBar(){
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 10),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SearchTypeElement("SONGS", _selectedCategory == 0, () {
-            changeSelectedCategory(0);
-          }),
-          SizedBox(
-            width: 31,
-          ),
-          SearchTypeElement("TRANSCRIBERS", _selectedCategory == 1, () {
-            changeSelectedCategory(1);
-          }),
-          SizedBox(
-            width: 31,
-          ),
-          SearchTypeElement("ARTISTS", _selectedCategory == 2, () {
-            changeSelectedCategory(2);
-          }),
-          SizedBox(
-            width: 31,
-          ),
-          SearchTypeElement("FILMS", _selectedCategory == 3, () {
-            changeSelectedCategory(3);
-          }),
-          SizedBox(
-            width: 31,
-          ),
-          SearchTypeElement("SERIES", _selectedCategory == 4, () {
-            changeSelectedCategory(4);
-          }),
-          SizedBox(
-            width: 31,
-          ),
-          SearchTypeElement("ANIMES", _selectedCategory == 5, () {
-            changeSelectedCategory(5);
-          }),
-          SizedBox(
-            width: 31,
-          ),
-          SearchTypeElement("JEUX", _selectedCategory == 6, () {
-            changeSelectedCategory(6);
-          }),
-          SizedBox(
-            width: 31,
-          ),
-        ],
-      ),
-    );
-  }
-
   void changeSelectedCategory(int category){
     setState(() {
       _selectedCategory = category;
     });
     _search(_searchtext);
   }
-
-  Widget _searchMessage(String text){
-    return Container(
-      height: 150,
-      child: Center(
-        child: Text(
-          text,
-          style: CustomStyle.noResultText,
-        ),
-      ),
-    );
-  }
+//endregion
 }
 

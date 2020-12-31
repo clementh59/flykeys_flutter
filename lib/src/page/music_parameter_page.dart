@@ -24,12 +24,15 @@ class MusicParameterPage extends StatefulWidget {
 }
 
 class _MusicParameterPageState extends State<MusicParameterPage> {
+  //region Variables
   bool waitForUserInput =
       false; // state of the switch to know if I have to wait for the user input to make the morceau fall down or not
   bool expandChooseHandParameter =
       true; // If I expand the option block that allow me to choose the hand I want to play
   List<bool> selectedHands = [true, true]; //[MAIN_DROITE, MAIN_GAUCHE]
+  //endregion
 
+  //region Overrides
   @override
   void initState() {
     super.initState();
@@ -72,9 +75,11 @@ class _MusicParameterPageState extends State<MusicParameterPage> {
       ),
     );
   }
+  //endregion
 
+  //region Widget
   Widget _tileParameterWidget(String name, Widget imageAsset, Function callBack,
-      {bool showRightArrow = false,
+    {bool showRightArrow = false,
       bool showSwitch = false,
       bool switchState = false}) {
     return InkWell(
@@ -105,32 +110,25 @@ class _MusicParameterPageState extends State<MusicParameterPage> {
               ),
             ),
             showRightArrow
-                ? Icon(
-                    Icons.arrow_forward_ios,
-                    color: CustomColors.white,
-                    size: 18,
-                  )
-                : SizedBox(),
+              ? Icon(
+              Icons.arrow_forward_ios,
+              color: CustomColors.white,
+              size: 18,
+            )
+              : SizedBox(),
             showSwitch
-                ? Switch(
-                    onChanged: (bool) {
-                      callBack();
-                    },
-                    activeColor: CustomColors.blue,
-                    value: switchState,
-                  )
-                : SizedBox(),
+              ? Switch(
+              onChanged: (bool) {
+                callBack();
+              },
+              activeColor: CustomColors.blue,
+              value: switchState,
+            )
+              : SizedBox(),
           ],
         ),
       ),
     );
-  }
-
-  String getTextCorrespondingToHands() {
-    if (selectedHands[MAIN_GAUCHE] && selectedHands[MAIN_DROITE])
-      return 'les deux mains';
-    if (selectedHands[MAIN_DROITE]) return 'la main droite';
-    return 'la main gauche';
   }
 
   Widget _handCard(
@@ -300,6 +298,15 @@ class _MusicParameterPageState extends State<MusicParameterPage> {
       ],
     );
   }
+  //endregion
+
+  //region Logic
+  String getTextCorrespondingToHands() {
+    if (selectedHands[MAIN_GAUCHE] && selectedHands[MAIN_DROITE])
+      return 'les deux mains';
+    if (selectedHands[MAIN_DROITE]) return 'la main droite';
+    return 'la main gauche';
+  }
 
   void clickOnWaitForUserInput() {
     if (waitForUserInput) {
@@ -352,5 +359,6 @@ class _MusicParameterPageState extends State<MusicParameterPage> {
     Utils.saveBooleanToSharedPreferences(widget.music.id + '_MD', selectedHands[MAIN_DROITE]);
     Utils.saveBooleanToSharedPreferences(widget.music.id + '_MG', selectedHands[MAIN_GAUCHE]);
   }
+  //endregion
 
 }

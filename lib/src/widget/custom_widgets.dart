@@ -6,6 +6,8 @@ import 'package:flykeys/src/utils/custom_colors.dart';
 import 'package:flykeys/src/utils/custom_style.dart';
 
 class CustomWidgets {
+
+  //region Icons
   static Widget settingsIcon(context) {
     return InkWell(
       onTap: () {
@@ -39,6 +41,22 @@ class CustomWidgets {
     );
   }
 
+  static Widget playIconWithBlueCircle() {
+    return Container(
+      height: 45,
+      width: 45,
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(150), border: Border.all(color: CustomColors.blue, width: 1.25)),
+      child: Center(
+        child: Container(
+          width: 22,
+          height: 22,
+          child: Image.asset('assets/images/icons/play_icon.png')
+        )
+      ),
+    );
+  }
+
+  //region Pastilles bleu
   static Widget smallPastilleBleu() {
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
@@ -53,13 +71,6 @@ class CustomWidgets {
           ),
         ),
       ),
-    );
-  }
-
-  static Widget ytWidget(double height) {
-    return Image.asset(
-      "assets/images/icons/logo_yt.png",
-      height: height,
     );
   }
 
@@ -79,7 +90,46 @@ class CustomWidgets {
       ),
     );
   }
+  //endregion
 
+  static Widget ytWidget(double height) {
+    return Image.asset(
+      "assets/images/icons/logo_yt.png",
+      height: height,
+    );
+  }
+
+  static Widget heartIcon(bool liked) {
+    if (liked)
+      return Icon(
+        Icons.favorite,
+        color: CustomColors.heartColor,
+        size: 30,
+      );
+    return Image.asset(
+      "assets/images/icons/heart_border.png",
+      height: 30,
+    );
+  }
+
+  static Widget blueNumberIndicator(String number, bool fill) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10),
+      decoration: fill
+        ? BoxDecoration(color: CustomColors.blue, borderRadius: BorderRadius.circular(15))
+        : BoxDecoration(border: Border.all(color: CustomColors.grey), borderRadius: BorderRadius.circular(15)),
+      child: Center(
+        child: Text(
+          number,
+          style: CustomStyle.numberResultChosen,
+        ),
+      ),
+    );
+  }
+
+  //endregion
+
+  //region Stars Widgets
   static Widget starsWidget(double starsNumber) {
     List<Widget> stars = [];
 
@@ -131,7 +181,9 @@ class CustomWidgets {
       size: size,
     );
   }
+  //endregion
 
+  //region Note widgets
   static Widget noteWidget(int difficulty) {
     List<Widget> notes = [];
 
@@ -167,30 +219,226 @@ class CustomWidgets {
       ),
     );
   }
+  //endregion
 
-  static Widget heartIcon(bool liked) {
-    if (liked)
-      return Icon(
-        Icons.favorite,
-        color: CustomColors.heartColor,
-        size: 30,
-      );
-    return Image.asset(
-      "assets/images/icons/heart_border.png",
-      height: 30,
+  //region Text
+  static Widget detailPageNumberCategories(String text1, String category1, String text2, String category2) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      mainAxisSize: MainAxisSize.max,
+      children: [
+        CustomWidgets.detailPageNumberCategory(text1, category1),
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+            color: CustomColors.grey,
+          ),
+          width: 1,
+          height: 45,
+        ),
+        CustomWidgets.detailPageNumberCategory(text2, category2),
+      ],
     );
   }
 
-  static Widget blueNumberIndicator(String number, bool fill) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10),
-      decoration: fill
-          ? BoxDecoration(color: CustomColors.blue, borderRadius: BorderRadius.circular(15))
-          : BoxDecoration(border: Border.all(color: CustomColors.grey), borderRadius: BorderRadius.circular(15)),
-      child: Center(
+  static Widget detailPageNumberCategory(String text, String category) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          text,
+          style: CustomStyle.numberFollowersDetailPage,
+        ),
+        SizedBox(
+          height: 7,
+        ),
+        Text(
+          category,
+          style: CustomStyle.labelFollowersDetailPage,
+        ),
+      ],
+    );
+  }
+
+  static Widget numberSlideBarText(String text) {
+    return Text(
+      text,
+      style: CustomStyle.numberSlideBarMusicPage,
+    );
+  }
+  //endregion
+
+  //region Utils for connection
+  static Widget textWithLoadingIndicator(String text) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          _textWidget(text),
+          SizedBox(
+            height: 30,
+          ),
+          Container(
+            height: 35,
+            child: circularProgressIndicator(),
+          )
+        ],
+      ),
+    );
+  }
+
+  static Widget circularProgressIndicator() {
+    return CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(CustomColors.blue));
+  }
+
+  static Widget textWithoutLoadingIndicator(String text) {
+    return _textWidget(text);
+  }
+
+  static Widget bluetoothIsOff() {
+    return Center(
+      child: CustomWidgets.textWithoutLoadingIndicator("Bluetooth is off!"),
+    );
+  }
+
+  static Widget _textWidget(String text) {
+    return Text(
+      text,
+      textAlign: TextAlign.center,
+      style: CustomStyle.loadingTextMusicPage,
+    );
+  }
+  //endregion
+
+  //region Images
+  /// returns a Row containing two images showing what is a MIDI port
+  static Widget midiImages() {
+    return Row(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        SizedBox(),
+        Image.asset('assets/images/onboarding/midi-input.png', width: 94),
+        Image.asset('assets/images/onboarding/midi-cable.png', width: 108),
+        SizedBox(),
+      ],
+    );
+  }
+
+  static Widget detailPageBackgroundImage(ImageLoadingBloc imageLoadingBloc, context) {
+    return Stack(
+      children: [
+        BlocBuilder<ImageLoadingBloc, ImageLoadingState>(
+          bloc: imageLoadingBloc,
+          builder: (BuildContext context, ImageLoadingState state) {
+            Widget image;
+
+            if (state is ImageLoadedState) {
+              image = state.image;
+            } else
+              image = null;
+
+            if (image != null) {
+              return image;
+            }
+            return SizedBox();
+          }),
+        Positioned.fill(
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
+                CustomColors.backgroundColor.withOpacity(0.7),
+                CustomColors.backgroundColor.withOpacity(1),
+              ]),
+            ),
+          ),
+        ),
+        Positioned(
+          //Sinon j'ai une petite ligne non voulu en bas de la stack
+          bottom: 0,
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            height: 2,
+            color: CustomColors.backgroundColor,
+          ),
+        ),
+      ],
+    );
+  }
+
+  //endregion
+
+  //region Buttons
+  static Widget button(String text, Color borderColor, Function callback, {double width = double.infinity}) {
+    return InkWell(
+      onTap: callback,
+      focusColor: Colors.transparent,
+      hoverColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      splashColor: Colors.transparent,
+      child: Container(
+        width: width,
+        decoration: BoxDecoration(
+          border: Border.all(color: borderColor),
+          borderRadius: BorderRadius.circular(31),
+        ),
+        padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
         child: Text(
-          number,
-          style: CustomStyle.numberResultChosen,
+          text,
+          style: CustomStyle.smallButtonTextOnBoardingPage,
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
+  }
+
+  static Widget buttonWithText(String text, Function onClick) {
+    return Center(
+      child: InkWell(
+        focusColor: Colors.transparent,
+        hoverColor: Colors.transparent,
+        highlightColor: Colors.transparent,
+        splashColor: Colors.transparent,
+        onTap: onClick,
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(40),
+            border: Border.all(color: CustomColors.blue, width: 2),
+          ),
+          child: Text(
+            text,
+            style: CustomStyle.morePopularSongStyle,
+          ),
+        ),
+      ),
+    );
+  }
+
+  static Widget buttonLoadMorePopularSongStyle(String text, Function callback, {fontSize = 0}) {
+    TextStyle style = CustomStyle.morePopularSongStyle;
+
+    if (fontSize != 0) style = style.copyWith(fontSize: fontSize);
+
+    return InkWell(
+      onTap: callback,
+      focusColor: Colors.transparent,
+      hoverColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      splashColor: Colors.transparent,
+      child: Container(
+        padding: EdgeInsets.all(12.0),
+        width: double.infinity,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(40),
+          border: Border.all(color: CustomColors.blue, width: 2),
+        ),
+        child: Center(
+          child: Text(
+            text,
+            style: style,
+          ),
         ),
       ),
     );
@@ -282,237 +530,9 @@ class CustomWidgets {
       ),
     );
   }
+  //endregion
 
-  static Widget detailPageBackgroundImage(ImageLoadingBloc imageLoadingBloc, context) {
-    return Stack(
-      children: [
-        BlocBuilder<ImageLoadingBloc, ImageLoadingState>(
-            bloc: imageLoadingBloc,
-            builder: (BuildContext context, ImageLoadingState state) {
-              Widget image;
-
-              if (state is ImageLoadedState) {
-                image = state.image;
-              } else
-                image = null;
-
-              if (image != null) {
-                return image;
-              }
-              return SizedBox();
-            }),
-        Positioned.fill(
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
-                CustomColors.backgroundColor.withOpacity(0.7),
-                CustomColors.backgroundColor.withOpacity(1),
-              ]),
-            ),
-          ),
-        ),
-        Positioned(
-          //Sinon j'ai une petite ligne non voulu en bas de la stack
-          bottom: 0,
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            height: 2,
-            color: CustomColors.backgroundColor,
-          ),
-        ),
-      ],
-    );
-  }
-
-  static Widget detailPageNumberCategories(String text1, String category1, String text2, String category2) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      mainAxisSize: MainAxisSize.max,
-      children: [
-        CustomWidgets.detailPageNumberCategory(text1, category1),
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(5),
-            color: CustomColors.grey,
-          ),
-          width: 1,
-          height: 45,
-        ),
-        CustomWidgets.detailPageNumberCategory(text2, category2),
-      ],
-    );
-  }
-
-  static Widget detailPageNumberCategory(String text, String category) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          text,
-          style: CustomStyle.numberFollowersDetailPage,
-        ),
-        SizedBox(
-          height: 7,
-        ),
-        Text(
-          category,
-          style: CustomStyle.labelFollowersDetailPage,
-        ),
-      ],
-    );
-  }
-
-  static Widget numberSlideBarText(String text) {
-    return Text(
-      text,
-      style: CustomStyle.numberSlideBarMusicPage,
-    );
-  }
-
-  static Widget buttonWithText(String text, Function onClick) {
-    return Center(
-      child: InkWell(
-        focusColor: Colors.transparent,
-        hoverColor: Colors.transparent,
-        highlightColor: Colors.transparent,
-        splashColor: Colors.transparent,
-        onTap: onClick,
-        child: Container(
-          padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 15),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(40),
-            border: Border.all(color: CustomColors.blue, width: 2),
-          ),
-          child: Text(
-            text,
-            style: CustomStyle.morePopularSongStyle,
-          ),
-        ),
-      ),
-    );
-  }
-
-  static Widget buttonLoadMorePopularSongStyle(String text, Function callback, {fontSize = 0}) {
-    TextStyle style = CustomStyle.morePopularSongStyle;
-
-    if (fontSize != 0) style = style.copyWith(fontSize: fontSize);
-
-    return InkWell(
-      onTap: callback,
-      focusColor: Colors.transparent,
-      hoverColor: Colors.transparent,
-      highlightColor: Colors.transparent,
-      splashColor: Colors.transparent,
-      child: Container(
-        padding: EdgeInsets.all(12.0),
-        width: double.infinity,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(40),
-          border: Border.all(color: CustomColors.blue, width: 2),
-        ),
-        child: Center(
-          child: Text(
-            text,
-            style: style,
-          ),
-        ),
-      ),
-    );
-  }
-
-  static Widget textWithLoadingIndicator(String text) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          _textWidget(text),
-          SizedBox(
-            height: 30,
-          ),
-          Container(
-            height: 35,
-            child: circularProgressIndicator(),
-          )
-        ],
-      ),
-    );
-  }
-
-  static Widget circularProgressIndicator() {
-    return CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(CustomColors.blue));
-  }
-
-  static Widget textWithoutLoadingIndicator(String text) {
-    return _textWidget(text);
-  }
-
-  static Widget bluetoothIsOff() {
-    return Center(
-      child: CustomWidgets.textWithoutLoadingIndicator("Bluetooth is off!"),
-    );
-  }
-
-  static Widget _textWidget(String text) {
-    return Text(
-      text,
-      textAlign: TextAlign.center,
-      style: CustomStyle.loadingTextMusicPage,
-    );
-  }
-
-  static Widget playIconWithBlueCircle() {
-    return Container(
-      height: 45,
-      width: 45,
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(150), border: Border.all(color: CustomColors.blue, width: 1.25)),
-      child: Center(
-        child: Container(
-          width: 22,
-          height: 22,
-          child: Image.asset('assets/images/icons/play_icon.png')
-        )
-      ),
-    );
-  }
-
-  /// returns a Row containing two images showing what is a MIDI port
-  static Widget midiImages() {
-    return Row(
-      mainAxisSize: MainAxisSize.max,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        SizedBox(),
-        Image.asset('assets/images/onboarding/midi-input.png', width: 94),
-        Image.asset('assets/images/onboarding/midi-cable.png', width: 108),
-        SizedBox(),
-      ],
-    );
-  }
-
-  static Widget button(String text, Color borderColor, Function callback, {double width = double.infinity}) {
-    return InkWell(
-      onTap: callback,
-      focusColor: Colors.transparent,
-      hoverColor: Colors.transparent,
-      highlightColor: Colors.transparent,
-      splashColor: Colors.transparent,
-      child: Container(
-        width: width,
-        decoration: BoxDecoration(
-          border: Border.all(color: borderColor),
-          borderRadius: BorderRadius.circular(31),
-        ),
-        padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-        child: Text(
-          text,
-          style: CustomStyle.smallButtonTextOnBoardingPage,
-          textAlign: TextAlign.center,
-        ),
-      ),
-    );
-  }
-
+  //region Custom Layouts
   /// returns a ScrollView that can contain things like Column with max size, Expanded, ...
   /// And of course, the scrollView will be scrollable only if the items are overflowing the screen.
   static Widget scrollViewWithBoundedHeight({child, scrollController}) {
@@ -537,4 +557,5 @@ class CustomWidgets {
       },
     );
   }
+//endregion
 }

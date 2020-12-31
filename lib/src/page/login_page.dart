@@ -16,6 +16,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  //region Variables
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   AuthentificationBloc authentificationBloc;
 
@@ -31,14 +32,94 @@ class _LoginPageState extends State<LoginPage> {
   String errorConfirmPassword = "";
 
   TextEditingController _textEditingControllerMail =
-      TextEditingController(text: "");
+  TextEditingController(text: "");
   TextEditingController _textEditingControllerFullName =
-      TextEditingController();
+  TextEditingController();
   TextEditingController _textEditingControllerPassword =
-      TextEditingController(text: "");
+  TextEditingController(text: "");
 
   bool im_waiting = false;
+  //endregion
 
+  //region Overrides
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    authentificationBloc = BlocProvider.of<AuthentificationBloc>(context);
+    authentificationBloc.add(CheckIfHeIsLogin());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocListener(
+      bloc: authentificationBloc,
+      listener: (BuildContext context, state) {
+        if (state is AuthentificateFailedState) {
+          Scaffold.of(context)
+              .showSnackBar(SnackBar(content: Text(state.result)));
+        }
+        setState(() {
+          im_waiting = false;
+        });
+      },
+      child: BlocBuilder<AuthentificationBloc, AuthentificationState>(
+          bloc: authentificationBloc,
+          builder: (BuildContext context, AuthentificationState state) {
+            if (state is InitialAuthentificationState ||
+                state is AuthentificateFailedState)
+              return Scaffold(
+                key: _scaffoldKey,
+                backgroundColor: CustomColors.backgroundColor,
+                body: GestureDetector(
+                  onTap: () => FocusScope.of(context).unfocus(),
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
+                    child: view == "login"
+                        ? Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Text(
+                                'Sign In',
+                                style: CustomStyle.signInLoginPage,
+                              ),
+                              _buildEmailTF(),
+                              _buildPasswordTF(true),
+                              _buildLoginBtn(),
+                              _buildSignInWithText(),
+                              _buildSignupBtn(),
+                            ],
+                          )
+                        : Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Text(
+                                'Sign Up',
+                                style: CustomStyle.signInLoginPage,
+                              ),
+                              _buildNameTF(),
+                              _buildEmailTF(),
+                              _buildPasswordTF(false),
+                              _buildConfirmPasswordTF(),
+                              _buildRegisterBtn(),
+                              _buildSigninBtn(),
+                            ],
+                          ),
+                  ),
+                ),
+              );
+            if (state is AuthentificateSucceedState)
+              return MainPage();
+
+            return Center(
+              child: Text("State not handled $state"),
+            );
+          }),
+    );
+  }
+  //endregion
+
+  //region Widgets
   Widget _buildEmailTF() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -158,15 +239,15 @@ class _LoginPageState extends State<LoginPage> {
           child: Stack(
             children: [
               errorPassword != ""
-                  ? Align(
-                      alignment: Alignment.centerLeft,
-                      child: _errorText(errorPassword))
-                  : SizedBox(),
+                ? Align(
+                alignment: Alignment.centerLeft,
+                child: _errorText(errorPassword))
+                : SizedBox(),
               showForgotText
-                  ? Align(
-                      alignment: Alignment.centerRight,
-                      child: _buildForgotPasswordBtn())
-                  : SizedBox(),
+                ? Align(
+                alignment: Alignment.centerRight,
+                child: _buildForgotPasswordBtn())
+                : SizedBox(),
             ],
           ),
         )
@@ -208,8 +289,8 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ),
         errorConfirmPassword != ""
-            ? _errorText(errorConfirmPassword)
-            : SizedBox(),
+          ? _errorText(errorConfirmPassword)
+          : SizedBox(),
       ],
     );
   }
@@ -243,11 +324,11 @@ class _LoginPageState extends State<LoginPage> {
         ),
         color: Colors.white,
         child: im_waiting
-            ? CircularProgressIndicator(
-                valueColor:
-                    new AlwaysStoppedAnimation<Color>(CustomColors.blue),
-              )
-            : Text('LOGIN', style: CustomStyle.loginButtonLoginPage),
+          ? CircularProgressIndicator(
+          valueColor:
+          new AlwaysStoppedAnimation<Color>(CustomColors.blue),
+        )
+          : Text('LOGIN', style: CustomStyle.loginButtonLoginPage),
       ),
     );
   }
@@ -264,11 +345,11 @@ class _LoginPageState extends State<LoginPage> {
         ),
         color: Colors.white,
         child: im_waiting
-            ? CircularProgressIndicator(
-                valueColor:
-                    new AlwaysStoppedAnimation<Color>(CustomColors.blue),
-              )
-            : Text('REGISTER', style: CustomStyle.loginButtonLoginPage),
+          ? CircularProgressIndicator(
+          valueColor:
+          new AlwaysStoppedAnimation<Color>(CustomColors.blue),
+        )
+          : Text('REGISTER', style: CustomStyle.loginButtonLoginPage),
       ),
     );
   }
@@ -279,9 +360,9 @@ class _LoginPageState extends State<LoginPage> {
         Text(
           '- OR -',
           style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w400,
-              fontFamily: 'Poppins'),
+            color: Colors.white,
+            fontWeight: FontWeight.w400,
+            fontFamily: 'Poppins'),
         ),
         SizedBox(height: 15.0),
         Text(
@@ -323,7 +404,7 @@ class _LoginPageState extends State<LoginPage> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[
         _buildSocialBtn(
-          () => loginWithGoogle(),
+            () => loginWithGoogle(),
           AssetImage(
             'assets/images/icons/google.jpg',
           ),
@@ -341,18 +422,18 @@ class _LoginPageState extends State<LoginPage> {
             TextSpan(
               text: 'Don\'t have an Account? ',
               style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 14.0,
-                  fontWeight: FontWeight.w400,
-                  fontFamily: 'Poppins'),
+                color: Colors.white,
+                fontSize: 14.0,
+                fontWeight: FontWeight.w400,
+                fontFamily: 'Poppins'),
             ),
             TextSpan(
               text: 'Sign Up',
               style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 14.0,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Poppins'),
+                color: Colors.white,
+                fontSize: 14.0,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Poppins'),
             ),
           ],
         ),
@@ -369,18 +450,18 @@ class _LoginPageState extends State<LoginPage> {
             TextSpan(
               text: 'Have an Account? ',
               style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 14.0,
-                  fontWeight: FontWeight.w400,
-                  fontFamily: 'Poppins'),
+                color: Colors.white,
+                fontSize: 14.0,
+                fontWeight: FontWeight.w400,
+                fontFamily: 'Poppins'),
             ),
             TextSpan(
               text: 'Sign In',
               style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 14.0,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Poppins'),
+                color: Colors.white,
+                fontSize: 14.0,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Poppins'),
             ),
           ],
         ),
@@ -394,83 +475,9 @@ class _LoginPageState extends State<LoginPage> {
       style: CustomStyle.errorLoginPage,
     );
   }
+  //endregion
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    authentificationBloc = BlocProvider.of<AuthentificationBloc>(context);
-    authentificationBloc.add(CheckIfHeIsLogin());
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocListener(
-      bloc: authentificationBloc,
-      listener: (BuildContext context, state) {
-        if (state is AuthentificateFailedState) {
-          Scaffold.of(context)
-              .showSnackBar(SnackBar(content: Text(state.result)));
-        }
-        setState(() {
-          im_waiting = false;
-        });
-      },
-      child: BlocBuilder<AuthentificationBloc, AuthentificationState>(
-          bloc: authentificationBloc,
-          builder: (BuildContext context, AuthentificationState state) {
-            if (state is InitialAuthentificationState ||
-                state is AuthentificateFailedState)
-              return Scaffold(
-                key: _scaffoldKey,
-                backgroundColor: CustomColors.backgroundColor,
-                body: GestureDetector(
-                  onTap: () => FocusScope.of(context).unfocus(),
-                  child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
-                    child: view == "login"
-                        ? Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Text(
-                                'Sign In',
-                                style: CustomStyle.signInLoginPage,
-                              ),
-                              _buildEmailTF(),
-                              _buildPasswordTF(true),
-                              _buildLoginBtn(),
-                              _buildSignInWithText(),
-                              _buildSignupBtn(),
-                            ],
-                          )
-                        : Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Text(
-                                'Sign Up',
-                                style: CustomStyle.signInLoginPage,
-                              ),
-                              _buildNameTF(),
-                              _buildEmailTF(),
-                              _buildPasswordTF(false),
-                              _buildConfirmPasswordTF(),
-                              _buildRegisterBtn(),
-                              _buildSigninBtn(),
-                            ],
-                          ),
-                  ),
-                ),
-              );
-            if (state is AuthentificateSucceedState)
-              return MainPage();
-
-            return Center(
-              child: Text("State not handled $state"),
-            );
-          }),
-    );
-  }
-
+  //region Logic
   void register() {
     bool signup = true;
 
@@ -616,4 +623,5 @@ class _LoginPageState extends State<LoginPage> {
       view = "login";
     });
   }
+//endregion
 }

@@ -33,6 +33,7 @@ class ChooseTheKindOfPiano extends StatelessWidget {
     );
   }
 
+  //region Widgets
   Widget _numericButton(context) {
     return Container(
       width: MediaQuery.of(context).size.width,
@@ -128,4 +129,5 @@ class ChooseTheKindOfPiano extends StatelessWidget {
       ),
     );
   }
+//endregion
 }

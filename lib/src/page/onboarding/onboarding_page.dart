@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flykeys/src/page/onboarding/ask_to_plug_the_cable.dart';
 import 'package:flykeys/src/page/onboarding/choose_the_kind_of_piano.dart';
-import 'package:flykeys/src/page/onboarding/set_limit_of_keyboard_midi.dart';
+import 'package:flykeys/src/page/onboarding/set_limit_of_keyboard.dart';
 import 'package:flykeys/src/page/onboarding/validate_the_choice_of_kind_of_piano.dart';
 import 'package:flykeys/src/utils/custom_colors.dart';
 import 'package:flykeys/src/utils/custom_style.dart';
 import 'package:flykeys/src/widget/custom_widgets.dart';
+
+import 'ak_to_plug_the_object.dart';
 
 class OnBoardingPage extends StatefulWidget {
   @override
@@ -13,6 +15,7 @@ class OnBoardingPage extends StatefulWidget {
 }
 
 class _OnBoardingPageState extends State<OnBoardingPage> {
+  //region Variables
   Map info = {}; // This map will contains the info passed by the child pages
   // e.g {
   //    'kindOfPiano': 'numeric',
@@ -24,7 +27,9 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
   Map onBoardingSteps; // All the possible steps
   Map step; // The actual step
   var history = []; // The history of the steps, to where how to go back
+  //endregion
 
+  //region Overrided
   @override
   void initState() {
     super.initState();
@@ -47,33 +52,33 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
       'validateTheChoiceOfKindOfPiano': {
         'index': 1,
         'page': ValidateTheChoiceOfKindOfPiano(info, goToNextStep),
+        'next': 'askToPlugTheObject',
+      },
+      'askToPlugTheObject': {
+        'index': 2,
+        'page': AskToPlugTheObject(goToNextStep),
         'next': () {
           if (info['midiPort']) return 'askToPlugTheCable';
-          return 'setLimitOfKeyboardManually';
+          return 'setLimitOfKeyboard';
         },
       },
       'askToPlugTheCable': {
-        'index': 2,
-        'page': AskToPlugTheCable(goToNextStep),
-        'next': 'setLimitOfKeyboardMidi',
-      },
-      'setLimitOfKeyboardMidi': {
         'index': 3,
-        'page': SetLimitOfKeyboardMidi(info, goToNextStep, goToPreviousStep),
+        'page': AskToPlugTheCable(goToNextStep),
+        'next': 'setLimitOfKeyboard',
+      },
+      'setLimitOfKeyboard': {
+        'index': 4,
+        'page': SetLimitOfKeyboard(info, goToNextStep, goToPreviousStep),
         'next': 'explanationModeApprentissage',
         'customScroll': true,
       },
-      'setLimitOfKeyboardManually': {
-        'index': 3,
-        'page': SetLimitOfKeyboardMidi(info, goToNextStep, goToPreviousStep),
-        'next': 'explanationModeApprentissage',
-      },
       'explanationModeApprentissage': {
-        'index': 6,
+        'index': 5,
         'next': 'explanationModeLightningShow',
       },
       'explanationModeLightningShow': {
-        'index': 7,
+        'index': 6,
       },
     };
     step = onBoardingSteps['chooseTheKindOfPiano'];
@@ -113,9 +118,9 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
       ),
     );
   }
+  //endregion
 
-  /***************      WIDGETS   ********************/
-
+  //region Widgets
   Widget header() {
     bool showBackIcon = history.length > 1;
 
@@ -160,7 +165,6 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
   Widget body() {
 
     if (step['customScroll']==true) {
-      print('OUI');
       return step['page'];
     }
 
@@ -197,6 +201,18 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                     width: 5,
                   ),
                   bottomPoint(3),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  bottomPoint(4),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  bottomPoint(5),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  bottomPoint(6),
                 ],
               ),
             ),
@@ -239,9 +255,9 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
       ),
     );
   }
+  //endregion
 
-  /***************      STEPS LOGIC   ********************/
-
+  //region Logic
   /// Go to the previous step of the onboarding process
   /// Returns false if there isn't previous step - true otherwise
   bool goToPreviousStep() {
@@ -276,4 +292,5 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
 
     return true;
   }
+//endregion
 }

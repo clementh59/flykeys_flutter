@@ -13,6 +13,7 @@ import 'package:flykeys/src/utils/utils.dart';
 
 class BluetoothRepository {
 
+  //region Variables
   BluetoothDevice flyKeysDevice;
   BluetoothCharacteristic mainBluetoothCharacteristic;
   BluetoothCharacteristic tickBluetoothCharacteristic;
@@ -20,7 +21,9 @@ class BluetoothRepository {
   StreamSubscription streamSubscriptionNotePushedListening;
   StreamSubscription deviceStateSubscription;
   List<int> bytesSent = [];
+  //endregion
 
+  //region Trame morceau
   /// Create a List of byte that can be understood by the esp32 from a
   /// list of note
   List<int> createTrameFromListeNote(List<Note> listNotes) {
@@ -79,7 +82,6 @@ class BluetoothRepository {
     return tramesAEnvoyer;
   }
 
-
 	/// Send a morceau to the esp32
   ///
   /// The [tramesAEnvoyer] needs to be a list of int. I reccomand you to create
@@ -134,13 +136,9 @@ class BluetoothRepository {
 
     return;
   }
+  //endregion
 
-  Future<Null> envoiLaTrameMTU(List<int> trame,
-      BluetoothCharacteristic bluetoothCharacteristicToSend) async {
-    //print("J'envoi la trame $trame");
-    await bluetoothCharacteristicToSend.write(trame);
-  }
-
+  //region Connection
   /// return true and assign the device to the global field [flyKeysDevice]
   /// if it finds the device - false otherwise
   Future<bool> findFlyKeysDevice(FlutterBlue flutterBlue) async {
@@ -207,6 +205,34 @@ class BluetoothRepository {
     return false;
   }
 
+  /// Récupère les deux characteristiques nécessaires et renvoie true si elles
+  /// sont récupérées / renvoi false sinon
+  Future<bool> hasTheRightCharacteristics() async {
+    List<BluetoothService> services = await flyKeysDevice.discoverServices();
+
+    for (BluetoothService service in services) {
+      var characteristics = service.characteristics;
+      for (BluetoothCharacteristic c in characteristics) {
+        if (c.uuid.toString() == BluetoothConstants.uuidOfMainCommunication) {
+          //todo:generate a new one for my purpose on a website generator
+          mainBluetoothCharacteristic = c;
+          dev.log("found the mainBluetoothCharacteristic",
+            name: "hasTheGoodCharacteristics");
+        } else if (c.uuid.toString() == BluetoothConstants.uuidOfTickCommunication) {
+          tickBluetoothCharacteristic = c;
+          dev.log("found the tickBluetoothCharacteristic",
+            name: "hasTheGoodCharacteristics");
+        }
+      }
+    }
+
+    if (mainBluetoothCharacteristic != null &&
+      tickBluetoothCharacteristic != null) {
+      return true;
+    }
+    return false;
+  }
+
   /// Connect to the flykeys device. To be called, the [flyKeysDevice] need
   /// to contain a FlyKeys device. It can be done by calling FindFlyKeysDevice()
   ///
@@ -227,47 +253,9 @@ class BluetoothRepository {
       return false;
     }
   }
+  //endregion
 
-  /// The value notifier [onDisconnectNotifier] will be notified when the esp32
-  /// will be disconnected from the esp32
-  void subscribeToConnectionStateChanges(ValueNotifier onDisconnectNotifier) {
-    deviceStateSubscription?.cancel();
-    deviceStateSubscription = flyKeysDevice.state.listen((s) {
-      print("#18 New state flykeys device : $s");
-      if (s == BluetoothDeviceState.disconnected) {
-        onDisconnectNotifier.value = true;
-      }
-    });
-  }
-
-  /// Récupère les deux characteristiques nécessaires et renvoie true si elles
-  /// sont récupérées / renvoi false sinon
-  Future<bool> hasTheRightCharacteristics() async {
-    List<BluetoothService> services = await flyKeysDevice.discoverServices();
-
-    for (BluetoothService service in services) {
-      var characteristics = service.characteristics;
-      for (BluetoothCharacteristic c in characteristics) {
-        if (c.uuid.toString() == BluetoothConstants.uuidOfMainCommunication) {
-          //todo:generate a new one for my purpose on a website generator
-          mainBluetoothCharacteristic = c;
-          dev.log("found the mainBluetoothCharacteristic",
-              name: "hasTheGoodCharacteristics");
-        } else if (c.uuid.toString() == BluetoothConstants.uuidOfTickCommunication) {
-          tickBluetoothCharacteristic = c;
-          dev.log("found the tickBluetoothCharacteristic",
-              name: "hasTheGoodCharacteristics");
-        }
-      }
-    }
-
-    if (mainBluetoothCharacteristic != null &&
-        tickBluetoothCharacteristic != null) {
-      return true;
-    }
-    return false;
-  }
-
+  //region Send to esp32
   /// send the code that means PLAY to the esp32
   Future<void> play() async {
     await mainBluetoothCharacteristic.write([BluetoothConstants.CODE_PLAY]);
@@ -375,6 +363,60 @@ class BluetoothRepository {
     await mainBluetoothCharacteristic.write([BluetoothConstants.CODE_CLEAR_LEDS]);
   }
 
+  Future<Null> envoiLaTrameMTU(List<int> trame,
+    BluetoothCharacteristic bluetoothCharacteristicToSend) async {
+    //print("J'envoi la trame $trame");
+    await bluetoothCharacteristicToSend.write(trame);
+  }
+
+  /// send to the esp32 the [tick] passed in parameter
+  ///
+  /// return true if it succeed
+  /// false otherwise
+  Future<bool> sendANewTick(int tick) async {
+    int index = findTheIndexCorrespondToTheTick(tick);
+
+    if (index == -1) {
+      print(tick);
+      print(bytesSent);
+      return false;
+    }
+
+    ByteData byteData = new ByteData(4);
+    byteData.setInt32(0, index);
+    ByteData byteData2 = new ByteData(4);
+    byteData2.setInt32(0, tick);
+
+    print("send new tick : j'envoi tick=$tick et index=$index");
+
+    await envoiLaTrameMTU([
+      byteData.getUint8(3),
+      byteData.getUint8(2),
+      byteData.getUint8(1),
+      byteData.getUint8(0),
+      byteData2.getUint8(3),
+      byteData2.getUint8(2),
+      byteData2.getUint8(1),
+      byteData2.getUint8(0)
+    ], tickBluetoothCharacteristic);
+    return true;
+  }
+
+  //endregion
+
+  //region Stream subscription
+  /// The value notifier [onDisconnectNotifier] will be notified when the esp32
+  /// will be disconnected from the esp32
+  void subscribeToConnectionStateChanges(ValueNotifier onDisconnectNotifier) {
+    deviceStateSubscription?.cancel();
+    deviceStateSubscription = flyKeysDevice.state.listen((s) {
+      print("#18 New state flykeys device : $s");
+      if (s == BluetoothDeviceState.disconnected) {
+        onDisconnectNotifier.value = true;
+      }
+    });
+  }
+
   /// [valueNotifierActualTick] sera mis à jour à chaque fois que l'esp32 avance
   /// d'un tick dans le morceau
   ///
@@ -431,44 +473,11 @@ class BluetoothRepository {
   void stopListeningToNotePushed() {
     try {
       streamSubscriptionNotePushedListening?.cancel();
-    } catch (e) {
-      print('error while cancelling streamSubscriptionNotePushedListening');
-    }
+    } catch (e) {}
   }
+  //endregion
 
-  /// send to the esp32 the [tick] passed in parameter
-  ///
-  /// return true if it succeed
-  /// false otherwise
-  Future<bool> sendANewTick(int tick) async {
-    int index = findTheIndexCorrespondToTheTick(tick);
-
-    if (index == -1) {
-      print(tick);
-      print(bytesSent);
-      return false;
-    }
-
-    ByteData byteData = new ByteData(4);
-    byteData.setInt32(0, index);
-    ByteData byteData2 = new ByteData(4);
-    byteData2.setInt32(0, tick);
-
-    print("send new tick : j'envoi tick=$tick et index=$index");
-
-    await envoiLaTrameMTU([
-      byteData.getUint8(3),
-      byteData.getUint8(2),
-      byteData.getUint8(1),
-      byteData.getUint8(0),
-      byteData2.getUint8(3),
-      byteData2.getUint8(2),
-      byteData2.getUint8(1),
-      byteData2.getUint8(0)
-    ], tickBluetoothCharacteristic);
-    return true;
-  }
-
+  //region Utils
   /// return the first index in the [bytesSent] corresponding to the [tickToGo]
   /// return -1 if none index corresponds to the [tickToGo]
   ///
@@ -487,6 +496,7 @@ class BluetoothRepository {
     }
     return -1;
   }
+  //endregion
 
   void dispose() {
     mainBluetoothCharacteristic = null;
