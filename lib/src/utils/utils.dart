@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:flykeys/src/repository/database_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Utils{
 
 	static const String app_version = "1.0";
 	static const String app_name = "FlyKeys";
-	static const String legalPhrase = "Thanks to : \nMatt Wojtaś for the app design inspiration\n";
+	static const String legalPhrase = "Thanks to : \nMatt Wojtaś for the app design inspiration\nDinosoftLabs, Flat icons, Icongeek26, Freepik,  for icons";
 	static const int numberOfMusicLoadedFirstTrending = 4;
 	static const int numberOfMusicLoadedWhenCLickLoadMoreMusic = 6;
 	static const int numberOfElementLoadedWhenSearch = 5;
+	static const noteNames = ['Do','Do#','Ré','Ré#','Mi','Fa','Fa#','Sol','Sol#','La','La#','Si'];
 
+	/// This function is useful when you retrieve a value from Firestore and you don't know if it is an int or a double
+	/// It [returns] the value casted to double
 	static double getIntOrDouble(var val){
 		if (val is double){
 			return val;
@@ -40,6 +42,8 @@ class Utils{
 		return str + " " + (reste/1000).floor().toString() + " " + (reste%1000).toString();
 	}
 
+	/// This function is useful when you retrieve a list of string from Firestore (because the type in dart is dynamic by default)
+	/// It [returns] a list of string
 	static List<String> listDynamicToStringList(List<dynamic> listDyn){
 		List<String> list = [];
 		for(var i in listDyn){
@@ -48,8 +52,7 @@ class Utils{
 		return list;
 	}
 
-	/************		SharedPrefs *************/
-
+	//region Shared prefs
 	/// Returns the string corresponding to the [key] in the shared prefs
 	/// If the string doesn't exist, it returns [defaultValue] which is an empty
 	/// string by default and can be configured with {defaultValue = YOUR_VALUE}
@@ -122,5 +125,34 @@ class Utils{
 		buffer.write(hexString.replaceFirst('#', ''));
 		return Color(int.parse(buffer.toString(), radix: 16));
 	}
+	//endregion
+
+	//region MIDI
+
+	static String getNoteNameFromKey(int key) {
+		return noteNames[key%12];
+	}
+
+	/// [firstKey] e.g 21
+	/// [lastKey] e.g 108
+	/// [returns] a Map with 'noires' and 'blanches' that are the numbers of corresponding keys
+	static Map getNumberOfTouches(int firstKey, int lastKey) {
+
+		int numberOfTouchesNoires = 0;
+		int numberOfTouchesBlanches = 0;
+
+		for(int key = firstKey; key<=lastKey; key++) {
+			String nameOfNote = noteNames[key%12];
+			if (nameOfNote.contains('#'))
+				numberOfTouchesNoires++;
+			else
+				numberOfTouchesBlanches++;
+		}
+
+		return {'noires':numberOfTouchesNoires,'blanches':numberOfTouchesBlanches};
+
+	}
+
+	//endregion
 
 }

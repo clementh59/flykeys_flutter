@@ -340,6 +340,43 @@ class CustomStyle{
 		fontWeight: FontWeight.bold,
 	);
 
+	/***************	 OnBoarding Page		*********************/
+
+	static TextStyle titleOnBoardingPage = TextStyle(
+			color: CustomColors.white,
+			fontSize: 16,
+			fontFamily: 'Poppins',
+			fontWeight: REGULAR,
+	);
+
+	static TextStyle bigTextOnBoardingPage = TextStyle(
+		color: CustomColors.white,
+		fontSize: 25,
+		fontFamily: 'Poppins',
+		fontWeight: MEDIUM,
+		height: 1.3
+	);
+
+	static TextStyle smallTextOnBoardingPage = TextStyle(
+		color: CustomColors.white,
+		fontSize: 16,
+		fontFamily: 'Poppins',
+		fontWeight: LIGHT,
+	);
+
+	static TextStyle smallButtonTextOnBoardingPage = TextStyle(
+		color: CustomColors.white,
+		fontSize: 14,
+		fontFamily: 'Poppins',
+		fontWeight: MEDIUM,
+	);
+
+	static TextStyle bigButtonTextOnBoardingPage = TextStyle(
+		color: CustomColors.white,
+		fontSize: 20,
+		fontFamily: 'Poppins',
+		fontWeight: BOLD,
+	);
 
 
 

@@ -317,7 +317,7 @@ class _ParameterPageState extends State<ParameterPage> {
           Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              CustomWidgets.buttonLoadMorePopularSongStyle("SAUVEGARDER MES COULEURS", saveColorChanges, biggerFont: true),
+              CustomWidgets.buttonLoadMorePopularSongStyle("SAUVEGARDER MES COULEURS", saveColorChanges, fontSize: 14.0),
               SizedBox(
                 height: 31,
               ),

@@ -1,15 +1,17 @@
 import 'dart:async';
+import 'dart:developer' as dev;
 import 'dart:io';
+
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
-import 'package:flykeys/src/model/midiReader/parsedFileReader.dart';
 import 'package:flykeys/src/model/midiReader/note.dart';
+import 'package:flykeys/src/model/midiReader/parsedFileReader.dart';
 import 'package:flykeys/src/repository/bluetooth_constants.dart';
 import 'package:flykeys/src/repository/bluetooth_repository.dart';
 import 'package:flykeys/src/repository/parsed_file_repository.dart';
+
 import 'bloc.dart';
-import 'dart:developer' as dev;
 
 class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
   final BluetoothRepository bluetoothRepository;
@@ -22,12 +24,15 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
   ValueNotifier<int> valueNotifierActualTick;
   ValueNotifier<Duration> valueNotifierActualDuration;
   ValueNotifier<bool>
-      valueNotifierUpdateTickInPage; //always true except when the user slide the time slide bar : we don't want that the slider update
+      valueNotifierUpdateTickInPage; //always true except when the user slide the time slide bar and we don't want the slider to update
   int nbDeTickMax; //le nb de tick total sert dans le calcul du temps actuel lorsque l'on recoit le tick actuel
   double
       speed_x1; //la speed_x1 sert dans le calcul du temps actuel lorsque l'on recoit le tick actuel
   bool isPlaying = false;
-  int lastSecondSentToMusicPage;//me sert pour updateTimeBarWithLastSecondsSentbyTheDevice()
+  int lastSecondSentToMusicPage; //me sert pour updateTimeBarWithLastSecondsSentbyTheDevice()
+
+  // To know which note has been pushed
+  ValueNotifier<int> valueNotifierNotePushed;
 
   BluetoothBloc(this.bluetoothRepository) {
     flutterBlue = FlutterBlue.instance;
@@ -48,7 +53,7 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
   Stream<MyBluetoothState> mapEventToState(
     BluetoothEvent event,
   ) async* {
-    dev.log("new event : $event",name: "Bluetooth bloc");
+    dev.log("new event : $event", name: "Bluetooth bloc");
     print("Bluetooth bloc : $event");
 
     //find device
@@ -73,13 +78,7 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
       yield FlyKeysDeviceFoundState();
       bool connected =
           await bluetoothRepository.connectToDevice(valueNotifierOnDisconnect);
-      valueNotifierOnDisconnect.addListener(() {
-        dev.log("Value changed : " + valueNotifierOnDisconnect.value.toString(),name:"valueNotifierOnDisconnect");
-        if (valueNotifierOnDisconnect.value == true) {
-          print("#15482 : disconnect!!!!!");
-          add(DisconnectEvent());
-        }
-      });
+      valueNotifierOnDisconnect.addListener(valueNotifierOnDisconnectListener);
       if (!connected) {
         yield FailedToConnectState();
         return;
@@ -99,15 +98,16 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
     }
 
     if (event is DisconnectEvent) {
-      valueNotifierStopSendingMorceau.value = true; //si il y a un envoit, je l'arrete / sinon, ca change rien
+      valueNotifierStopSendingMorceau?.value =
+          true; //si il y a un envoit, je l'arrete / sinon, ca change rien
       onDisconnect();
       yield FlyKeysDeviceDisconnectedState();
     }
 
     if (event is QuitMusicEvent) {
-      valueNotifierStopSendingMorceau?.value = true; //si il y a un envoit, je l'arrete / sinon, ca change rien
-      if (isPlaying)
-        await bluetoothRepository.pause();
+      valueNotifierStopSendingMorceau?.value =
+          true; //si il y a un envoit, je l'arrete / sinon, ca change rien
+      if (isPlaying) await bluetoothRepository.pause();
       yield InitialBluetoothState();
     }
 
@@ -126,32 +126,32 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
       return;
     }
 
-    if (event is EnvoiMesCouleursEvent){
+    if (event is EnvoiMesCouleursEvent) {
       await bluetoothRepository.sendColors(); // si je le met
       return;
     }
 
-    if (event is AskToWaitForTheUserInputEvent){
-    	await bluetoothRepository.askToWaitForUserInputInModeApprentissage();
-    	return;
-		}
+    if (event is AskToWaitForTheUserInputEvent) {
+      await bluetoothRepository.askToWaitForUserInputInModeApprentissage();
+      return;
+    }
 
-		if (event is AskToNotWaitForTheUserInputEvent){
-			await bluetoothRepository.askToNotWaitForUserInputInModeApprentissage();
-			return;
-		}
+    if (event is AskToNotWaitForTheUserInputEvent) {
+      await bluetoothRepository.askToNotWaitForUserInputInModeApprentissage();
+      return;
+    }
 
-    if (event is ShowMeTheTwoHands){
+    if (event is ShowMeTheTwoHands) {
       await bluetoothRepository.showTheTwoHands();
       return;
     }
 
-    if (event is ShowMeOnlyTheLeftHand){
+    if (event is ShowMeOnlyTheLeftHand) {
       await bluetoothRepository.showOnlyTheLeftHand();
       return;
     }
 
-    if (event is ShowMeOnlyTheRightHand){
+    if (event is ShowMeOnlyTheRightHand) {
       await bluetoothRepository.showOnlyTheRightHand();
       return;
     }
@@ -165,7 +165,7 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
           isPlaying = false;
         }
         valueNotifierUpdateTickInPage.value = true;
-        updateTimeBarWithLastSecondsSentbyTheDevice();
+        updateTimeBarWithLastSecondsSentByTheDevice();
       } else
         valueNotifierUpdateTickInPage.value = true;
       return;
@@ -177,7 +177,7 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
       isPlaying = true;
       yield PlayingMusicState();
       await bluetoothRepository
-          .subscribeToTickCharacteristic(valueNotifierActualTick);
+          .subscribeWhenTickIsUpdated(valueNotifierActualTick);
       updateDurationListenerWhenTickListenerUpdate();
     }
 
@@ -193,16 +193,34 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
       isPlaying = false;
     }
 
-
     //other modes!!
 
-    if (event is LightningShowEvent){
+    if (event is LightningShowEvent) {
       yield LoadingCommandMusicState();
       await bluetoothRepository.lightningShow();
       yield LightningShowModeState();
     }
 
-    //private events that are send in this class
+    if (event is SetUpMidiKeyboardLimitEvent) {
+      yield LoadingCommandMusicState();
+			valueNotifierNotePushed = event.valueNotifierNotePushed;
+      await bluetoothRepository.setUpMidiKeyboardLimit();
+      await bluetoothRepository
+          .subscribeWhenNoteIsPushed(valueNotifierNotePushed);
+      yield SetLimitOfKeyboardState();
+    }
+
+    if (event is LightLedsEvent) {
+      if (event.clearLeds)
+        await bluetoothRepository.clearLeds();
+      await bluetoothRepository.lightLeds(event.ledsToLight);
+    }
+
+		if (event is ClearLedsEvent) {
+			await bluetoothRepository.clearLeds();
+		}
+
+    ///private events that are send in this class
 
     //private event that is send when the stream in reactToSendMorceauEvent have a new value
     if (event is _SendingMorceauStepEvent) {
@@ -250,7 +268,12 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
     streamSubscription = bluetoothRepository
         .envoiLaTrameMorceau(trameToSend, valueNotifierStopSendingMorceau)
         .listen((value) {
-      dev.log("Sending in progress : " + value.toString() + "/" + trameToSend.length.toString(), name: "New event in bluetooth bloc");
+      dev.log(
+          "Sending in progress : " +
+              value.toString() +
+              "/" +
+              trameToSend.length.toString(),
+          name: "New event in bluetooth bloc");
       add(_SendingMorceauStepEvent(
           (value.toDouble() / trameToSend.length.toDouble())));
     });
@@ -266,24 +289,7 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
 	 *  Des que ActualTick change, j'update ActualTime pour que la page puisse mettre à jour sa timeBar
 	 */
   void updateDurationListenerWhenTickListenerUpdate() {
-    valueNotifierActualTick.addListener(() {
-      //je dois diviser par 1000 la speed_x1 car elle est en ms et je la veux en s
-
-      dev.log("Value changed : " + valueNotifierActualTick.value.toString(),name:"valueNotifierActualTick");
-
-      if (valueNotifierActualTick.value < 0) {
-        //Le morceau est finis!
-        add(MorceauIsFinishEvent());
-      } else {
-        int nbSeconds =
-            (valueNotifierActualTick.value * speed_x1 / 1000).floor();
-        if (valueNotifierUpdateTickInPage.value) {
-          print("#35 j'update le value notifier avec $nbSeconds");
-          valueNotifierActualDuration.value = new Duration(seconds: nbSeconds);
-          lastSecondSentToMusicPage = nbSeconds;
-        }
-      }
-    });
+    valueNotifierActualTick.addListener(valueNotifierActualTickListener);
   }
 
   void setSpeedX1(double speed) {
@@ -300,11 +306,13 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
     return duration;
   }
 
-  void setValueNotifierActualDuration(ValueNotifier<Duration> valueNotifierActualDuration) {
+  void setValueNotifierActualDuration(
+      ValueNotifier<Duration> valueNotifierActualDuration) {
     this.valueNotifierActualDuration = valueNotifierActualDuration;
   }
 
-  void setValueNotifierUpdateTickInPage(ValueNotifier<bool> valueNotifierUpdateTickInPage) {
+  void setValueNotifierUpdateTickInPage(
+      ValueNotifier<bool> valueNotifierUpdateTickInPage) {
     this.valueNotifierUpdateTickInPage = valueNotifierUpdateTickInPage;
   }
 
@@ -313,13 +321,50 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
 	 * C'est pour cela que cette fonction me renvoi cette info
 	 * Je l'utilise lorsque la seconde à laquelle j'essaie d'aller n'est pas chargé dans le device (Je n'ai pas envoyé tout le morceau)
 	 */
-  void updateTimeBarWithLastSecondsSentbyTheDevice() {
+  void updateTimeBarWithLastSecondsSentByTheDevice() {
     if (valueNotifierUpdateTickInPage.value) {
-      if (lastSecondSentToMusicPage==null)
-        lastSecondSentToMusicPage = 0;
-      valueNotifierActualDuration.value = new Duration(seconds: lastSecondSentToMusicPage);
+      if (lastSecondSentToMusicPage == null) lastSecondSentToMusicPage = 0;
+      valueNotifierActualDuration.value =
+          new Duration(seconds: lastSecondSentToMusicPage);
     }
   }
+
+  /****************		ValueNotifier Handlers	*********************/
+
+  valueNotifierOnDisconnectListener() {
+    dev.log("Value changed : " + valueNotifierOnDisconnect.value.toString(),
+        name: "valueNotifierOnDisconnect");
+    if (valueNotifierOnDisconnect.value == true) {
+      print("#15482 : disconnect!!!!!");
+      add(DisconnectEvent());
+    }
+  }
+
+  valueNotifierActualTickListener() {
+		//je dois diviser par 1000 la speed_x1 car elle est en ms et je la veux en s
+
+		dev.log("Value changed : " + valueNotifierActualTick.value.toString(),
+			name: "valueNotifierActualTick");
+
+		if (valueNotifierActualTick.value < 0) {
+			//Le morceau est finis!
+			add(MorceauIsFinishEvent());
+		} else {
+			int nbSeconds =
+			(valueNotifierActualTick.value * speed_x1 / 1000).floor();
+			if (valueNotifierUpdateTickInPage.value) {
+				print("#35 j'update le value notifier avec $nbSeconds");
+				valueNotifierActualDuration.value = new Duration(seconds: nbSeconds);
+				lastSecondSentToMusicPage = nbSeconds;
+			}
+		}
+	}
+
+	/****************		 Stop properly		**********************/
+
+	void stopListeningToNotePushed() {
+  	bluetoothRepository.stopListeningToNotePushed();
+	}
 
   void onDisconnect() {
     dispose();
@@ -329,8 +374,8 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
     dev.log("dispose bluetooth bloc", name: "Bluetooth bloc");
     flutterBlue.stopScan();
     bluetoothRepository?.dispose();
-    valueNotifierOnDisconnect?.removeListener(() {});
-    valueNotifierActualTick?.removeListener(() {});
+    valueNotifierOnDisconnect?.removeListener(valueNotifierOnDisconnectListener);
+    valueNotifierActualTick?.removeListener(valueNotifierActualTickListener);
     streamSubscription?.cancel();
   }
 }

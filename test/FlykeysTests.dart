@@ -5,6 +5,7 @@ import 'package:flykeys/src/model/midiReader/parsedFileReader.dart';
 import 'package:flykeys/src/model/midiReader/note.dart';
 import 'package:flykeys/src/repository/bluetooth_constants.dart';
 import 'package:flykeys/src/repository/bluetooth_repository.dart';
+import 'package:flykeys/src/utils/utils.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -85,6 +86,12 @@ void main() {
       52-12,MG,71-12,MG_RP
     ];
 
+    File createFileFromString(String str) {
+      File parsedFile = File('file.txt');
+      parsedFile.writeAsStringSync(str);
+      return parsedFile;
+    }
+
     setUpAll((){
       WidgetsFlutterBinding.ensureInitialized();
     });
@@ -124,10 +131,26 @@ void main() {
     });
 
   });
-}
 
-File createFileFromString(String str) {
-  File parsedFile = File('file.txt');
-  parsedFile.writeAsStringSync(str);
-  return parsedFile;
+  group('Utils', () {
+
+    test('It should return the name of the note corresponding to the MIDI key', () async {
+
+      expect(Utils.getNoteNameFromKey(24),'Do');
+      expect(Utils.getNoteNameFromKey(25),'Do#');
+      expect(Utils.getNoteNameFromKey(26),'Ré');
+      expect(Utils.getNoteNameFromKey(59),'Si');
+    });
+
+    test('It should return the number of black and whites keys', () async {
+
+      expect(Utils.getNumberOfTouches(24,26),{'noires':1,'blanches':2});
+      expect(Utils.getNumberOfTouches(24,24),{'noires':0,'blanches':1});
+      expect(Utils.getNumberOfTouches(24,25),{'noires':1,'blanches':1});
+      expect(Utils.getNumberOfTouches(24,35),{'noires':5,'blanches':7});
+      expect(Utils.getNumberOfTouches(21,50),{'noires':12,'blanches':18});
+      expect(Utils.getNumberOfTouches(21,108),{'noires':36,'blanches':52});
+    });
+
+  });
 }
