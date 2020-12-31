@@ -198,14 +198,30 @@ class CustomStyle{
 	);
 	//endregion
 
-	//region Music page
-	static TextStyle loadingTextMusicPage = TextStyle(
+	//region Sending morceau page
+	static TextStyle loadingProgressMusicPage = TextStyle(
 		color: CustomColors.white,
-		fontSize: 20,
+		fontSize: 24,
 		fontFamily: 'Poppins',
-		fontWeight: SEMIBOLD,
+		fontWeight: BLACK,
 	);
 
+	static TextStyle loadingTextMusicPage = TextStyle(
+		color: CustomColors.white,
+		fontSize: 18,
+		fontFamily: 'Poppins',
+		fontWeight: MEDIUM,
+	);
+
+	static TextStyle loadingTextSkipSendingStep = TextStyle(
+		color: CustomColors.blue,
+		fontSize: 12,
+		fontFamily: 'Poppins',
+		fontWeight: BOLD,
+	);
+	//endregion
+
+	//region Music page
 	static TextStyle musicNameMusicPage = TextStyle(
 		color: CustomColors.white,
 		fontSize: 20,

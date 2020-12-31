@@ -15,6 +15,7 @@ import 'package:flykeys/src/utils/custom_size.dart';
 import 'package:flykeys/src/utils/custom_style.dart';
 import 'package:flykeys/src/utils/strings.dart';
 import 'package:flykeys/src/utils/utils.dart';
+import 'package:flykeys/src/widget/customProgressCircle.dart';
 import 'package:flykeys/src/widget/custom_widgets.dart';
 
 import 'bluetooth/connection_to_flykeys_object_page.dart';
@@ -186,49 +187,34 @@ class SendingMorceauPage extends StatelessWidget {
 
   Widget envoiEnCoursPage(context, double avancement) {
     return Column(
-      mainAxisSize: MainAxisSize.min,
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: <Widget>[
-        CustomWidgets.textWithLoadingIndicator("Envoi du morceau en cours..."),
-        SizedBox(
-          height: 30,
-        ),
-        Stack(
+        SizedBox(),
+        Column(
           children: <Widget>[
-            Container(
-              width: MediaQuery.of(context).size.width - 100,
-              height: 40,
-              decoration: BoxDecoration(color: Colors.black.withOpacity(0.1)),
-            ),
-            Container(
-              width: (MediaQuery.of(context).size.width - 100) * min(1, avancement),
-              height: 40,
-              decoration: BoxDecoration(color: Colors.blue),
+            CustomProgressCircle(8 / 16),
+            Text(
+              'Envoi du morceau en cours...',
+              style: CustomStyle.loadingTextMusicPage,
             ),
           ],
         ),
-        SizedBox(
-          height: 30,
-        ),
-        InkWell(
-          focusColor: Colors.transparent,
-          hoverColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-          splashColor: Colors.transparent,
-          child: Container(
-              margin: EdgeInsets.only(top: 30),
-              padding: EdgeInsets.all(10),
-              decoration: BoxDecoration(color: Colors.blue, borderRadius: BorderRadius.circular(15)),
-              child: Text("Jouer que cette partie!")),
-          onTap: () {
-            _stopSendingMorceau(context);
-          },
+        Align(
+          alignment: Alignment.bottomRight,
+          child: Padding(
+            padding: EdgeInsets.only(bottom: 48, right: 38),
+            child: Text(
+              'Passer',
+              style: CustomStyle.loadingTextSkipSendingStep,
+            ),
+          ),
         ),
       ],
     );
   }
 
   void _stopSendingMorceau(context) {
-    //BlocProvider.of<BluetoothBloc>(context).add(StopSendingMorceauEvent());
     BlocProvider.of<BluetoothBloc>(context).stopSendingMorceau();
   }
 }
