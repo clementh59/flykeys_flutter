@@ -186,7 +186,6 @@ class SendingMorceauPage extends StatelessWidget {
   }
 
   Widget envoiEnCoursPage(context, double avancement) {
-    print(avancement);
     return Column(
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.spaceAround,
