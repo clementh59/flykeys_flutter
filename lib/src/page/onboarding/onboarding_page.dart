@@ -7,7 +7,7 @@ import 'package:flykeys/src/utils/custom_colors.dart';
 import 'package:flykeys/src/utils/custom_style.dart';
 import 'package:flykeys/src/widget/custom_widgets.dart';
 
-import 'ak_to_plug_the_object.dart';
+import 'ask_to_plug_the_object.dart';
 
 class OnBoardingPage extends StatefulWidget {
   @override
