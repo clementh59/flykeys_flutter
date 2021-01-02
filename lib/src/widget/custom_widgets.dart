@@ -4,9 +4,9 @@ import 'package:flykeys/src/bloc/image_loading/bloc.dart';
 import 'package:flykeys/src/page/parameter_page.dart';
 import 'package:flykeys/src/utils/custom_colors.dart';
 import 'package:flykeys/src/utils/custom_style.dart';
+import 'package:shimmer/shimmer.dart';
 
 class CustomWidgets {
-
   //region Icons
   static Widget settingsIcon(context) {
     return InkWell(
@@ -46,13 +46,7 @@ class CustomWidgets {
       height: 45,
       width: 45,
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(150), border: Border.all(color: CustomColors.blue, width: 1.25)),
-      child: Center(
-        child: Container(
-          width: 22,
-          height: 22,
-          child: Image.asset('assets/images/icons/play_icon.png')
-        )
-      ),
+      child: Center(child: Container(width: 22, height: 22, child: Image.asset('assets/images/icons/play_icon.png'))),
     );
   }
 
@@ -90,6 +84,7 @@ class CustomWidgets {
       ),
     );
   }
+
   //endregion
 
   static Widget ytWidget(double height) {
@@ -116,8 +111,8 @@ class CustomWidgets {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10),
       decoration: fill
-        ? BoxDecoration(color: CustomColors.blue, borderRadius: BorderRadius.circular(15))
-        : BoxDecoration(border: Border.all(color: CustomColors.grey), borderRadius: BorderRadius.circular(15)),
+          ? BoxDecoration(color: CustomColors.blue, borderRadius: BorderRadius.circular(15))
+          : BoxDecoration(border: Border.all(color: CustomColors.grey), borderRadius: BorderRadius.circular(15)),
       child: Center(
         child: Text(
           number,
@@ -181,9 +176,11 @@ class CustomWidgets {
       size: size,
     );
   }
+
   //endregion
 
   //region Note widgets
+  /// [difficulty] is the number of note that will be shown
   static Widget noteWidget(int difficulty) {
     List<Widget> notes = [];
 
@@ -197,6 +194,7 @@ class CustomWidgets {
     );
   }
 
+  /// [difficulty] is an integer. It is the number of note that will be shown
   static Widget biggerNoteWidget(int difficulty) {
     List<Widget> notes = [];
 
@@ -219,6 +217,7 @@ class CustomWidgets {
       ),
     );
   }
+
   //endregion
 
   //region Text
@@ -266,6 +265,7 @@ class CustomWidgets {
       style: CustomStyle.numberSlideBarMusicPage,
     );
   }
+
   //endregion
 
   //region Utils for connection
@@ -309,6 +309,7 @@ class CustomWidgets {
       style: CustomStyle.loadingTextMusicPage,
     );
   }
+
   //endregion
 
   //region Images
@@ -330,20 +331,20 @@ class CustomWidgets {
     return Stack(
       children: [
         BlocBuilder<ImageLoadingBloc, ImageLoadingState>(
-          bloc: imageLoadingBloc,
-          builder: (BuildContext context, ImageLoadingState state) {
-            Widget image;
+            bloc: imageLoadingBloc,
+            builder: (BuildContext context, ImageLoadingState state) {
+              Widget image;
 
-            if (state is ImageLoadedState) {
-              image = state.image;
-            } else
-              image = null;
+              if (state is ImageLoadedState) {
+                image = state.image;
+              } else
+                image = null;
 
-            if (image != null) {
-              return image;
-            }
-            return SizedBox();
-          }),
+              if (image != null) {
+                return image;
+              }
+              return SizedBox();
+            }),
         Positioned.fill(
           child: Container(
             decoration: BoxDecoration(
@@ -530,15 +531,14 @@ class CustomWidgets {
       ),
     );
   }
+
   //endregion
 
   //region Custom Layouts
   /// returns a ScrollView that can contain things like Column with max size, Expanded, ...
   /// And of course, the scrollView will be scrollable only if the items are overflowing the screen.
   static Widget scrollViewWithBoundedHeight({child, scrollController}) {
-
-    if (scrollController==null)
-      scrollController = new ScrollController();
+    if (scrollController == null) scrollController = new ScrollController();
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -555,6 +555,15 @@ class CustomWidgets {
           ),
         );
       },
+    );
+  }
+
+  /// wrap the child with a shimmer effect
+  static Widget customShimmer({child}) {
+    return Shimmer.fromColors(
+      baseColor: CustomColors.shimmerBaseColor,
+      highlightColor: CustomColors.shimmerHighlightColor,
+      child: child,
     );
   }
 //endregion

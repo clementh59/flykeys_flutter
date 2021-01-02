@@ -7,10 +7,12 @@ import 'package:flykeys/src/bloc/image_loading/bloc.dart';
 import 'package:flykeys/src/model/transcriber.dart';
 import 'package:flykeys/src/page/transcriber_page.dart';
 import 'package:flykeys/src/repository/image_provider_repository.dart';
+import 'package:flykeys/src/utils/custom_colors.dart';
 import 'package:flykeys/src/utils/custom_size.dart';
 import 'package:flykeys/src/utils/custom_style.dart';
 import 'package:flykeys/src/utils/utils.dart';
 import 'package:flykeys/src/widget/custom_widgets.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 class WidgetTranscriber extends StatefulWidget {
@@ -158,6 +160,78 @@ class _WidgetTranscriberState extends State<WidgetTranscriber> {
         ),
       ),
     );
+  }
+}
+
+class EmptyWidgetTranscriber extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(right: CustomSize.widthBetweenTranscribersTile),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(23),
+        child: Container(
+          height: CustomSize.heightOfTranscriberTile,
+          width: CustomSize.widthOfTranscriberTile,
+          child: Stack(
+            children: <Widget>[
+              _getLoadingImageWidget(),
+              Positioned(
+                top: CustomSize.heightOfTranscriberTile -
+                    CustomSize.heightOfBackgroundBlurTranscriberTile,
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: ClipRect(
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaY: 5, sigmaX: 5),
+                    child: Container(
+                      color: Colors.black.withOpacity(0.1),
+                    ),
+                  ),
+                ),
+              ),
+              CustomWidgets.customShimmer(
+                child: Align(
+                  alignment: Alignment.bottomLeft,
+                  child: Container(
+                    width: CustomSize.widthOfTranscriberTile,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 32.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Text(
+                                "",
+                                style: CustomStyle.transcriberTileName,
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 1,
+                          ),
+                          Text(
+                            "0 followers",
+                            style: CustomStyle.transcriberTileFollowers,
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );;
   }
 }
 
@@ -366,8 +440,12 @@ Widget _getDefaultImage() {
 }
 
 Widget _getLoadingImageWidget() {
-  return Center(
-    child: CircularProgressIndicator(),
+  return CustomWidgets.customShimmer(
+    child: Container(
+      width: CustomSize.widthOfTranscriberTile,
+      height: CustomSize.heightOfTranscriberTile,
+      color: Colors.white, // this colors isn't shown since the shimmer effect override it
+    ),
   );
 }
 

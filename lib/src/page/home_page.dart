@@ -22,8 +22,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  ValueNotifier valueNotifierActivePageTranscriber =
-      new ValueNotifier(0); //sert pour les dots indicators
+  ValueNotifier valueNotifierActivePageTranscriber = new ValueNotifier(0); //sert pour les dots indicators
   int dotIndicatorIndex = 0;
 
   TrendingBloc _trendingBloc;
@@ -45,9 +44,7 @@ class _HomePageState extends State<HomePage> {
     super.didChangeDependencies();
     _musicBloc = MusicBloc(FirestoreRepository());
     _transcriberBloc = TranscriberBloc(FirestoreRepository());
-    _trendingBloc =
-        TrendingBloc(_transcriberBloc, _musicBloc, FirestoreRepository())
-          ..add(GetTrendings());
+    _trendingBloc = TrendingBloc(_transcriberBloc, _musicBloc, FirestoreRepository())..add(GetTrendings());
   }
 
   @override
@@ -151,17 +148,22 @@ class _HomePageState extends State<HomePage> {
             return Row(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                SizedBox(width: CustomSize.leftAndRightPadding,),
-                for (int i = 0; i < state.transcribers.length; i++)
-                  WidgetTranscriber(
-                      state.transcribers[i], i, valueNotifierActivePage)
+                SizedBox(
+                  width: CustomSize.leftAndRightPadding,
+                ),
+                for (int i = 0; i < state.transcribers.length; i++) WidgetTranscriber(state.transcribers[i], i, valueNotifierActivePage)
               ],
             );
           }
-          if (state is TranscriberListLoadingState) {
-            return Container(height: CustomSize.heightOfTranscriberTile, width: MediaQuery.of(context).size.width,child: Center(child: CircularProgressIndicator()));
-          }
-          return SizedBox();
+          return Row(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              SizedBox(
+                width: CustomSize.leftAndRightPadding,
+              ),
+              for (int i = 0; i < 5; i++) EmptyWidgetTranscriber(),
+            ],
+          );
         },
       ),
     );
@@ -171,7 +173,7 @@ class _HomePageState extends State<HomePage> {
     return BlocBuilder<MusicBloc, MusicState>(
       bloc: _musicBloc,
       builder: (BuildContext context, MusicState state) {
-        print("New state in bloc builder $state");
+        List<Widget> musicWidgets = [];
 
         if (state is MusicTrendingListLoadedState) {
 
@@ -184,7 +186,6 @@ class _HomePageState extends State<HomePage> {
         }//lorsque les musiques sont chargées
 
         if (state is MusicTrendingListLoadingState){
-          List<Widget> musicWidgets = [];
 
           for (int i = 0; i < state.alreadyLoadedMusics.length; i++) {
             musicWidgets.add(WidgetMusic(state.alreadyLoadedMusics[i]));
@@ -208,38 +209,39 @@ class _HomePageState extends State<HomePage> {
 
         }//lorsque je viens de demander plus de musique
 
-        if (state is MusicListLoadingState) {
+        for (int i = 0; i < Constants.numberOfMusicLoadedFirstTrending; i++) {
+          musicWidgets.add(EmptyWidgetMusic());
+          if (i != Constants.numberOfMusicLoadedFirstTrending - 1)
+            musicWidgets.add(SizedBox(
+              height: CustomSize.heightBetweenMusicTiles,
+            ));
+        }
 
-          double height = CustomSize
-            .heightBetweenButtonLoadMorePopularSongsAndMusicTile +
-            CustomSize.heightBetweenButtonLoadMorePopularSongsAndPlayForFun +
-            CustomSize.heightOfMusicTile *
-              Constants.numberOfMusicLoadedFirstTrending +
-            CustomSize.heightBetweenMusicTiles *
-              (Constants.numberOfMusicLoadedFirstTrending -
-                1); //il manque la height du button load more songs mais comme je n'ai pas proprement défini de height, je le prend pas en compte
-          return Container(width: MediaQuery
-            .of(context)
-            .size
-            .width,
-            height: height,
-            child: Center(child: CircularProgressIndicator()));
-        }//lorsque je charge la premiere tournée de musique
+        musicWidgets.add(SizedBox(
+          height: CustomSize.heightBetweenButtonLoadMorePopularSongsAndPlayForFun,
+        ));
 
-
-        return SizedBox();
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: musicWidgets,
+        );
       },
     );
   }
 
   Widget _buttonLoadMorePopular() {
-    return CustomWidgets.buttonLoadMorePopularSongStyle('MORE POPULAR SONGS', (){_trendingBloc.add(GetMoreTrendingMusic());});
+    return CustomWidgets.buttonLoadMorePopularSongStyle('MORE POPULAR SONGS', () {
+      _trendingBloc.add(GetMoreTrendingMusic());
+    });
   }
 
   Widget gameTiles() {
     List<Widget> gameTiles = [];
 
-    gameTiles.add(SizedBox(width: CustomSize.leftAndRightPadding,));
+    gameTiles.add(SizedBox(
+      width: CustomSize.leftAndRightPadding,
+    ));
 
     for (int i = 0; i < games.length; i++) {
       gameTiles.add(gameTile(Game.fromMapObject(games[i])));
@@ -249,7 +251,9 @@ class _HomePageState extends State<HomePage> {
         ));
     }
 
-    gameTiles.add(SizedBox(width: CustomSize.leftAndRightPadding,));
+    gameTiles.add(SizedBox(
+      width: CustomSize.leftAndRightPadding,
+    ));
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
@@ -261,8 +265,8 @@ class _HomePageState extends State<HomePage> {
 
   Widget gameTile(Game game) {
     return InkWell(
-      onTap: (){
-        if (game.page!=null){
+      onTap: () {
+        if (game.page != null) {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => game.page),
@@ -339,15 +343,12 @@ class PageIndicator extends StatelessWidget {
     return Container(
       height: 9,
       width: 9,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5), color: CustomColors.blue),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), color: CustomColors.blue),
       child: Center(
         child: Container(
           height: 6,
           width: 6,
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
-              color: CustomColors.backgroundColor),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), color: CustomColors.backgroundColor),
         ),
       ),
     );
@@ -357,8 +358,7 @@ class PageIndicator extends StatelessWidget {
     return Container(
       height: size,
       width: size,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5), color: CustomColors.blueGrey),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), color: CustomColors.blueGrey),
     );
   }
 }

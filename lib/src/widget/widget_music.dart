@@ -7,13 +7,14 @@ import 'package:flykeys/src/model/artist.dart';
 import 'package:flykeys/src/model/music.dart';
 import 'package:flykeys/src/page/music_page.dart';
 import 'package:flykeys/src/repository/image_provider_repository.dart';
+import 'package:flykeys/src/utils/custom_colors.dart';
 import 'package:flykeys/src/utils/custom_size.dart';
 import 'package:flykeys/src/utils/custom_style.dart';
 import 'package:flykeys/src/widget/custom_widgets.dart';
 
 class WidgetMusic extends StatefulWidget {
   final Music music;
-  bool showFromArtistList;
+  final bool showFromArtistList;
 
   WidgetMusic(this.music,{this.showFromArtistList=false});
 
@@ -206,10 +207,71 @@ class _WidgetMusicState extends State<WidgetMusic> {
 
 }
 
+class EmptyWidgetMusic extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Row(
+          children: <Widget>[
+            ClipRRect(
+              borderRadius: BorderRadius.circular(30),
+              child: Container(
+                height: CustomSize.heightOfMusicTile,
+                width: CustomSize.heightOfMusicTile,
+                child: _getLoadingImageWidget(),
+              ),
+            ),
+            SizedBox(
+              width: 20,
+            ),
+            Container(
+              height: CustomSize.heightOfMusicTile,
+              child: Stack(
+                children: [
+                  Align(
+                      alignment: Alignment.topLeft,
+                      child: CustomWidgets.customShimmer(
+                        child: Text("Song",
+                            style: CustomStyle.musicTileName),
+                      )),
+                  CustomWidgets.customShimmer(
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: Text("Artist",
+                            style: CustomStyle.musicTileName),
+                      ),
+                    ),
+                  ),
+                  Align(
+                      alignment: Alignment.bottomLeft,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          CustomWidgets.customShimmer(child: CustomWidgets.starsWidget(5)),
+                          SizedBox(width: 12.6,),
+                          CustomWidgets.customShimmer(child: CustomWidgets.noteWidget(3)),
+                        ],
+                      )),
+                ],
+              ),
+            ),
+          ],
+        ),
+        CustomWidgets.customShimmer(child: CustomWidgets.heartIcon(true)),
+      ],
+    );
+  }
+}
+
 class MusicListWidget extends StatefulWidget {
   final List<Music> musicList;
   final Widget buttonLoadMore;
-  bool showFromArtistList;
+  final bool showFromArtistList;
 
   MusicListWidget(this.musicList, this.buttonLoadMore,{this.showFromArtistList=false});
 
@@ -255,7 +317,9 @@ class _MusicListWidgetState extends State<MusicListWidget> {
 }
 
 Widget _getLoadingImageWidget() {
-  return Center(
-    child: CircularProgressIndicator(),
+  return CustomWidgets.customShimmer(
+    child: Container(
+      color: Colors.white, // we don't see it, it is with shimmer effect
+    ),
   );
 }

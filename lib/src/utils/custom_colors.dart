@@ -12,6 +12,8 @@ class CustomColors{
 	static Color yellow = Color(0xffFFBB0C);
 	static Color grey = Color(0xffA3A3A3);
 	static Color lighterGrey = Color(0xffC3C3C3);
+	static Color shimmerBaseColor = white.withOpacity(0.05);
+	static Color shimmerHighlightColor = Color(0xff566578).withOpacity(0.05);
 	static Color blueGrey = Color(0xff566578);
 	static Color red = Color(0xffFF5555);
 	static Color heartColor = Color(0xffFF4C4C);
