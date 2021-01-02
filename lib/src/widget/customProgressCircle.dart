@@ -13,17 +13,19 @@ class CustomProgressCircle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    return Center(
-      child: Container(
-        width: 400,
-        height: 400,
-        child: Stack(
-          children: <Widget>[
-            Stack(
+    double size = MediaQuery.of(context).size.width;
+
+    return Container(
+      width: size,
+      height: size,
+      child: Stack(
+        children: <Widget>[
+          ClipRect(
+            child: Stack(
               children: <Widget>[
                 Container(
-                  width: 400,
-                  height: 400,
+                  width: size,
+                  height: size,
                   child: CustomPaint(
                     painter: ProgressCirclePainter(this.progress),
                   ),
@@ -36,34 +38,41 @@ class CustomProgressCircle extends StatelessWidget {
                 ),
               ],
             ),
-            Container(
-              width: 400,
-              height: 400,
-              child: CustomPaint(
-                painter: BackgroundCirclePainter(),
-              ),
+          ),
+          Container(
+            width: size,
+            height: size,
+            child: CustomPaint(
+              painter: BackgroundCirclePainter(),
             ),
-            Container(
-              width: 400,
-              height: 400,
-              child: CustomPaint(
-                painter: ProgressCirclePainter(this.progress),
-              ),
+          ),
+          Center(
+            child: Stack(
+              children: [
+                Container(
+                  width: size,
+                  height: size,
+                  child: CustomPaint(
+                    painter: ProgressCirclePainter(this.progress),
+                  ),
+                ),
+                Center(
+                  child: Text(
+                    ((progress*100).round()).toString()+'%',
+                    style: CustomStyle.loadingProgressMusicPage,
+                  ),
+                ),
+              ],
             ),
-            Center(
-              child: Text(
-                ((progress*100).round()).toString()+'%',
-                style: CustomStyle.loadingProgressMusicPage,
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 }
 
 class BackgroundCirclePainter extends CustomPainter {
+
   @override
   void paint(Canvas canvas, Size size) {
     var paint1 = Paint()
@@ -71,7 +80,7 @@ class BackgroundCirclePainter extends CustomPainter {
       ..strokeWidth = 6
       ..style = PaintingStyle.stroke;
 
-    canvas.drawCircle(Offset(200, 200), 100, paint1);
+    canvas.drawCircle(Offset(size.width/2, size.width/2), 100, paint1);
   }
 
   @override
@@ -88,8 +97,8 @@ class ProgressCirclePainter extends CustomPainter {
     // In your paint method
     final paint = Paint()
       ..shader = ui.Gradient.linear(
-        Offset(200, 0),
-        Offset(200, 400),
+        Offset(size.width/2, 0),
+        Offset(size.width/2, size.width),
         [
           Color(0xff48FED0),
           Color(0xff39B1FB),
@@ -102,8 +111,8 @@ class ProgressCirclePainter extends CustomPainter {
     // it is between 0 and 2*pi
     double arcSize = 2 * pi * this.progress;
 
-    canvas.drawArc(ui.Rect.fromCircle(center: Offset(200, 200), radius: 100), -pi / 2, arcSize, false, paint);
-    canvas.drawArc(ui.Rect.fromCircle(center: Offset(200, 200), radius: 100), -pi / 2, arcSize, false, paint);
+    canvas.drawArc(ui.Rect.fromCircle(center: Offset(size.width/2, size.width/2), radius: 100), -pi / 2, arcSize, false, paint);
+    canvas.drawArc(ui.Rect.fromCircle(center: Offset(size.width/2, size.width/2), radius: 100), -pi / 2, arcSize, false, paint);
   }
 
   @override

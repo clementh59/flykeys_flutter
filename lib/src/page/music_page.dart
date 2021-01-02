@@ -193,7 +193,7 @@ class SendingMorceauPage extends StatelessWidget {
         SizedBox(),
         Column(
           children: <Widget>[
-            CustomProgressCircle(8 / 16),
+            CustomProgressCircle(avancement),
             Text(
               'Envoi du morceau en cours...',
               style: CustomStyle.loadingTextMusicPage,
@@ -204,9 +204,18 @@ class SendingMorceauPage extends StatelessWidget {
           alignment: Alignment.bottomRight,
           child: Padding(
             padding: EdgeInsets.only(bottom: 48, right: 38),
-            child: Text(
-              'Passer',
-              style: CustomStyle.loadingTextSkipSendingStep,
+            child: InkWell(
+              onTap: () {
+                _stopSendingMorceau(context);
+              },
+              focusColor: Colors.transparent,
+              hoverColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+              splashColor: Colors.transparent,
+              child: Text(
+                'Passer',
+                style: CustomStyle.loadingTextSkipSendingStep,
+              ),
             ),
           ),
         ),
