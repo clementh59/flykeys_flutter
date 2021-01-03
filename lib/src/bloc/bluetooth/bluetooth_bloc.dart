@@ -10,6 +10,8 @@ import 'package:flykeys/src/model/midiReader/parsedFileReader.dart';
 import 'package:flykeys/src/repository/bluetooth_constants.dart';
 import 'package:flykeys/src/repository/bluetooth_repository.dart';
 import 'package:flykeys/src/repository/parsed_file_repository.dart';
+import 'package:flykeys/src/utils/strings.dart';
+import 'package:flykeys/src/utils/utils.dart';
 
 import 'bloc.dart';
 
@@ -27,7 +29,7 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
       valueNotifierUpdateTickInPage; //always true except when the user slide the time slide bar and we don't want the slider to update
   int nbDeTickMax; //le nb de tick total sert dans le calcul du temps actuel lorsque l'on recoit le tick actuel
   double
-      speed_x1; //la speed_x1 sert dans le calcul du temps actuel lorsque l'on recoit le tick actuel
+      speedX1; //la speedX1 sert dans le calcul du temps actuel lorsque l'on recoit le tick actuel
   bool isPlaying = false;
   int lastSecondSentToMusicPage; //me sert pour updateTimeBarWithLastSecondsSentbyTheDevice()
 
@@ -44,7 +46,7 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
   void initEverythingLearningMode() {
     valueNotifierStopSendingMorceau = ValueNotifier(false);
     valueNotifierActualTick = ValueNotifier(0);
-    speed_x1 = 0;
+    speedX1 = 0;
     nbDeTickMax = 0;
     isPlaying = false;
   }
@@ -266,7 +268,8 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
 
     yield DecodageMorceauState();
     ParsedFileReader midiReader = ParsedFileReader(dataFile: parsedFile);
-    List<Note> listNotes = await midiReader.readDataFile();
+    Map pianoInfo = await Utils.getMapFromSharedPreferences(Strings.PIANO_INFOS_SHARED_PREFS);
+    List<Note> listNotes = await midiReader.readDataFile(pianoInfo['leftLimit'], pianoInfo['rightLimit']);
     nbDeTickMax = midiReader.getNbDeTickDuMorceau();
 
     if (valueNotifierStopSendingMorceau.value) {
@@ -315,7 +318,7 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
   }
 
   Duration getDurationOfTheMorceau() {
-    int nbSeconds = (nbDeTickMax * speed_x1 / 1000).floor();
+    int nbSeconds = (nbDeTickMax * speedX1 / 1000).floor();
     Duration duration = new Duration(seconds: nbSeconds);
     return duration;
   }
@@ -333,7 +336,7 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
 
   //region Setters
   void setSpeedX1(double speed) {
-    speed_x1 = speed;
+    speedX1 = speed;
   }
 
   void setValueNotifierActualDuration(
@@ -368,7 +371,7 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
 			add(MorceauIsFinishEvent());
 		} else {
 			int nbSeconds =
-			(valueNotifierActualTick.value * speed_x1 / 1000).floor();
+			(valueNotifierActualTick.value * speedX1 / 1000).floor();
 			if (valueNotifierUpdateTickInPage.value) {
 				valueNotifierActualDuration.value = new Duration(seconds: nbSeconds);
 				lastSecondSentToMusicPage = nbSeconds;
@@ -407,9 +410,7 @@ class _SendingMorceauStepEvent extends BluetoothEvent {
   List<Object> get props => [progress];
 }
 
-/**
- * Est appele lorsque l'envoi est finis ou lorsque on la stoppé
- */
+///Est appele lorsque l'envoi est finis ou lorsque on la stoppé
 class _SendingMorceauFinishEvent extends BluetoothEvent {
   _SendingMorceauFinishEvent();
 

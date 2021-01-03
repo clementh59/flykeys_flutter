@@ -92,10 +92,10 @@ class Utils{
 
 	/// Returns the map corresponding to the [key] in the shared prefs
 	/// If the key doesn't exist, it returns [defaultValue]
-	static Future<Map> getMapFromSharedPreferences(String key, defaultValue) async {
+	static Future<Map> getMapFromSharedPreferences(String key, {defaultValue}) async {
 		String res = await readStringFromSharedPreferences(key);
 		if (res == '')
-			return defaultValue;
+			return defaultValue ?? {};
 		return json.decode(res);
 	}
 
