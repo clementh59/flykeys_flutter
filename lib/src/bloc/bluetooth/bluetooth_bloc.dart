@@ -370,7 +370,6 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
 			int nbSeconds =
 			(valueNotifierActualTick.value * speed_x1 / 1000).floor();
 			if (valueNotifierUpdateTickInPage.value) {
-				print("#35 j'update le value notifier avec $nbSeconds");
 				valueNotifierActualDuration.value = new Duration(seconds: nbSeconds);
 				lastSecondSentToMusicPage = nbSeconds;
 			}

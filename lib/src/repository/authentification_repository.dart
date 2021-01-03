@@ -139,7 +139,8 @@ class AuthentificationRepository {
     await _auth.sendPasswordResetEmail(email: mail);
   }
 
-  Future<bool> checkIfHeIsLogin() async {
+  /// [returns] true if the user is logged in - false otherwise
+  Future<bool> checkIfHeIsLoggedIn() async {
     FirebaseUser value = await FirebaseAuth.instance.currentUser();
     if (value == null)
      return false;

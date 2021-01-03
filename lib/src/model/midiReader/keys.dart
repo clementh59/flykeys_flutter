@@ -12,7 +12,6 @@ class Keys {
 	List<ListeVerticale> keys;
 
 	Keys() {
-		//System.out.println(TAG + "Keys constructor");
 		keys = List();
 		for(int i=0;i<NB_TOUCHES_VERTICALE_MAX;i++){
 			keys.add(new ListeVerticale());
@@ -76,7 +75,6 @@ class ListeVerticale{
 		if (listNotes.length!=0 && !listNotes[listNotes.length-1].aDejaUneNoteOff()){
 			//Si la note d'avant n'a pas été terminée, je la retire et j'insère la mienne
 			listNotes.removeLast();
-			print("J'ajoute $n");
 			listNotes.add(n);
 		}else{
 			listNotes.add(n);

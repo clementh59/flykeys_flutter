@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 class Utils{
 
@@ -62,24 +63,22 @@ class Utils{
 	static Future<List<String>> readListOfStringFromSharedPreferences(String key, {defaultValue}) async {
 		final prefs = await SharedPreferences.getInstance();
 		final value = prefs.getStringList(key) ?? defaultValue ? defaultValue : [];
-		//print('read: $value');
 		return value;
 	}
 
 	static Future<void> saveStringToSharedPreferences(String key, String value) async {
 		final prefs = await SharedPreferences.getInstance();
-		prefs.setString(key, value);
+		await prefs.setString(key, value);
 		//print('saved $value');
 	}
 
 	static Future<void> saveListOfStringToSharedPreferences(String key, List<String> value) async {
 		final prefs = await SharedPreferences.getInstance();
-		prefs.setStringList(key, value);
-		//print('saved $value');
+		await prefs.setStringList(key, value);
 	}
 
 	/// Returns the boolean corresponding to the [key] in the shared prefs
-	/// If the boolean doesn't exist, it returns [defaultValue] which is an false
+	/// If the boolean doesn't exist, it returns [defaultValue] which is false
 	/// by default and can be configured with {defaultValue = YOUR_VALUE}
 	static Future<bool> getBooleanFromSharedPreferences(String key, {defaultValue=false}) async {
 		final prefs = await SharedPreferences.getInstance();
@@ -88,7 +87,20 @@ class Utils{
 
 	static Future<void> saveBooleanToSharedPreferences(String key, bool value) async {
 		final prefs = await SharedPreferences.getInstance();
-		prefs.setBool(key, value);
+		await prefs.setBool(key, value);
+	}
+
+	/// Returns the map corresponding to the [key] in the shared prefs
+	/// If the key doesn't exist, it returns [defaultValue]
+	static Future<Map> getMapFromSharedPreferences(String key, defaultValue) async {
+		String res = await readStringFromSharedPreferences(key);
+		if (res == '')
+			return defaultValue;
+		return json.decode(res);
+	}
+
+	static Future<void> saveMapToSharedPreferences(String key, Map value) async {
+		await saveStringToSharedPreferences(key, json.encode(value));
 	}
 
 	/****	  Colors in shared prefs	*****/
@@ -110,7 +122,7 @@ class Utils{
 
 	static Future<void> saveColorToSharedPreferences(String key, Color value) async {
 		final prefs = await SharedPreferences.getInstance();
-		prefs.setString(key, value.toString());
+		await prefs.setString(key, value.toString());
 	}
 
 	static Color _fromHex(String hexString) {

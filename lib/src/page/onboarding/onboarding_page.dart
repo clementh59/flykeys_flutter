@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flykeys/src/page/main_page.dart';
 import 'package:flykeys/src/page/onboarding/ask_to_plug_the_cable.dart';
 import 'package:flykeys/src/page/onboarding/choose_the_kind_of_piano.dart';
 import 'package:flykeys/src/page/onboarding/set_limit_of_keyboard.dart';
 import 'package:flykeys/src/page/onboarding/validate_the_choice_of_kind_of_piano.dart';
 import 'package:flykeys/src/utils/custom_colors.dart';
 import 'package:flykeys/src/utils/custom_style.dart';
+import 'package:flykeys/src/utils/strings.dart';
+import 'package:flykeys/src/utils/utils.dart';
 import 'package:flykeys/src/widget/custom_widgets.dart';
 
 import 'ask_to_plug_the_object.dart';
 
 class OnBoardingPage extends StatefulWidget {
+  final Widget nextPage;
+
+  OnBoardingPage({@required this.nextPage});
+
   @override
   _OnBoardingPageState createState() => _OnBoardingPageState();
 }
@@ -70,16 +77,16 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
       'setLimitOfKeyboard': {
         'index': 4,
         'page': SetLimitOfKeyboard(info, goToNextStep, goToPreviousStep),
-        'next': 'explanationModeApprentissage',
+        //'next': 'explanationModeApprentissage',
         'customScroll': true,
       },
-      'explanationModeApprentissage': {
+      /*'explanationModeApprentissage': {
         'index': 5,
         'next': 'explanationModeLightningShow',
       },
       'explanationModeLightningShow': {
         'index': 6,
-      },
+      },*/
     };
     step = onBoardingSteps['chooseTheKindOfPiano'];
     history.add(step);
@@ -118,6 +125,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
       ),
     );
   }
+
   //endregion
 
   //region Widgets
@@ -163,8 +171,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
   }
 
   Widget body() {
-
-    if (step['customScroll']==true) {
+    if (step['customScroll'] == true) {
       return step['page'];
     }
 
@@ -255,6 +262,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
       ),
     );
   }
+
   //endregion
 
   //region Logic
@@ -275,7 +283,10 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
   /// Go to the previous step of the onboarding process
   /// Returns false if there isn't next step - true otherwise
   bool goToNextStep() {
-    if (step['next'] == null) return false;
+    if (step['next'] == null) { // it means I've finished the onBoarding process
+      onOnBoardingFinish();
+      return false;
+    }
 
     String next;
 
@@ -292,5 +303,14 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
 
     return true;
   }
+
+  void onOnBoardingFinish() {
+		Navigator.pushReplacement(
+			context,
+			MaterialPageRoute(builder: (context) => widget.nextPage),
+		);
+		Utils.saveBooleanToSharedPreferences(Strings.I_DID_ONBOARDING_SHARED_PREFS, true);
+		Utils.saveMapToSharedPreferences(Strings.PIANO_INFOS_SHARED_PREFS, info);
+	}
 //endregion
 }

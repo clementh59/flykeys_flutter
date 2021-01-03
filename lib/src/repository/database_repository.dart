@@ -155,7 +155,6 @@ class FirestoreRepository extends DatabaseRepository {
         .get();
 
     Map<String, dynamic> data = ds.data;
-    print(data);
 
     return data;
   }

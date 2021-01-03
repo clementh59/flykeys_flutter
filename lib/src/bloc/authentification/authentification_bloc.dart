@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flykeys/src/repository/authentification_repository.dart';
 import './bloc.dart';
 
@@ -50,7 +49,7 @@ class AuthentificationBloc extends Bloc<AuthentificationEvent, AuthentificationS
     }
 
     if (event is CheckIfHeIsLogin){
-      if (await authentificationRepository.checkIfHeIsLogin())
+      if (await authentificationRepository.checkIfHeIsLoggedIn())
         yield AuthentificateSucceedState();
     }
 

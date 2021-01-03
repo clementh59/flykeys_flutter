@@ -359,7 +359,6 @@ class BluetoothRepository {
 
   /// Je demande à l'esp32 d'éteindre toute les LEDs
   Future<void> clearLeds() async {
-    print('I clear LEDS');
     await mainBluetoothCharacteristic.write([BluetoothConstants.CODE_CLEAR_LEDS]);
   }
 
@@ -452,7 +451,6 @@ class BluetoothRepository {
   /// Pour ce faire, la fonction listen to [tickBluetoothCharacteristic] et
   /// met à jour [valueNotifierNotePushed] en fonction de la nouvelle valeur.
   Future<int> subscribeWhenNoteIsPushed(ValueNotifier valueNotifierNotePushed) async {
-    print('subscribe when note is pushed');
     await tickBluetoothCharacteristic.setNotifyValue(true);
     streamSubscriptionNotePushedListening?.cancel();
     streamSubscriptionNotePushedListening =

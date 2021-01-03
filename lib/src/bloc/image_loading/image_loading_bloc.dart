@@ -26,8 +26,6 @@ class ImageLoadingBloc extends Bloc<ImageLoadingEvent, ImageLoadingState> {
       if (event.image=="")
         yield NoImageState();
       else{
-        print(event.image);
-        print(event.path);
         yield LoadingImageState();
         Widget image = await imageProviderRepository.fetchImage(event.path+'/'+event.image);
         yield ImageLoadedState(image);

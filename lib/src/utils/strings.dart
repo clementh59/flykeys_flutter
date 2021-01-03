@@ -32,6 +32,8 @@ class Strings{
 	static const String WAIT_FOR_USER_INPUT_SHARED_PREFS = "WAIT_FOR_USER_INPUT";
 	static const String COLOR_MD_SHARED_PREFS = "COLOR_MD";
 	static const String COLOR_MG_SHARED_PREFS = "COLOR_MG";
+	static const String I_DID_ONBOARDING_SHARED_PREFS = "I_DID_ONBOARDING";
+	static const String PIANO_INFOS_SHARED_PREFS = "PIANO_INFOS";
 	//endregion
 
 }

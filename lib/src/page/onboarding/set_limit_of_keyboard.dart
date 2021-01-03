@@ -182,7 +182,7 @@ class _SetLimitOfKeyboardState extends State<SetLimitOfKeyboard> {
             ),
             SizedBox(height: 26),
             Text(
-              'L’application va communiquer avec l’objet pour vérifier que la communication avec le piano est valide. N\'hésitez pas à appuyer sur différentes touches pendant plusieurs secondes (parfois la connection met quelques secondes à se faire). Vous serez automatiquement redirigé lorsque l\'appuie d\'une touche sera detecté',
+              'L’application va communiquer avec l’objet pour vérifier que la communication avec le piano est valide. N\'hésitez pas à appuyer sur différentes touches pendant plusieurs secondes (parfois la connection met quelques secondes à se faire). Vous serez automatiquement redirigé lorsque l\'appuie d\'une touche sera detecté. Votre piano doit être branché pour que la connexion fonctionne.',
               style: CustomStyle.smallTextOnBoardingPage,
               textAlign: TextAlign.left,
             ),
@@ -393,7 +393,6 @@ class _SetLimitOfKeyboardState extends State<SetLimitOfKeyboard> {
         Padding(
           padding: const EdgeInsets.only(bottom: 20.0, top: 20),
           child: CustomWidgets.buttonLoadMorePopularSongStyle("C'est fait", () {
-            print(dropdownValues);
             if (dropdownValues.containsKey('firstKey') && dropdownValues.containsKey('numberOfKeys')) {
               widget.info['leftLimit'] = dropdownValues['firstKey'];
               widget.info['rightLimit'] = dropdownValues['firstKey'] + dropdownValues['numberOfKeys'] - 1;
@@ -610,6 +609,11 @@ class _SetLimitOfKeyboardState extends State<SetLimitOfKeyboard> {
   //region Logic
 
   void onNotePushed() {
+    if (step == StepsForMidi.checkConnection){
+      setState(() {
+        step = StepsForMidi.setUpLeftLimit;
+      });
+    }
     setState(() {
       lastKeyPushed = valueNotifierNotePushed.value;
     });
@@ -642,6 +646,8 @@ class _SetLimitOfKeyboardState extends State<SetLimitOfKeyboard> {
                         step = StepsForMidi.setUpLeftLimit;
                       else
                         step = StepsForAcoustic.setUpFirstKey;
+                      lightTheLeftLineOfLed = true;
+                      lightTheRightLineOfLed = true;
                     });
                   },
                 ),
