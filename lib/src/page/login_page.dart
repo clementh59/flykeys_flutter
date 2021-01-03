@@ -65,54 +65,51 @@ class _LoginPageState extends State<LoginPage> {
       child: BlocBuilder<AuthentificationBloc, AuthentificationState>(
           bloc: authentificationBloc,
           builder: (BuildContext context, AuthentificationState state) {
-            if (state is InitialAuthentificationState ||
-                state is AuthentificateFailedState)
-              return Scaffold(
-                key: _scaffoldKey,
-                backgroundColor: CustomColors.backgroundColor,
-                body: GestureDetector(
-                  onTap: () => FocusScope.of(context).unfocus(),
-                  child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
-                    child: view == "login"
-                        ? Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Text(
-                                'Sign In',
-                                style: CustomStyle.signInLoginPage,
-                              ),
-                              _buildEmailTF(),
-                              _buildPasswordTF(true),
-                              _buildLoginBtn(),
-                              _buildSignInWithText(),
-                              _buildSignupBtn(),
-                            ],
-                          )
-                        : Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Text(
-                                'Sign Up',
-                                style: CustomStyle.signInLoginPage,
-                              ),
-                              _buildNameTF(),
-                              _buildEmailTF(),
-                              _buildPasswordTF(false),
-                              _buildConfirmPasswordTF(),
-                              _buildRegisterBtn(),
-                              _buildSigninBtn(),
-                            ],
-                          ),
-                  ),
-                ),
-              );
             if (state is AuthentificateSucceedState)
               return MainPage();
 
-            return Center(
-              child: Text("State not handled $state"),
+            return Scaffold(
+              key: _scaffoldKey,
+              backgroundColor: CustomColors.backgroundColor,
+              body: SafeArea(
+                child: GestureDetector(
+                  onTap: () => FocusScope.of(context).unfocus(),
+                  child: Padding(
+                    padding:
+                    const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
+                    child: view == "login"
+                        ? Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text(
+                          'Sign In',
+                          style: CustomStyle.signInLoginPage,
+                        ),
+                        _buildEmailTF(),
+                        _buildPasswordTF(true),
+                        _buildLoginBtn(),
+                        _buildSignInWithText(),
+                        _buildSignupBtn(),
+                      ],
+                    )
+                        : Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text(
+                          'Sign Up',
+                          style: CustomStyle.signInLoginPage,
+                        ),
+                        _buildNameTF(),
+                        _buildEmailTF(),
+                        _buildPasswordTF(false),
+                        _buildConfirmPasswordTF(),
+                        _buildRegisterBtn(),
+                        _buildSigninBtn(),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
             );
           }),
     );

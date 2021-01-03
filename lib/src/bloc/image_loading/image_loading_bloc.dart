@@ -20,8 +20,6 @@ class ImageLoadingBloc extends Bloc<ImageLoadingEvent, ImageLoadingState> {
     ImageLoadingEvent event,
   ) async* {
 
-    dev.log("$event",name: "New event in image loading bloc");
-
     if (event is LoadImage){
       if (event.image=="")
         yield NoImageState();

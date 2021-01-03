@@ -17,11 +17,14 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: CustomBottomNavigationBar((val) {
-        setState(() {
-          _selectedItem = val;
-        });
-      }),
+      resizeToAvoidBottomInset: false,
+      bottomNavigationBar: SafeArea(
+        child: CustomBottomNavigationBar((val) {
+          setState(() {
+            _selectedItem = val;
+          });
+        }),
+      ),
       backgroundColor: CustomColors.backgroundColor,
       body: SafeArea(
         child: IndexedStack(

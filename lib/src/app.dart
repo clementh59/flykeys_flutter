@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flykeys/src/bloc/authentification/authentification_bloc.dart';
+import 'package:flykeys/src/page/loading_page.dart';
 import 'package:flykeys/src/page/login_page.dart';
 import 'package:flykeys/src/page/main_page.dart';
 import 'package:flykeys/src/page/onboarding/onboarding_page.dart';
@@ -10,7 +11,6 @@ import 'package:flykeys/src/repository/bluetooth_repository.dart';
 import 'package:flykeys/src/repository/database_repository.dart';
 import 'package:flykeys/src/utils/strings.dart';
 import 'package:flykeys/src/utils/utils.dart';
-import 'package:flykeys/src/widget/custom_widgets.dart';
 
 import 'bloc/bluetooth/bloc.dart';
 import 'bloc/favorites/bloc.dart';
@@ -23,7 +23,6 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
-
   var pageToShow = possiblePages.loading;
 
   @override
@@ -39,22 +38,32 @@ class _AppState extends State<App> {
       DeviceOrientation.portraitDown,
     ]);
 
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider<BluetoothBloc>(create: (BuildContext context) {
-          return BluetoothBloc(BluetoothRepository());
-        }),
-        BlocProvider<FavoritesBloc>(create: (BuildContext context) {
-          return FavoritesBloc(SharedPrefsRepository(), FirestoreRepository());
-        }),
-        BlocProvider<AuthentificationBloc>(create: (BuildContext context) {
-          return AuthentificationBloc();
-        }),
-      ],
-      child: MaterialApp(
-        theme: ThemeData.dark(),
-        debugShowCheckedModeBanner: false,
-        home: getPageToShow() /*LoginPage()*/,
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+        statusBarColor: Colors.white,
+      ),
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider<BluetoothBloc>(create: (BuildContext context) {
+            return BluetoothBloc(BluetoothRepository());
+          }),
+          BlocProvider<FavoritesBloc>(create: (BuildContext context) {
+            return FavoritesBloc(SharedPrefsRepository(), FirestoreRepository());
+          }),
+          BlocProvider<AuthentificationBloc>(create: (BuildContext context) {
+            return AuthentificationBloc();
+          }),
+        ],
+        child: MaterialApp(
+          theme: ThemeData.dark(),
+          debugShowCheckedModeBanner: false,
+          home: AnnotatedRegion(
+              value: SystemUiOverlayStyle(
+                statusBarColor: Colors.white,
+              ),
+              child: getPageToShow()
+          ),
+        ),
       ),
     );
   }
@@ -62,14 +71,16 @@ class _AppState extends State<App> {
   /// [returns] the page to show according to [pageToShow]
   Widget getPageToShow() {
     switch (pageToShow) {
-      case possiblePages.loading :
-        return Center(child: CustomWidgets.circularProgressIndicator());
-      case possiblePages.mainPage :
+      case possiblePages.loading:
+        return LoadingPage();
+      case possiblePages.mainPage:
         return MainPage();
-      case possiblePages.login :
+      case possiblePages.login:
         return LoginPage();
-      case possiblePages.onBoarding :
-        return OnBoardingPage(nextPage: LoginPage(),);
+      case possiblePages.onBoarding:
+        return OnBoardingPage(
+          nextPage: LoginPage(),
+        );
     }
     return SizedBox();
   }
@@ -87,7 +98,7 @@ class _AppState extends State<App> {
     bool iDidOnBoarding = results[0];
     bool iAmLogin = results[1];
 
-    if (!iDidOnBoarding){
+    if (!iDidOnBoarding) {
       setState(() {
         pageToShow = possiblePages.onBoarding;
       });
@@ -101,5 +112,4 @@ class _AppState extends State<App> {
       });
     }
   }
-
 }
