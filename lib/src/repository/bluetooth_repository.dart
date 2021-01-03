@@ -26,7 +26,8 @@ class BluetoothRepository {
   //region Trame morceau
   /// Create a List of byte that can be understood by the esp32 from a
   /// list of note
-  List<int> createTrameFromListeNote(List<Note> listNotes) {
+  /// [leftLimit] the first key of the user's piano
+  List<int> createTrameFromListeNote(List<Note> listNotes, int leftLimit, int rightLimit) {
     List<Note> notesDejaEnvoyees = [];
     List<int> tramesAEnvoyer = [];
     int actualTick = -8;
@@ -37,7 +38,7 @@ class BluetoothRepository {
     List<Note>
         actualKeysOn; //Pour savoir si on doit appuyer sur une touche deux fois alors que l'on voit juste deux LEDs
 
-    listNotes.forEach((element) {element.key -= 12;});//todo: remove and do it from the user params
+    listNotes.forEach((element) {element.key -= (leftLimit - 12);});
 
     while (listNotes.length > 0) {
       lastKeysOn = actualKeysOn;
@@ -45,8 +46,8 @@ class BluetoothRepository {
       for (int i = 0; i < min(listNotes.length, 250); i++) {
         n = listNotes[i];
 
-        if (n.getKey() > 88) {
-          //je fais rien car elle ne sera pas visible sur le clavier!! //todo: changer avec les dimensions du piano que l'user a paramétrer dans l'app
+        if (n.getKey() > rightLimit) {
+          //je fais rien car elle ne sera pas visible sur le clavier!!
           notesDejaEnvoyees.add(n);
         } else if (n.getTimeOff() < actualTick) {
           //On ne voit plus la note
@@ -62,9 +63,8 @@ class BluetoothRepository {
             } else if (lastKeysOn[n.getKey()] != null &&
                 lastKeysOn[n.getKey()] != n && lastKeysOn[n.getKey()].getColor() == n.getColor()) {
               tramesAEnvoyer.add(n.key); //je la met en rouge
-              n.setIsReleaseAndPushColor();//todo: place above
-              tramesAEnvoyer.add(BluetoothConstants.mapStringColorToCode[n.getColor()]);
               n.setIsReleaseAndPushColor();
+              tramesAEnvoyer.add(BluetoothConstants.mapStringColorToCode[n.getColor()]);
             } else {
               tramesAEnvoyer.add(n.key); //Je l'envoi simplement
               tramesAEnvoyer.add(BluetoothConstants.mapStringColorToCode[n.getColor()]); //avec sa couleur

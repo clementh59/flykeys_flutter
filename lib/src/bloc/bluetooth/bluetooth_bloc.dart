@@ -269,7 +269,7 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
     yield DecodageMorceauState();
     ParsedFileReader midiReader = ParsedFileReader(dataFile: parsedFile);
     Map pianoInfo = await Utils.getMapFromSharedPreferences(Strings.PIANO_INFOS_SHARED_PREFS);
-    List<Note> listNotes = await midiReader.readDataFile(pianoInfo['leftLimit'], pianoInfo['rightLimit']);
+    List<Note> listNotes = await midiReader.readDataFile();
     nbDeTickMax = midiReader.getNbDeTickDuMorceau();
 
     if (valueNotifierStopSendingMorceau.value) {
@@ -279,7 +279,7 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
 
     yield TraitementMorceauState();
     List<int> trameToSend =
-        bluetoothRepository.createTrameFromListeNote(listNotes);
+        bluetoothRepository.createTrameFromListeNote(listNotes, pianoInfo['leftLimit'], pianoInfo['rightLimit']);
 
     if (valueNotifierStopSendingMorceau.value) {
       yield SendingMorceauAbortedState();

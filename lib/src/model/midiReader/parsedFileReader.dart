@@ -12,9 +12,7 @@ class ParsedFileReader{
 
 	ParsedFileReader({this.dataFile});
 
-	/// [leftLimit] the left limit of the piano (ex : 21)
-	/// [rightLimit] the left limit of the piano (ex : 108)
-	Future<List<Note>> readDataFile(int leftLimit, int rightLimit) async {
+	Future<List<Note>> readDataFile() async {
 		String data = dataFile.readAsStringSync();
 		List<String> lines = data.split("\n");
 		List<Note> notes = [];
@@ -26,11 +24,7 @@ class ParsedFileReader{
 
 			if (info.length==4) {
 				Note n = Note(int.parse(info[0]), int.parse(info[1]), int.parse(info[2]), info[3]);
-
-				// if the note isn't on the user's piano, we don't add it
-				if (n.getKey()>=leftLimit && n.getKey()<=rightLimit) {
-					notes.add(n);
-				}
+				notes.add(n);
 			} else if (info.length != 0 && !(info.length == 1 && info[0]=='')){ // Si la ligne n'est pas vide mais quelle ne respecte pas le format (4 " "), c'est que le fichier n'est pas bon!
 				throw new Exception("The music file hasn't a good format (#2)");
 			}

@@ -99,7 +99,7 @@ void main() {
     test('should create a list of notes from a parsed file', () async {
       ParsedFileReader midiReader =
       ParsedFileReader(dataFile: createFileFromString(PARSED_FILE_CONTENT));
-      List<Note> listNotes = await midiReader.readDataFile(0,200);
+      List<Note> listNotes = await midiReader.readDataFile();
 
       expect(listNotes, expectedListeNote);
     });
@@ -107,14 +107,14 @@ void main() {
     test('should throw an error since the parsed file isn\'t good', () async {
       ParsedFileReader midiReader =
       ParsedFileReader(dataFile: createFileFromString(PARSED_FILE_CONTENT+"\n7845"));
-      expect(() async => await midiReader.readDataFile(0,200), throwsException);
+      expect(() async => await midiReader.readDataFile(), throwsException);
     });
 
     test('should create a trame to send from a parsed file', () async {
       ParsedFileReader midiReader =
       ParsedFileReader(dataFile: createFileFromString(PARSED_FILE_CONTENT_SMALLER));
-      List<Note> listNotes = await midiReader.readDataFile(0,200);
-      List<int> trameToSend = bluetoothRepository.createTrameFromListeNote(listNotes);
+      List<Note> listNotes = await midiReader.readDataFile();
+      List<int> trameToSend = bluetoothRepository.createTrameFromListeNote(listNotes, 0, 200);
 
       // I remove all the CODE_NEW_TICK that are at the beginning of the trame to send
       int i=0;
