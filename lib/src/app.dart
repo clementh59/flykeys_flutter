@@ -38,32 +38,22 @@ class _AppState extends State<App> {
       DeviceOrientation.portraitDown,
     ]);
 
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle(
-        statusBarColor: Colors.white,
-      ),
-      child: MultiBlocProvider(
-        providers: [
-          BlocProvider<BluetoothBloc>(create: (BuildContext context) {
-            return BluetoothBloc(BluetoothRepository());
-          }),
-          BlocProvider<FavoritesBloc>(create: (BuildContext context) {
-            return FavoritesBloc(SharedPrefsRepository(), FirestoreRepository());
-          }),
-          BlocProvider<AuthentificationBloc>(create: (BuildContext context) {
-            return AuthentificationBloc();
-          }),
-        ],
-        child: MaterialApp(
-          theme: ThemeData.dark(),
-          debugShowCheckedModeBanner: false,
-          home: AnnotatedRegion(
-              value: SystemUiOverlayStyle(
-                statusBarColor: Colors.white,
-              ),
-              child: getPageToShow()
-          ),
-        ),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<BluetoothBloc>(create: (BuildContext context) {
+          return BluetoothBloc(BluetoothRepository());
+        }),
+        BlocProvider<FavoritesBloc>(create: (BuildContext context) {
+          return FavoritesBloc(SharedPrefsRepository(), FirestoreRepository());
+        }),
+        BlocProvider<AuthentificationBloc>(create: (BuildContext context) {
+          return AuthentificationBloc();
+        }),
+      ],
+      child: MaterialApp(
+        theme: ThemeData.dark(),
+        debugShowCheckedModeBanner: false,
+        home: getPageToShow(),
       ),
     );
   }
