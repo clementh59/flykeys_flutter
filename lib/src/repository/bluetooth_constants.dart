@@ -3,9 +3,9 @@ class BluetoothConstants {
 	static const int MTU_SIZE = 254;
 	static const int SCAN_TIMEOUT = 6; //time out de 6s pour le scan
 	static const String uuidOfMainCommunication =
-			"beb5483e-36e1-4688-b7f5-ea07361b26a8";
+			"bd4ee624-3b1c-4700-9cb8-be4f4fad8b13";
 	static const String uuidOfTickCommunication =
-			"beb5483e-36e1-4688-b7f5-ea07361b26a7";
+			"3204020f-f928-4e8f-8145-32b83a1b1476";
 
 	static const CODE_MODE_APPRENTISSAGE_ENVOI_DU_MORCEAU = 0xFD;
 	static const CODE_PLAY = 0xFC;

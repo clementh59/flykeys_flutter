@@ -209,7 +209,8 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
 
     //region Other Modes (Lightning show, Set up limit of keyboard, ...)
     if (event is LightningShowEvent) {
-      await bluetoothRepository.lightningShow();
+      Map pianoInfo = await Utils.getMapFromSharedPreferences(Strings.PIANO_INFOS_SHARED_PREFS);
+      await bluetoothRepository.lightningShow(pianoInfo['leftLimit']);
       yield LightningShowModeState();
       return;
     }
@@ -289,14 +290,8 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
     yield SendingMorceauState(0);
 
     streamSubscription = bluetoothRepository
-        .envoiLaTrameMorceau(trameToSend, valueNotifierStopSendingMorceau)
+        .envoiLaTrameMorceau(trameToSend, valueNotifierStopSendingMorceau, pianoInfo['leftLimit'])
         .listen((value) {
-      dev.log(
-          "Sending in progress : " +
-              value.toString() +
-              "/" +
-              trameToSend.length.toString(),
-          name: "New event in bluetooth bloc");
       add(_SendingMorceauStepEvent(
           (value.toDouble() / trameToSend.length.toDouble())));
     });

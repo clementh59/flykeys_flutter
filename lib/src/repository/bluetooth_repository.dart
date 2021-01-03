@@ -101,8 +101,10 @@ class BluetoothRepository {
   /// - 150, once it will have sent the first frame
   /// - 300, once it will have sent the second frame
   /// ...
+  ///
+  /// [leftLimit] is the first key of the piano
   Stream<int> envoiLaTrameMorceau(
-      List<int> tramesAEnvoyer, ValueNotifier valueNotifierStopSending) async* {
+      List<int> tramesAEnvoyer, ValueNotifier valueNotifierStopSending, int leftLimit) async* {
     bytesSent = [];
     List<int> trameDeMaxMTU =
         []; // On envoi les bytes BluetoothConstants.MTU_SIZE par BluetoothConstants.MTU_SIZE, ce tableau les contient temporairement à chaque fois
@@ -110,7 +112,7 @@ class BluetoothRepository {
         0; // Pour se repérer dans l'index du tableau de trame de BluetoothConstants.MTU_SIZE où on est
 
     await mainBluetoothCharacteristic
-        .write([BluetoothConstants.CODE_MODE_APPRENTISSAGE_ENVOI_DU_MORCEAU]); //Je dis à l'esp que je lui envoi le morceau
+        .write([BluetoothConstants.CODE_MODE_APPRENTISSAGE_ENVOI_DU_MORCEAU, leftLimit]); //Je dis à l'esp que je lui envoi le morceau
 
     for (int i = 0; i < tramesAEnvoyer.length; i++) {
       trameDeMaxMTU.add(tramesAEnvoyer[i]);
@@ -267,8 +269,9 @@ class BluetoothRepository {
   }
 
   /// send the code that means START THE LIGHTNING SHOW MODE to the esp32
-  Future<void> lightningShow() async {
-    await mainBluetoothCharacteristic.write([BluetoothConstants.CODE_MODE_LIGHTNING_SHOW]); // PLAY
+  /// [firstKey] the first key of the piano (e.g 21)
+  Future<void> lightningShow(int firstKey) async {
+    await mainBluetoothCharacteristic.write([BluetoothConstants.CODE_MODE_LIGHTNING_SHOW, firstKey]); // PLAY
   }
 
   /// send the code that means START THE SET UP MIDI LIMIT to the esp32
