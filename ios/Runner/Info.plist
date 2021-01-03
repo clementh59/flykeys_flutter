@@ -53,5 +53,19 @@
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>Need Location permission</string>
 
+    <!-- Google Sign-in Section -->
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleTypeRole</key>
+            <string>Editor</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>com.googleusercontent.apps.555670573637-9fa1rlk4kauk0ogitvggl0955c46a4r7</string>
+            </array>
+        </dict>
+    </array>
+    <!-- End of the Google Sign-in Section -->
+
 </dict>
 </plist>
