@@ -38,7 +38,7 @@ class BluetoothRepository {
     List<Note>
         actualKeysOn; //Pour savoir si on doit appuyer sur une touche deux fois alors que l'on voit juste deux LEDs
 
-    listNotes.forEach((element) {element.key -= (leftLimit - 12);});
+    listNotes.forEach((element) {element.key -= (leftLimit);});
 
     while (listNotes.length > 0) {
       lastKeysOn = actualKeysOn;
