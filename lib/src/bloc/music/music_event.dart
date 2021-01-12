@@ -15,6 +15,17 @@ class GetMusic extends MusicEvent {
 
 }
 
+class GetMusics extends MusicEvent {
+
+  final List<String> ids;
+
+  GetMusics(this.ids);
+
+  @override
+  List<Object> get props => [ids];
+
+}
+
 class GetTrendingMusics extends MusicEvent {
 
   final List<String> ids;

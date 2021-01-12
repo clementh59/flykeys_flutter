@@ -33,6 +33,16 @@ class MusicBloc extends Bloc<MusicEvent, MusicState> {
       }
     }
 
+    if (event is GetMusics){
+      yield MusicListLoadingState();
+      try {
+        List<Music> musicList = await musicRepository.fetchMusics(event.ids);
+        yield MusicListLoadedState(musicList);
+      } on NetworkError {
+        yield MusicNetworkErrorState();
+      }
+    }
+
     if (event is GetTrendingMusics){
       yield MusicListLoadingState();
       try {
