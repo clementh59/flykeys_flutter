@@ -162,22 +162,30 @@ class _MusicPageState extends State<MusicPage> {
 /**
  * Télécharge le morceau sur firebase storage, le décrypte et l'envoi par bluetooth
  */
-class SendingMorceauPage extends StatelessWidget {
+class SendingMorceauPage extends StatefulWidget {
   final MyBluetoothState state;
   final Music music;
 
   SendingMorceauPage(this.state, this.music);
 
   @override
+  _SendingMorceauPageState createState() => _SendingMorceauPageState();
+}
+
+class _SendingMorceauPageState extends State<SendingMorceauPage> {
+
+  bool stopSending = false;
+
+  @override
   Widget build(BuildContext context) {
-    if (state is FetchingMorceauState)
+    if (widget.state is FetchingMorceauState)
       return CustomWidgets.textWithLoadingIndicator("Téléchargement du morceau");
-    else if (state is DecodageMorceauState)
+    else if (widget.state is DecodageMorceauState)
       return CustomWidgets.textWithLoadingIndicator("Decodage du morceau");
-    else if (state is TraitementMorceauState)
+    else if (widget.state is TraitementMorceauState)
       return CustomWidgets.textWithLoadingIndicator("Traitement du morceau");
-    else if (state is SendingMorceauState) {
-      SendingMorceauState _state = state;
+    else if (widget.state is SendingMorceauState) {
+      SendingMorceauState _state = widget.state;
       return envoiEnCoursPage(context, _state.avancement);
     }
 
@@ -186,45 +194,55 @@ class SendingMorceauPage extends StatelessWidget {
   }
 
   Widget envoiEnCoursPage(context, double avancement) {
-    return Column(
-      mainAxisSize: MainAxisSize.max,
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: <Widget>[
-        SizedBox(),
-        Column(
-          children: <Widget>[
-            CustomProgressCircle(avancement),
-            Text(
-              'Envoi du morceau en cours...',
-              style: CustomStyle.loadingTextMusicPage,
-            ),
-          ],
-        ),
-        Align(
-          alignment: Alignment.bottomRight,
-          child: Padding(
-            padding: EdgeInsets.only(bottom: 48, right: 38),
-            child: InkWell(
-              onTap: () {
-                _stopSendingMorceau(context);
-              },
-              focusColor: Colors.transparent,
-              hoverColor: Colors.transparent,
-              highlightColor: Colors.transparent,
-              splashColor: Colors.transparent,
-              child: Text(
-                'Passer',
-                style: CustomStyle.loadingTextSkipSendingStep,
+
+    if (!stopSending)
+      return Column(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: <Widget>[
+          SizedBox(),
+          Column(
+            children: <Widget>[
+              CustomProgressCircle(avancement),
+              Text(
+                'Envoi du morceau en cours...',
+                style: CustomStyle.loadingTextMusicPage,
+              ),
+            ],
+          ),
+          Align(
+            alignment: Alignment.bottomRight,
+            child: Padding(
+              padding: EdgeInsets.only(bottom: 48, right: 38),
+              child: InkWell(
+                onTap: () {
+                  _stopSendingMorceau(context);
+                },
+                focusColor: Colors.transparent,
+                hoverColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+                splashColor: Colors.transparent,
+                child: Text(
+                  'Passer',
+                  style: CustomStyle.loadingTextSkipSendingStep,
+                ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      );
+    return Expanded(
+      child: Center(
+        child: CustomWidgets.circularProgressIndicator(),
+      ),
     );
   }
 
   void _stopSendingMorceau(context) {
     BlocProvider.of<BluetoothBloc>(context).stopSendingMorceau();
+    setState(() {
+      stopSending = true;
+    });
   }
 }
 
