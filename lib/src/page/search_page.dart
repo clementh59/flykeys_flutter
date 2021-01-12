@@ -406,6 +406,9 @@ class _SearchPageState extends State<SearchPage> {
       _categoryIsAlreadyLoaded[_selectedCategory] = true;
     }
 
+    // I unfocus the textfield
+    FocusScope.of(context).requestFocus(new FocusNode());
+
   }
 
   void _initCategoryAreLoadedBoolean(){
