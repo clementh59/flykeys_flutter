@@ -22,6 +22,8 @@ class SettingUpBluetoothPage extends StatefulWidget {
 
 class _SettingUpBluetoothPageState extends State<SettingUpBluetoothPage> {
 
+	int secondsLeft = 2;
+
 	void scanAgain() {
 		BlocProvider.of<BluetoothBloc>(context).add(FindFlyKeysDevice());
 	}
@@ -60,8 +62,13 @@ class _SettingUpBluetoothPageState extends State<SettingUpBluetoothPage> {
 				if (widget.state is FlyKeysDeviceDisconnectedState)
 					widget.onDisconnected();
 			});
+			Future.delayed(new Duration(seconds: 1), () {
+				setState(() {
+					secondsLeft = 1;
+				});
+			});
 			return CustomWidgets.textWithLoadingIndicator(
-				"Une deconnexion est survenu!");
+				"Une deconnexion est survenu! La page se fermera automatiquement dans " + secondsLeft.toString() + "s");
 		}
 
 		//Error :
@@ -75,7 +82,7 @@ class _SettingUpBluetoothPageState extends State<SettingUpBluetoothPage> {
 						SizedBox(
 							height: 15,
 						),
-						CustomWidgets.buttonWithText("Chercher de nouveau", scanAgain),
+						CustomWidgets.buttonLoadMorePopularSongStyle("Chercher de nouveau", scanAgain),
 					],
 				),
 			);
