@@ -5,10 +5,13 @@ import 'package:flykeys/src/bloc/artist/artist_event.dart';
 import 'package:flykeys/src/bloc/artist/artist_state.dart';
 import 'package:flykeys/src/bloc/music/bloc.dart';
 import 'package:flykeys/src/bloc/transcribers/bloc.dart';
+import 'package:flykeys/src/model/music.dart';
 import 'package:flykeys/src/repository/database_repository.dart';
 import 'package:flykeys/src/utils/custom_colors.dart';
 import 'package:flykeys/src/utils/custom_size.dart';
 import 'package:flykeys/src/utils/custom_style.dart';
+import 'package:flykeys/src/utils/strings.dart';
+import 'package:flykeys/src/utils/utils.dart';
 import 'package:flykeys/src/widget/custom_widgets.dart';
 import 'package:flykeys/src/widget/profile_image.dart';
 import 'package:flykeys/src/widget/search_type_element.dart';
@@ -27,6 +30,7 @@ class _SearchPageState extends State<SearchPage> {
   //region Variables
   String _searchtext = "";
   MusicBloc _musicBloc;
+  MusicBloc _recentMusicBloc;
   TranscriberBloc _transcriberBloc;
   ArtistBloc _artistBloc;
   bool _isSearching = false;
@@ -40,15 +44,17 @@ class _SearchPageState extends State<SearchPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _musicBloc = MusicBloc(FirestoreRepository());
-    _transcriberBloc = TranscriberBloc(FirestoreRepository());
-    _artistBloc = ArtistBloc(FirestoreRepository());
   }
 
   @override
   void initState() {
     super.initState();
     _initCategoryAreLoadedBoolean();
+    _musicBloc = MusicBloc(FirestoreRepository());
+    _recentMusicBloc = MusicBloc(FirestoreRepository());
+    _transcriberBloc = TranscriberBloc(FirestoreRepository());
+    _artistBloc = ArtistBloc(FirestoreRepository());
+    _loadRecentSearchs();
   }
 
   @override
@@ -205,7 +211,7 @@ class _SearchPageState extends State<SearchPage> {
           builder: (BuildContext context, MusicState state) {
             if (state is MusicListLoadedState) {
               if (state.musics.length>0)
-                return MusicListWidget(state.musics, null);
+                return MusicListWidget(state.musics, null, onSelect: onMusicSelect,);
               return _searchMessage("No result");
             }
             if (state is MusicListLoadingState) {
@@ -295,6 +301,23 @@ class _SearchPageState extends State<SearchPage> {
             fontWeight: CustomStyle.MEDIUM,
           ),
         ),
+        SizedBox(height: 20,),
+        BlocBuilder<MusicBloc, MusicState>(
+          bloc: _recentMusicBloc,
+          builder: (BuildContext context, MusicState state) {
+            if (state is MusicListLoadedState) {
+              if (state.musics.length>0)
+                return MusicListWidget(state.musics, null, onSelect: onMusicSelect,);
+              return _searchMessage("Aucune recherche récente");
+            }
+            if (state is MusicListLoadingState) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            return SizedBox();
+          },
+        )
       ],
     );
   }
@@ -430,6 +453,20 @@ class _SearchPageState extends State<SearchPage> {
       _selectedCategory = category;
     });
     _search(_searchtext);
+  }
+
+  void onMusicSelect(Music music) async {
+    List<String> musicsIds = await Utils.readListOfStringFromSharedPreferences(Strings.RECENT_SEARCH_SHARED_PREFS, defaultValue:[]);
+    musicsIds.add(music.id);
+    if (musicsIds.length>5)
+      musicsIds.removeAt(0);
+    await Utils.saveListOfStringToSharedPreferences(Strings.RECENT_SEARCH_SHARED_PREFS, musicsIds);
+  }
+
+  void _loadRecentSearchs() async {
+    List<String> musicsIds = await Utils.readListOfStringFromSharedPreferences(Strings.RECENT_SEARCH_SHARED_PREFS, defaultValue:[]);
+    if (musicsIds.length>0)
+    	_recentMusicBloc.add(GetMusics(musicsIds));
   }
 //endregion
 }

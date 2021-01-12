@@ -62,8 +62,13 @@ class Utils{
 	/// list by default and can be configured with {defaultValue = YOUR_VALUE}
 	static Future<List<String>> readListOfStringFromSharedPreferences(String key, {defaultValue}) async {
 		final prefs = await SharedPreferences.getInstance();
-		final value = prefs.getStringList(key) ?? defaultValue ? defaultValue : [];
-		return value;
+		print(prefs.getStringList(key));
+		final value = prefs.getStringList(key);
+		if (value != null)
+			return value;
+		if (defaultValue!=null)
+			return defaultValue;
+		return [];
 	}
 
 	static Future<void> saveStringToSharedPreferences(String key, String value) async {

@@ -34,6 +34,8 @@ class Strings{
 	static const String COLOR_MG_SHARED_PREFS = "COLOR_MG";
 	static const String I_DID_ONBOARDING_SHARED_PREFS = "I_DID_ONBOARDING";
 	static const String PIANO_INFOS_SHARED_PREFS = "PIANO_INFOS";
+
+	static const String RECENT_SEARCH_SHARED_PREFS = "RECENT_SEARCH_SHARED_PREFS";
 	//endregion
 
 }
