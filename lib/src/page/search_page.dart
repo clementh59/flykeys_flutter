@@ -464,10 +464,10 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   void _loadRecentSearchs() async {
-    List<String> musicsIds = await Utils.readListOfStringFromSharedPreferences(Strings.RECENT_SEARCH_SHARED_PREFS, defaultValue:[]);
+    List<String> musicsIds = await Utils.readListOfStringFromSharedPreferences(Strings.RECENT_SEARCH_SHARED_PREFS, defaultValue:List<String>());
     if (musicsIds.length>0)
     	_recentMusicBloc.add(GetMusics(musicsIds));
   }
-//endregion
+  //endregion
 }
 
