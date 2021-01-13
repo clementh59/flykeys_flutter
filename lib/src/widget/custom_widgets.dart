@@ -296,9 +296,31 @@ class CustomWidgets {
     return _textWidget(text);
   }
 
-  static Widget bluetoothIsOff() {
-    return Center(
-      child: CustomWidgets.textWithoutLoadingIndicator("Bluetooth is off!"),
+  static Widget bluetoothIsOffPage(context) {
+    return Stack(
+      children: <Widget>[
+        Container(
+          margin: EdgeInsets.only(top: 15, left: 15),
+          child: InkWell(
+            onTap: () {
+              Navigator.of(context).pop();
+            },
+            focusColor: Colors.transparent,
+            hoverColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+            splashColor: Colors.transparent,
+            child: Icon(
+              Icons.keyboard_arrow_left,
+              size: 40,
+              color: Colors.white,
+            ),
+          ),
+        ),
+        Align(
+          alignment: Alignment.center,
+          child: CustomWidgets.textWithoutLoadingIndicator("Bluetooth is off!"),
+        ),
+      ],
     );
   }
 

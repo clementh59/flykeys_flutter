@@ -117,7 +117,7 @@ class _MusicPageState extends State<MusicPage> {
                           } else if (state == BluetoothState.off) {
                             BlocProvider.of<BluetoothBloc>(context).onDisconnect();
                           }
-                          return CustomWidgets.bluetoothIsOff();
+                          return CustomWidgets.bluetoothIsOffPage(context);
                         }),
                   ),
                 );
