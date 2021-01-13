@@ -18,6 +18,7 @@ import 'package:flykeys/src/widget/search_type_element.dart';
 import 'package:flykeys/src/widget/widget_artist.dart';
 import 'package:flykeys/src/widget/widget_music.dart';
 import 'package:flykeys/src/widget/widget_transcriber.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 class SearchPage extends StatefulWidget {
 
@@ -59,60 +60,74 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          SizedBox(
-            height: 20,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: CustomSize.leftAndRightPadding),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                CustomWidgets.settingsIcon(context),
-                Text(
-                  "Search",
-                  style: CustomStyle.pageTitle,
+
+    return VisibilityDetector(
+      key: Key('searchPageKey'),
+      onVisibilityChanged: (VisibilityInfo info) {
+        if (info.visibleFraction == 0) {
+          unfocusTextField();
+        }
+      },
+      child: GestureDetector(
+        onTap: () {
+          unfocusTextField();
+        },
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              SizedBox(
+                height: 20,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: CustomSize.leftAndRightPadding),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    CustomWidgets.settingsIcon(context),
+                    Text(
+                      "Search",
+                      style: CustomStyle.pageTitle,
+                    ),
+                    ProfileImage(),
+                  ],
                 ),
-                ProfileImage(),
-              ],
-            ),
+              ),
+              SizedBox(
+                height: 30,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: CustomSize.leftAndRightPadding),
+                child: Text(
+                  "Discover",
+                  style: CustomStyle.greySubtitle,
+                ),
+              ),
+              SizedBox(
+                height: 5,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: CustomSize.leftAndRightPadding),
+                child: Text(
+                  "Ready to explore?",
+                  style: CustomStyle.title,
+                ),
+              ),
+              SizedBox(
+                height: 25,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: CustomSize.leftAndRightPadding),
+                child: _searchBar(),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: CustomSize.leftAndRightPadding),
+                child: _isSearching? _searchResult() : _recentElements(),
+              ),
+            ],
           ),
-          SizedBox(
-            height: 30,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: CustomSize.leftAndRightPadding),
-            child: Text(
-              "Discover",
-              style: CustomStyle.greySubtitle,
-            ),
-          ),
-          SizedBox(
-            height: 5,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: CustomSize.leftAndRightPadding),
-            child: Text(
-              "Ready to explore?",
-              style: CustomStyle.title,
-            ),
-          ),
-          SizedBox(
-            height: 25,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: CustomSize.leftAndRightPadding),
-            child: _searchBar(),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: CustomSize.leftAndRightPadding),
-            child: _isSearching? _searchResult() : _recentElements(),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -430,7 +445,7 @@ class _SearchPageState extends State<SearchPage> {
     }
 
     // I unfocus the textfield
-    FocusScope.of(context).requestFocus(new FocusNode());
+    unfocusTextField();
 
   }
 
@@ -456,8 +471,9 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   void onMusicSelect(Music music) async {
-    List<String> musicsIds = await Utils.readListOfStringFromSharedPreferences(Strings.RECENT_SEARCH_SHARED_PREFS, defaultValue:[]);
-    musicsIds.add(music.id);
+    List<String> musicsIds = await Utils.readListOfStringFromSharedPreferences(Strings.RECENT_SEARCH_SHARED_PREFS, defaultValue:List<String>());
+    if (!musicsIds.contains(music.id))
+      musicsIds.add(music.id);
     if (musicsIds.length>5)
       musicsIds.removeAt(0);
     await Utils.saveListOfStringToSharedPreferences(Strings.RECENT_SEARCH_SHARED_PREFS, musicsIds);
@@ -467,6 +483,11 @@ class _SearchPageState extends State<SearchPage> {
     List<String> musicsIds = await Utils.readListOfStringFromSharedPreferences(Strings.RECENT_SEARCH_SHARED_PREFS, defaultValue:List<String>());
     if (musicsIds.length>0)
     	_recentMusicBloc.add(GetMusics(musicsIds));
+  }
+
+  /// Hide the keyboard by unfocusing the textfield
+  void unfocusTextField() {
+    FocusScope.of(context).requestFocus(new FocusNode());
   }
   //endregion
 }
