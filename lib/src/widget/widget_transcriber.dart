@@ -20,17 +20,14 @@ class WidgetTranscriber extends StatefulWidget {
   final int pageIndex;
   final ValueNotifier valueNotifierActivePage;
 
-  WidgetTranscriber(
-      this.transcriber, this.pageIndex, this.valueNotifierActivePage);
+  WidgetTranscriber(this.transcriber, this.pageIndex, this.valueNotifierActivePage);
 
   @override
   _WidgetTranscriberState createState() => _WidgetTranscriberState();
 }
 
 class _WidgetTranscriberState extends State<WidgetTranscriber> {
-
-  ImageLoadingBloc imageLoadingBloc =
-      new ImageLoadingBloc(new FirestoreImageProviderRepository());
+  ImageLoadingBloc imageLoadingBloc = new ImageLoadingBloc(new FirestoreImageProviderRepository());
 
   @override
   void initState() {
@@ -41,22 +38,20 @@ class _WidgetTranscriberState extends State<WidgetTranscriber> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    imageLoadingBloc.add(LoadImage(widget.transcriber.profileImageName,"transcribers/"+widget.transcriber.id));
+    imageLoadingBloc.add(LoadImage(widget.transcriber.profileImageName, "transcribers/" + widget.transcriber.id));
   }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding:
-          const EdgeInsets.only(right: CustomSize.widthBetweenTranscribersTile),
+      padding: const EdgeInsets.only(right: CustomSize.widthBetweenTranscribersTile),
       child: VisibilityDetector(
         key: Key("ts" + widget.transcriber.id.toString()),
         onVisibilityChanged: (VisibilityInfo visibilityInfo) {
-          if (visibilityInfo.visibleFraction == 1)
-            widget.valueNotifierActivePage.value = widget.pageIndex;
+          if (visibilityInfo.visibleFraction == 1) widget.valueNotifierActivePage.value = widget.pageIndex;
         },
         child: InkWell(
-          onTap: (){
+          onTap: () {
             navigateToTranscriberPage(context, widget.transcriber);
           },
           focusColor: Colors.transparent,
@@ -90,8 +85,7 @@ class _WidgetTranscriberState extends State<WidgetTranscriber> {
                           child: image,
                         ),
                         Positioned(
-                          top: CustomSize.heightOfTranscriberTile -
-                              CustomSize.heightOfBackgroundBlurTranscriberTile,
+                          top: CustomSize.heightOfTranscriberTile - CustomSize.heightOfBackgroundBlurTranscriberTile,
                           bottom: 0,
                           left: 0,
                           right: 0,
@@ -126,10 +120,8 @@ class _WidgetTranscriberState extends State<WidgetTranscriber> {
                                       ),
                                       widget.transcriber.isVerified
                                           ? Padding(
-                                              padding:
-                                                  const EdgeInsets.only(top: 2.0),
-                                              child: CustomWidgets
-                                                  .smallPastilleBleu(),
+                                              padding: const EdgeInsets.only(top: 2.0),
+                                              child: CustomWidgets.smallPastilleBleu(),
                                             )
                                           : SizedBox()
                                     ],
@@ -138,10 +130,7 @@ class _WidgetTranscriberState extends State<WidgetTranscriber> {
                                     height: 1,
                                   ),
                                   Text(
-                                    Utils.showNumber(widget
-                                            .transcriber.nbFollowers
-                                            .toString()) +
-                                        " followers",
+                                    Utils.showNumber(widget.transcriber.nbFollowers.toString()) + " followers",
                                     style: CustomStyle.transcriberTileFollowers,
                                   ),
                                   SizedBox(
@@ -177,8 +166,7 @@ class EmptyWidgetTranscriber extends StatelessWidget {
             children: <Widget>[
               _getLoadingImageWidget(),
               Positioned(
-                top: CustomSize.heightOfTranscriberTile -
-                    CustomSize.heightOfBackgroundBlurTranscriberTile,
+                top: CustomSize.heightOfTranscriberTile - CustomSize.heightOfBackgroundBlurTranscriberTile,
                 bottom: 0,
                 left: 0,
                 right: 0,
@@ -231,7 +219,8 @@ class EmptyWidgetTranscriber extends StatelessWidget {
           ),
         ),
       ),
-    );;
+    );
+    ;
   }
 }
 
@@ -245,15 +234,12 @@ class WidgetTranscriberTile extends StatefulWidget {
 }
 
 class _WidgetTranscriberTileState extends State<WidgetTranscriberTile> {
-
-  ImageLoadingBloc imageLoadingBloc =
-      new ImageLoadingBloc(new FirestoreImageProviderRepository());
+  ImageLoadingBloc imageLoadingBloc = new ImageLoadingBloc(new FirestoreImageProviderRepository());
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (widget.transcriber.image == null)
-      imageLoadingBloc.add(LoadImage(widget.transcriber.profileImageName,"transcribers/"+widget.transcriber.id));
+    if (widget.transcriber.image == null) imageLoadingBloc.add(LoadImage(widget.transcriber.profileImageName, "transcribers/" + widget.transcriber.id));
   }
 
   @override
@@ -306,33 +292,24 @@ class _WidgetTranscriberTileState extends State<WidgetTranscriberTile> {
                 child: Stack(
                   children: [
                     Align(
-                      alignment: Alignment.topLeft,
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 4.0),
-                        child: Row(
-                          children: [
-                            Text(widget.transcriber.name,
-                              style:
-                              CustomStyle.transcriberSmallTileName),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            widget.transcriber.isVerified
-                              ? CustomWidgets.smallPastilleBleu()
-                              : SizedBox(),
-                          ],
-                        ),
-                      )),
+                        alignment: Alignment.topLeft,
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 4.0),
+                          child: Row(
+                            children: [
+                              Text(widget.transcriber.name, style: CustomStyle.transcriberSmallTileName),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              widget.transcriber.isVerified ? CustomWidgets.smallPastilleBleu() : SizedBox(),
+                            ],
+                          ),
+                        )),
                     Align(
                       alignment: Alignment.bottomLeft,
                       child: Padding(
                         padding: const EdgeInsets.only(bottom: 4.0),
-                        child: Text(
-                          Utils.showNumber(widget.transcriber.nbFollowers
-                            .toString()) +
-                            " followers",
-                          style:
-                          CustomStyle.transcriberSmallTileFollowers),
+                        child: Text(Utils.showNumber(widget.transcriber.nbFollowers.toString()) + " followers", style: CustomStyle.transcriberSmallTileFollowers),
                       ),
                     ),
                   ],
@@ -340,50 +317,44 @@ class _WidgetTranscriberTileState extends State<WidgetTranscriberTile> {
               ),
             ],
           ),
-          BlocBuilder<FavoritesBloc, FavoritesState>(
-            builder: (BuildContext context, FavoritesState state) {
-              if (state is ListsLoadedState){
-                if (state.transcribersId.contains(widget.transcriber.id)){
-                  widget.transcriber.iFollow = true;
-                  return _unfollowButton();
-                }else{
-                  widget.transcriber.iFollow = false;
-                  return _followButton();
-                }
+          BlocBuilder<FavoritesBloc, FavoritesState>(builder: (BuildContext context, FavoritesState state) {
+            if (state is ListsLoadedState) {
+              if (state.transcribersId.contains(widget.transcriber.id)) {
+                widget.transcriber.iFollow = true;
+                return _unfollowButton();
+              } else {
+                widget.transcriber.iFollow = false;
+                return _followButton();
               }
-              return _followButton();
-            }),
+            }
+            return _followButton();
+          }),
         ],
       ),
     );
   }
 
-  Widget _followButton(){
+  Widget _followButton() {
     return CustomWidgets.tileFollowButton(() {
       setState(() {
         widget.transcriber.iFollow = true;
       });
-      BlocProvider.of<FavoritesBloc>(context)
-        ..add(AddAFollowedTranscriber(widget.transcriber));
+      BlocProvider.of<FavoritesBloc>(context)..add(AddAFollowedTranscriber(widget.transcriber));
     });
   }
 
-  Widget _unfollowButton(){
+  Widget _unfollowButton() {
     return CustomWidgets.tileUnfollowButton(() {
       setState(() {
         widget.transcriber.iFollow = false;
       });
-      BlocProvider.of<FavoritesBloc>(context)
-        ..add(RemoveAFollowedTranscriber(widget.transcriber));
+      BlocProvider.of<FavoritesBloc>(context)..add(RemoveAFollowedTranscriber(widget.transcriber));
     });
   }
-
 }
 
-void navigateToTranscriberPage(context, Transcriber transcriber){
-  Navigator.push(context,
-    MaterialPageRoute(builder: (context) => TranscriberPage(transcriber)),
-  );
+void navigateToTranscriberPage(context, Transcriber transcriber) {
+  Navigator.push(context, Utils.createRoute(() => TranscriberPage(transcriber)));
 }
 
 class TranscriberListWidget extends StatefulWidget {
@@ -418,8 +389,7 @@ class _TranscriberListWidgetState extends State<TranscriberListWidget> {
           widget.buttonLoadMore,
         );
         transcriberWidgets.add(SizedBox(
-          height:
-              CustomSize.heightBetweenButtonLoadMorePopularSongsAndPlayForFun,
+          height: CustomSize.heightBetweenButtonLoadMorePopularSongsAndPlayForFun,
         ));
       }
     }

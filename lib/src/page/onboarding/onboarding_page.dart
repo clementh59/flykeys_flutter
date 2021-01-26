@@ -307,7 +307,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
   void onOnBoardingFinish() {
 		Navigator.pushReplacement(
 			context,
-			MaterialPageRoute(builder: (context) => widget.nextPage),
+			Utils.createRoute(() => widget.nextPage),
 		);
 		Utils.saveBooleanToSharedPreferences(Strings.I_DID_ONBOARDING_SHARED_PREFS, true);
 		Utils.saveMapToSharedPreferences(Strings.PIANO_INFOS_SHARED_PREFS, info);

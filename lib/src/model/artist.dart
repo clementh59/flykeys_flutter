@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flykeys/src/page/artist_page.dart';
+import 'package:flykeys/src/utils/utils.dart';
 
 import 'music.dart';
 
@@ -51,7 +52,7 @@ class Artist{
 			return;
 		}
 		Navigator.push(context,
-			MaterialPageRoute(builder: (context) => ArtistPage(a)),
+			Utils.createRoute(() => ArtistPage(a)),
 		);
 	}
 

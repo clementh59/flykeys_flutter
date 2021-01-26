@@ -9,6 +9,7 @@ import 'package:flykeys/src/page/music_page.dart';
 import 'package:flykeys/src/repository/image_provider_repository.dart';
 import 'package:flykeys/src/utils/custom_size.dart';
 import 'package:flykeys/src/utils/custom_style.dart';
+import 'package:flykeys/src/utils/utils.dart';
 import 'package:flykeys/src/widget/custom_widgets.dart';
 
 /// Show a music tile with [music] info
@@ -163,7 +164,7 @@ class _WidgetMusicState extends State<WidgetMusic> {
   void _tapOnMusic(Music music) async {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => MusicPage(music)),
+      Utils.createRoute(() => MusicPage(music)),
     );
   }
 

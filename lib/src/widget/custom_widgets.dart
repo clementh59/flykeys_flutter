@@ -4,6 +4,7 @@ import 'package:flykeys/src/bloc/image_loading/bloc.dart';
 import 'package:flykeys/src/page/parameter_page.dart';
 import 'package:flykeys/src/utils/custom_colors.dart';
 import 'package:flykeys/src/utils/custom_style.dart';
+import 'package:flykeys/src/utils/utils.dart';
 import 'package:shimmer/shimmer.dart';
 
 class CustomWidgets {
@@ -13,7 +14,7 @@ class CustomWidgets {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => ParameterPage()),
+          Utils.createRoute(() => ParameterPage()),
         );
       },
       child: Icon(

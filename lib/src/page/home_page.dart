@@ -269,7 +269,7 @@ class _HomePageState extends State<HomePage> {
         if (game.page != null) {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => game.page),
+            Utils.createRoute(() => game.page),
           );
         }
       },

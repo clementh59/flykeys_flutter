@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flykeys/src/page/transcriber_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
@@ -168,5 +169,27 @@ class Utils{
 	}
 
 	//endregion
+
+	/// Create a route to page with an animation
+	/// [returnPage] needs to be a function that return the page
+	/// e.g () => TranscriberPage(transcriber)
+	static Route createRoute(returnPage) {
+		return PageRouteBuilder(
+			pageBuilder: (context, animation, secondaryAnimation) => returnPage(),
+			transitionsBuilder: (context, animation, secondaryAnimation, child) {
+				var begin = Offset(1.0, 0.0);
+				var end = Offset.zero;
+				var curve = Curves.ease;
+
+				var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+				return SlideTransition(
+					position: animation.drive(tween),
+					child: child,
+				);
+			},
+		);
+	}
+
 
 }

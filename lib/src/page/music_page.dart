@@ -716,7 +716,7 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => MusicParameterPage(widget.music)),
+          Utils.createRoute(() => MusicParameterPage(widget.music)),
         );
       },
       child: Icon(
