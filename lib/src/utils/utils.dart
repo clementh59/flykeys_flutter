@@ -148,6 +148,16 @@ class Utils{
 		return (key/12).floor()-1;
 	}
 
+	/**
+	 * return true if the key is white - false if black
+	 */
+	static bool isWhiteKey(int key) {
+		String nameOfNote = noteNames[key%12];
+		if (nameOfNote.contains('#'))
+			return false;
+		return true;
+	}
+
 	/// [firstKey] e.g 21
 	/// [lastKey] e.g 108
 	/// [returns] a Map with 'noires' and 'blanches' that are the numbers of corresponding keys
@@ -157,8 +167,7 @@ class Utils{
 		int numberOfTouchesBlanches = 0;
 
 		for(int key = firstKey; key<=lastKey; key++) {
-			String nameOfNote = noteNames[key%12];
-			if (nameOfNote.contains('#'))
+			if (!isWhiteKey(key))
 				numberOfTouchesNoires++;
 			else
 				numberOfTouchesBlanches++;

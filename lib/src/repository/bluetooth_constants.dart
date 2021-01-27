@@ -21,6 +21,7 @@ class BluetoothConstants {
 
 	static const CODE_NEW_TICK = 0xBD;
 
+	static const int lastIndexOfColorDefine = 0x07;
 	static const mapStringColorToCode = {
 		'MD':0x02,
 		'MD_R&P': 0x03,

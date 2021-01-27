@@ -46,6 +46,9 @@ class BluetoothRepository {
       for (int i = 0; i < min(listNotes.length, 250); i++) {
         n = listNotes[i];
 
+        // To know if the color is white or black, we need to get the value of the key before removing the leftLimit!
+        int colorOffset = Utils.isWhiteKey(n.getKey() + leftLimit)? 0 : BluetoothConstants.lastIndexOfColorDefine;
+
         if (n.getKey() > rightLimit) {
           //je fais rien car elle ne sera pas visible sur le clavier!!
           notesDejaEnvoyees.add(n);
@@ -59,15 +62,15 @@ class BluetoothRepository {
 
             if (n.isReleaseAndPush()) {
               tramesAEnvoyer.add(n.key); //je la met en rouge
-              tramesAEnvoyer.add(BluetoothConstants.mapStringColorToCode[n.getColor()]);
+              tramesAEnvoyer.add(BluetoothConstants.mapStringColorToCode[n.getColor()] + colorOffset);
             } else if (lastKeysOn[n.getKey()] != null &&
                 lastKeysOn[n.getKey()] != n && lastKeysOn[n.getKey()].getColor() == n.getColor()) {
               tramesAEnvoyer.add(n.key); //je la met en rouge
               n.setIsReleaseAndPushColor();
-              tramesAEnvoyer.add(BluetoothConstants.mapStringColorToCode[n.getColor()]);
+              tramesAEnvoyer.add(BluetoothConstants.mapStringColorToCode[n.getColor()] + colorOffset);
             } else {
               tramesAEnvoyer.add(n.key); //Je l'envoi simplement
-              tramesAEnvoyer.add(BluetoothConstants.mapStringColorToCode[n.getColor()]); //avec sa couleur
+              tramesAEnvoyer.add(BluetoothConstants.mapStringColorToCode[n.getColor()] + colorOffset); //avec sa couleur
             }
             actualKeysOn[n.getKey()] = n;
           }
