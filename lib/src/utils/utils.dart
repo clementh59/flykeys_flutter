@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flykeys/src/page/transcriber_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
@@ -93,6 +92,19 @@ class Utils{
 	static Future<void> saveBooleanToSharedPreferences(String key, bool value) async {
 		final prefs = await SharedPreferences.getInstance();
 		await prefs.setBool(key, value);
+	}
+
+	/// Returns the integer corresponding to the [key] in the shared prefs
+	/// If the integer doesn't exist, it returns [defaultValue] which is 0
+	/// by default and can be configured with {defaultValue = YOUR_VALUE}
+	static Future<int> getIntegerFromSharedPreferences(String key, {defaultValue=0}) async {
+		final prefs = await SharedPreferences.getInstance();
+		return prefs.getInt(key) ?? defaultValue;
+	}
+
+	static Future<void> saveIntegerToSharedPreferences(String key, int value) async {
+		final prefs = await SharedPreferences.getInstance();
+		await prefs.setInt(key, value);
 	}
 
 	/// Returns the map corresponding to the [key] in the shared prefs

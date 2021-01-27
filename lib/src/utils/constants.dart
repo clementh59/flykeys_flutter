@@ -11,8 +11,16 @@ class Constants {
   static const int numberOfMusicLoadedWhenCLickLoadMoreMusic = 6;
   static const int numberOfElementLoadedWhenSearch = 5;
 
+  //colors
   static const Color DefaultMDColor = Color.fromRGBO(79,235,52,1);
   static const Color DefaultMGColor = Color.fromRGBO(52,152,235,1);
-  static const int lastLedIndex = 671; //e.g 704
+
+  // brightness
+  static const int lightBrightness = 75;
+  static const int mediumBrightness = 112;
+  static const int strongBrightness = 150;
+  static const int DefaultBrightness = mediumBrightness;
+
+  static const int lastLedIndex = 704; //e.g 704
 
 }

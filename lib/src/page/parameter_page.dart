@@ -27,11 +27,15 @@ class _ParameterPageState extends State<ParameterPage> {
   //variables pour notification
   bool notificationActive;
 
+  //variable pour luminosité
+  int selectedRadioLuminosity = 0;
+
   @override
   void initState() {
     super.initState();
     notificationActive = true;
     loadColorsFromSharedPrefs();
+    loadBrightnessFromSharedPrefs();
   }
 
   @override
@@ -66,8 +70,7 @@ class _ParameterPageState extends State<ParameterPage> {
   }
 
   Widget _tileParameterWidget(String name, Widget imageAsset, Function callBack,
-    {bool showRightArrow = false, bool showSwitch = false, bool switchState = false}) {
-
+      {bool showRightArrow = false, bool showSwitch = false, bool switchState = false}) {
     return InkWell(
       onTap: callBack,
       focusColor: Colors.transparent,
@@ -96,21 +99,21 @@ class _ParameterPageState extends State<ParameterPage> {
               ),
             ),
             showRightArrow
-              ? Icon(
-              Icons.arrow_forward_ios,
-              color: CustomColors.white,
-              size: 18,
-            )
-              : SizedBox(),
+                ? Icon(
+                    Icons.arrow_forward_ios,
+                    color: CustomColors.white,
+                    size: 18,
+                  )
+                : SizedBox(),
             showSwitch
-              ? Switch(
-              onChanged: (bool) {
-                callBack();
-              },
-              activeColor: CustomColors.blue,
-              value: switchState,
-            )
-              : SizedBox(),
+                ? Switch(
+                    onChanged: (bool) {
+                      callBack();
+                    },
+                    activeColor: CustomColors.blue,
+                    value: switchState,
+                  )
+                : SizedBox(),
           ],
         ),
       ),
@@ -128,24 +131,21 @@ class _ParameterPageState extends State<ParameterPage> {
           height: 20,
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(
-              horizontal: CustomSize.leftAndRightPadding),
+          padding: const EdgeInsets.symmetric(horizontal: CustomSize.leftAndRightPadding),
           child: _topBar("Settings"),
         ),
         SizedBox(
           height: 31,
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(
-              horizontal: CustomSize.leftAndRightPadding),
+          padding: const EdgeInsets.symmetric(horizontal: CustomSize.leftAndRightPadding),
           child: _profileWidget(true),
         ),
         SizedBox(
           height: 25,
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(
-              horizontal: CustomSize.leftAndRightPadding),
+          padding: const EdgeInsets.symmetric(horizontal: CustomSize.leftAndRightPadding),
           child: _tilesParameterWidget(),
         ),
       ],
@@ -159,8 +159,7 @@ class _ParameterPageState extends State<ParameterPage> {
             alignment: Alignment.topLeft,
             child: InkWell(
               onTap: () {
-                if (_indexedStackIndex == parameterIndex)
-                  Navigator.of(context).pop();
+                if (_indexedStackIndex == parameterIndex) Navigator.of(context).pop();
                 setState(() {
                   _indexedStackIndex = parameterIndex;
                 });
@@ -191,7 +190,7 @@ class _ParameterPageState extends State<ParameterPage> {
       hoverColor: Colors.transparent,
       highlightColor: Colors.transparent,
       splashColor: Colors.transparent,
-      onTap: (){
+      onTap: () {
         setState(() {
           _indexedStackIndex = profilIndex;
         });
@@ -235,7 +234,7 @@ class _ParameterPageState extends State<ParameterPage> {
           ),
           Icon(
             Icons.arrow_forward_ios,
-            color: arrow? CustomColors.white : CustomColors.backgroundColor,
+            color: arrow ? CustomColors.white : CustomColors.backgroundColor,
             size: 18,
           ),
         ],
@@ -247,35 +246,32 @@ class _ParameterPageState extends State<ParameterPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _tileParameterWidget(
-            "Notifications",
-            Image.asset("assets/images/icons/parameter/notification_icon.png"),
-            activeNotification,
-            showSwitch: true,
-            switchState: notificationActive),
-        _tileParameterWidget("Choix des couleurs",
-            Image.asset("assets/images/icons/parameter/color_wheel_icon.png"),
-            () {
+        _tileParameterWidget("Notifications", Image.asset("assets/images/icons/parameter/notification_icon.png"), activeNotification,
+            showSwitch: true, switchState: notificationActive),
+        _tileParameterWidget("Choix des couleurs", Image.asset("assets/images/icons/parameter/color_wheel_icon.png"), () {
           setState(() {
             _indexedStackIndex = choixDesCouleursIndex;
           });
-        }, showRightArrow:true),
+        }, showRightArrow: true),
+        _tileParameterWidget("Luminosité de Flykeys", Image.asset("assets/images/icons/parameter/luminosity_icon.png"), () {
+          showChooseLuminosityDialog();
+        }, showRightArrow: true),
         _tileParameterWidget(
-            "FAQ",
-            Image.asset("assets/images/icons/parameter/faq_icon.png"),
-            () {},
-            showRightArrow: true,),
-        _tileParameterWidget("Contact",
-            Image.asset("assets/images/icons/parameter/contact_icon.png"), () {
-          //todo: popup avec link twitter,...
-        },),
-        _tileParameterWidget("Informations légales",
-            Image.asset("assets/images/icons/parameter/info_icon.png"), () {
+          "FAQ",
+          Image.asset("assets/images/icons/parameter/faq_icon.png"),
+          () {},
+          showRightArrow: true,
+        ),
+        _tileParameterWidget(
+          "Contact",
+          Image.asset("assets/images/icons/parameter/contact_icon.png"),
+          () {
+            //todo: popup avec link twitter,...
+          },
+        ),
+        _tileParameterWidget("Informations légales", Image.asset("assets/images/icons/parameter/info_icon.png"), () {
           showAboutDialog(
-              context: context,
-              applicationLegalese: Constants.legalPhrase,
-              applicationVersion: Constants.app_version,
-              applicationName: 'FlyKeys');
+              context: context, applicationLegalese: Constants.legalPhrase, applicationVersion: Constants.app_version, applicationName: 'FlyKeys');
         }),
       ],
     );
@@ -286,6 +282,77 @@ class _ParameterPageState extends State<ParameterPage> {
       notificationActive = !notificationActive;
     });
   }
+
+  //region brightness
+  void loadBrightnessFromSharedPrefs() async {
+    int brightness = await Utils.getIntegerFromSharedPreferences(Strings.BRIGHTNESS_SHARED_PREFS, defaultValue: Constants.DefaultBrightness);
+    setState(() {
+      switch (brightness) {
+        case Constants.lightBrightness:
+          selectedRadioLuminosity = 0;
+          break;
+        case Constants.mediumBrightness:
+          selectedRadioLuminosity = 1;
+          break;
+        case Constants.strongBrightness:
+          selectedRadioLuminosity = 2;
+          break;
+        default:
+          selectedRadioLuminosity = 0;
+          break;
+      }
+    });
+  }
+
+  void showChooseLuminosityDialog() {
+    showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: List<Widget>.generate(3, (int index) {
+                  return ListTile(
+                    title: Text(getBrightnessText(index)),
+                    leading: Radio(
+                      value: index,
+                      groupValue: selectedRadioLuminosity,
+                      onChanged: (value) {
+                        Utils.saveIntegerToSharedPreferences(Strings.BRIGHTNESS_SHARED_PREFS, mapIndexToBrightness(index));
+                        setState(() {
+                          selectedRadioLuminosity = value;
+                        });
+                      },
+                    ),
+                  );
+                }),
+              );
+            },
+          ),
+        );
+      });
+  }
+
+  /// return 'Faible' for 0, 'Élevée' for 2, ...
+  String getBrightnessText(int index) {
+    if (index == 0)
+      return 'Faible';
+    if (index == 2)
+      return 'Élevée';
+    return 'Moyen';
+  }
+
+  /// return an integer corresponding to the brightness corresponding to the index of the radio buttons
+  int mapIndexToBrightness(int index) {
+    if (index == 0)
+      return Constants.lightBrightness;
+    if (index == 1)
+      return Constants.mediumBrightness;
+    return Constants.strongBrightness;
+  }
+  //endregion
 
   /***************    CHOIX DES COULEURS PAGE   *************/
 
@@ -332,12 +399,16 @@ class _ParameterPageState extends State<ParameterPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _tileChoixCouleur("Couleur main droite", couleurMD,(color){setState(() {
-          couleurMD = color;
-        });}),
-        _tileChoixCouleur("Couleur main gauche", couleurMG,(color){setState(() {
-          couleurMG = color;
-        });}),
+        _tileChoixCouleur("Couleur main droite", couleurMD, (color) {
+          setState(() {
+            couleurMD = color;
+          });
+        }),
+        _tileChoixCouleur("Couleur main gauche", couleurMG, (color) {
+          setState(() {
+            couleurMG = color;
+          });
+        }),
       ],
     );
   }
@@ -346,39 +417,38 @@ class _ParameterPageState extends State<ParameterPage> {
     return _tileParameterWidget(
       name,
       Container(
-        decoration: BoxDecoration(
-          color: c,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: Colors.white)),
-      ), () {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            titlePadding: const EdgeInsets.all(0.0),
-            contentPadding: const EdgeInsets.all(0.0),
-            content: SingleChildScrollView(
-              child: ColorPicker(
-                pickerColor: c,
-                onColorChanged: (color){
-                  callback(color);
-                },
-                colorPickerWidth: 300.0,
-                pickerAreaHeightPercent: 0.7,
-                enableAlpha: false,
-                displayThumbColor: true,
-                showLabel: true,
-                paletteType: PaletteType.hsv,
-                pickerAreaBorderRadius: const BorderRadius.only(
-                  topLeft: const Radius.circular(2.0),
-                  topRight: const Radius.circular(2.0),
+        decoration: BoxDecoration(color: c, borderRadius: BorderRadius.circular(20), border: Border.all(color: Colors.white)),
+      ),
+      () {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              titlePadding: const EdgeInsets.all(0.0),
+              contentPadding: const EdgeInsets.all(0.0),
+              content: SingleChildScrollView(
+                child: ColorPicker(
+                  pickerColor: c,
+                  onColorChanged: (color) {
+                    callback(color);
+                  },
+                  colorPickerWidth: 300.0,
+                  pickerAreaHeightPercent: 0.7,
+                  enableAlpha: false,
+                  displayThumbColor: true,
+                  showLabel: true,
+                  paletteType: PaletteType.hsv,
+                  pickerAreaBorderRadius: const BorderRadius.only(
+                    topLeft: const Radius.circular(2.0),
+                    topRight: const Radius.circular(2.0),
+                  ),
                 ),
               ),
-            ),
-          );
-        },
-      );
-    },);
+            );
+          },
+        );
+      },
+    );
   }
 
   /// save the colors to shared prefs
@@ -414,25 +484,22 @@ class _ParameterPageState extends State<ParameterPage> {
           height: 20,
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: CustomSize.leftAndRightPadding),
+          padding: const EdgeInsets.symmetric(horizontal: CustomSize.leftAndRightPadding),
           child: _topBar("Profil"),
         ),
         SizedBox(
           height: 31,
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: CustomSize.leftAndRightPadding),
+          padding: const EdgeInsets.symmetric(horizontal: CustomSize.leftAndRightPadding),
           child: _profileWidget(false),
         ),
         SizedBox(
           height: 33,
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: CustomSize.leftAndRightPadding),
-          child: _tileParameterWidget(Strings.deconnection, Image.asset("assets/images/icons/parameter/deconnect_icon.png"), (){
+          padding: const EdgeInsets.symmetric(horizontal: CustomSize.leftAndRightPadding),
+          child: _tileParameterWidget(Strings.deconnection, Image.asset("assets/images/icons/parameter/deconnect_icon.png"), () {
             BlocProvider.of<AuthentificationBloc>(context).add(DisconnectAuthEvent());
             Navigator.pop(context);
           }),
@@ -440,6 +507,4 @@ class _ParameterPageState extends State<ParameterPage> {
       ],
     );
   }
-
-
 }

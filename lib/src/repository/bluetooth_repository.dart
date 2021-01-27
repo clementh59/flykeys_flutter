@@ -363,6 +363,12 @@ class BluetoothRepository {
     await mainBluetoothCharacteristic.write(trame);
   }
 
+  /// I ask the esp32 to update the brightness of leds
+  /// [brightness] needs to be between 0 and 255
+  Future<void> updateBrightness(int brightness) async {
+    await mainBluetoothCharacteristic.write([BluetoothConstants.CODE_CHANGE_BRIGHTNESS, brightness]);
+  }
+
   /// Je demande à l'esp32 d'éteindre toute les LEDs
   Future<void> clearLeds() async {
     await mainBluetoothCharacteristic.write([BluetoothConstants.CODE_CLEAR_LEDS]);

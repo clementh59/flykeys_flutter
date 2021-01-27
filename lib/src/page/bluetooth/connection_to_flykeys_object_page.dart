@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flykeys/src/bloc/bluetooth/bloc.dart';
 import 'package:flykeys/src/bloc/bluetooth/bluetooth_state.dart';
+import 'package:flykeys/src/utils/constants.dart';
+import 'package:flykeys/src/utils/strings.dart';
+import 'package:flykeys/src/utils/utils.dart';
 import 'dart:developer' as dev;
 
 import 'package:flykeys/src/widget/custom_widgets.dart';
@@ -44,8 +47,7 @@ class _SettingUpBluetoothPageState extends State<SettingUpBluetoothPage> {
 			return CustomWidgets.textWithLoadingIndicator(
 				"Connection à l'objet réussie!");
 		} else if (widget.state is BluetoothIsSetUpState) {
-			//Je lui demande maintenant d'envoyer le morceau
-			widget.onConnected();
+			bluetoothIsSetUp();
 			dev.log("Bluetooth is set up",
 				name: "Je demande au bloc la prochaine action");
 			return CustomWidgets.textWithLoadingIndicator(
@@ -94,6 +96,16 @@ class _SettingUpBluetoothPageState extends State<SettingUpBluetoothPage> {
 		print(
 			"!!!!!!!!!!!ERROR!!!!!!!!!! NOT HANDLED CASE IN SettingUpBluetoothPage");
 		return SizedBox();
+	}
+
+	void bluetoothIsSetUp() async {
+		await sendBrightness(); // we send the brightness of the LEDs
+		widget.onConnected();
+	}
+
+	Future<void> sendBrightness() async {
+		int brightness = await Utils.getIntegerFromSharedPreferences(Strings.BRIGHTNESS_SHARED_PREFS, defaultValue: Constants.DefaultBrightness);
+		await BlocProvider.of<BluetoothBloc>(context).bluetoothRepository.updateBrightness(brightness);
 	}
 
 }
