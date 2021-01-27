@@ -11,6 +11,8 @@ class Constants {
   static const int numberOfMusicLoadedWhenCLickLoadMoreMusic = 6;
   static const int numberOfElementLoadedWhenSearch = 5;
 
+  static const String defaultMusicImageInMusicPage = "assets/images/music_icon.png";
+
   //colors
   static const Color DefaultMDColor = Color.fromRGBO(79,235,52,1);
   static const Color DefaultMGColor = Color.fromRGBO(52,152,235,1);

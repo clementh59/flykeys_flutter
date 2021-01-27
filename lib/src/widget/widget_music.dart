@@ -7,6 +7,7 @@ import 'package:flykeys/src/model/artist.dart';
 import 'package:flykeys/src/model/music.dart';
 import 'package:flykeys/src/page/music_page.dart';
 import 'package:flykeys/src/repository/image_provider_repository.dart';
+import 'package:flykeys/src/utils/constants.dart';
 import 'package:flykeys/src/utils/custom_size.dart';
 import 'package:flykeys/src/utils/custom_style.dart';
 import 'package:flykeys/src/utils/utils.dart';
@@ -67,6 +68,7 @@ class _WidgetMusicState extends State<WidgetMusic> {
 
                       if (widget.music.imageName == "") {
                         image = CustomWidgets.playIconWithBlueCircle();
+                        widget.music.image = Image.asset(Constants.defaultMusicImageInMusicPage);
                       } else if (widget.music.image == null) {
                         if (state is ImageLoadedState) {
                           image = state.image;
