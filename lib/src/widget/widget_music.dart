@@ -135,7 +135,6 @@ class _WidgetMusicState extends State<WidgetMusic> {
                   ..add(RemoveAFavoriteMusic(widget.music));
               } else {
                 setState(() {
-                  print("Set state!");
                   widget.music.liked = true;
                 });
                 BlocProvider.of<FavoritesBloc>(context)
@@ -240,7 +239,7 @@ class EmptyWidgetMusic extends StatelessWidget {
                   Align(
                       alignment: Alignment.topLeft,
                       child: CustomWidgets.customShimmer(
-                        child: Text("Song",
+                        child: Text("Musique",
                             style: CustomStyle.musicTileName),
                       )),
                   CustomWidgets.customShimmer(
@@ -248,7 +247,7 @@ class EmptyWidgetMusic extends StatelessWidget {
                       alignment: Alignment.centerLeft,
                       child: Padding(
                         padding: const EdgeInsets.only(top: 8),
-                        child: Text("Artist",
+                        child: Text("Artiste",
                             style: CustomStyle.musicTileName),
                       ),
                     ),

@@ -88,7 +88,7 @@ class LightningShowModePage extends StatelessWidget {
     return Container(
       width: MediaQuery.of(context).size.width,
       child: Center(
-        child: CustomWidgets.textWithoutLoadingIndicator("Mode animation visuelle"),
+        child: CustomWidgets.textWithoutLoadingIndicator("Mode animations visuelles"),
       ),
     );
   }

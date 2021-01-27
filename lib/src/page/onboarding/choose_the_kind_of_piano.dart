@@ -18,7 +18,7 @@ class ChooseTheKindOfPiano extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 58),
           child: Text(
-            'De quel type est ton piano?',
+            'De quel type est votre piano?',
             style: CustomStyle.bigTextOnBoardingPage,
             textAlign: TextAlign.center,
           ),

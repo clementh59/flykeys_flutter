@@ -403,7 +403,7 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          "Transcribed by ",
+          "Transcrit par ",
           style: CustomStyle.transcriberNameMusicPage,
         ),
         Text(
@@ -631,7 +631,7 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
         children: <Widget>[
           CustomWidgets.backArrowIcon(context),
           Text(
-            "Learn",
+            "Apprentissage",
             style: CustomStyle.pageTitle,
           ),
           CustomWidgets.settingsIcon(context),

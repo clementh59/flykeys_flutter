@@ -6,9 +6,9 @@ import 'package:flykeys/src/widget/custom_widgets.dart';
 //region Global variables
 const explanationText = {
   'acoustic':
-      'Cela signifie que tu n’as pas besoin de brancher ton piano pour le faire fonctionner (ou de le recharger).\n\nCela signifie également que tu n’as pas de port comme celui-ci sur ton piano pour relier l’objet Flykeys au piano.',
+      'Cela signifie que vous n’avez pas besoin de brancher votre piano pour le faire fonctionner (ou de le recharger).\n\nCela signifie également que vous n’avez pas de port comme celui-ci sur votre piano pour relier l’objet Flykeys au piano.',
   'numeric':
-      'Cela signifie que tu as besoin de brancher ton piano pour le faire fonctionner (ou de le recharger).\n\nCela signifie également que tu as un port comme celui-ci sur ton piano pour relier l’objet Flykeys au piano.',
+      'Cela signifie que vous avez besoin de brancher votre piano pour le faire fonctionner (ou de le recharger).\n\nCela signifie également que vous avez un port comme celui-ci sur votre piano pour relier l’objet Flykeys au piano.',
 };
 
 const pianoTypeStrings = {
@@ -47,7 +47,7 @@ class ValidateTheChoiceOfKindOfPiano extends StatelessWidget {
                   textAlign: TextAlign.center,
                   text: TextSpan(children: [
                     TextSpan(
-                      text: 'Ton type de piano est ',
+                      text: 'Votre type de piano est ',
                       style: CustomStyle.bigTextOnBoardingPage,
                     ),
                     TextSpan(

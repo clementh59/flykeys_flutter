@@ -230,11 +230,11 @@ class _SetLimitOfKeyboardState extends State<SetLimitOfKeyboard> {
                 text: TextSpan(
                   children: [
                     TextSpan(
-                      text: "Maintenant, appuie sur la touche la plus à gauche du piano.",
+                      text: "Maintenant, appuyez sur la touche la plus à gauche du piano.",
                       style: CustomStyle.smallTextOnBoardingPage,
                     ),
                     TextSpan(
-                      text: " La première touche doit être aligné avec la ligne éclairée sur l’objet Flykeys",
+                      text: " La première touche doit être alignée avec la ligne éclairée sur l’objet Flykeys",
                       style: CustomStyle.smallTextOnBoardingPage.copyWith(fontWeight: CustomStyle.BOLD),
                     ),
                     TextSpan(
@@ -461,7 +461,7 @@ class _SetLimitOfKeyboardState extends State<SetLimitOfKeyboard> {
                   ),
                   TextSpan(
                     text:
-                        " noires). Pour être sûr que la configuration est valide, vous pouvez comparer le son de la première et de la dernière touche couverte par l’objet Flykeys avec les sons reconnus par l’application.",
+                        " noires). Pour être sûr que la configuration soit valide, vous pouvez comparer le son de la première et de la dernière touche couverte par l’objet Flykeys avec les sons reconnus par l’application.",
                     style: CustomStyle.smallTextOnBoardingPage,
                   ),
                 ],
@@ -624,7 +624,7 @@ class _SetLimitOfKeyboardState extends State<SetLimitOfKeyboard> {
         context: context,
         builder: (_) => new AlertDialog(
               title: new Text("Veuillez réessayer de paramétrer les limites du piano"),
-              content: new Text("Si vous n'arrivez toujours pas à paramétrer les limites, veuillez envoye une photo de votre piano par mail à " +
+              content: new Text("Si vous n'arrivez toujours pas à paramétrer les limites, veuillez envoyer une photo de votre piano par mail à " +
                   Constants.contact_mail),
               actions: <Widget>[
                 FlatButton(

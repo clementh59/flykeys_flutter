@@ -71,7 +71,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
                   widget.callBack(1);
                 },
                 child: CustomNavBarItem(
-                    "Search",
+                    "Recherche",
                     Image.asset(
                       "assets/images/icons/search_icon.png",
                       width: CustomSize.sizeOfIcons,
@@ -89,7 +89,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
                   widget.callBack(2);
                 },
                 child: CustomNavBarItem(
-                    "Favorites",
+                    "Favoris",
                     Image.asset(
                       "assets/images/icons/heart_icon.png",
                       width: CustomSize.sizeOfIcons,

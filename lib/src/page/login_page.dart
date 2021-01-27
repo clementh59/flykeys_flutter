@@ -82,7 +82,7 @@ class _LoginPageState extends State<LoginPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         Text(
-                          'Sign In',
+                          'Se connecter',
                           style: CustomStyle.signInLoginPage,
                         ),
                         _buildEmailTF(),
@@ -96,7 +96,7 @@ class _LoginPageState extends State<LoginPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         Text(
-                          'Sign Up',
+                          'S\'inscrire',
                           style: CustomStyle.signInLoginPage,
                         ),
                         _buildNameTF(),
@@ -146,7 +146,7 @@ class _LoginPageState extends State<LoginPage> {
                 Icons.mail_outline,
                 color: Colors.white,
               ),
-              hintText: 'Enter your Email',
+              hintText: 'Entre ton email',
               hintStyle: CustomStyle.hintTextLoginPage,
             ),
           ),
@@ -162,7 +162,7 @@ class _LoginPageState extends State<LoginPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(
-          'Full Name',
+          'Prénom',
           style: CustomStyle.labelLoginPage,
         ),
         SizedBox(height: 5.0),
@@ -186,7 +186,7 @@ class _LoginPageState extends State<LoginPage> {
                 Icons.person_outline,
                 color: Colors.white,
               ),
-              hintText: 'Enter your Name',
+              hintText: 'Entre ton prénom',
               hintStyle: CustomStyle.hintTextLoginPage,
             ),
           ),
@@ -202,7 +202,7 @@ class _LoginPageState extends State<LoginPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(
-          'Password',
+          'Mot de passe',
           style: CustomStyle.labelLoginPage,
         ),
         SizedBox(height: 5.0),
@@ -226,7 +226,7 @@ class _LoginPageState extends State<LoginPage> {
                 Icons.lock_outline,
                 color: Colors.white,
               ),
-              hintText: 'Enter your Password',
+              hintText: 'Entre ton mot de passe',
               hintStyle: CustomStyle.hintTextLoginPage,
             ),
           ),
@@ -257,7 +257,7 @@ class _LoginPageState extends State<LoginPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(
-          'Confirm Password',
+          'Confirme ton mot de passe',
           style: CustomStyle.labelLoginPage,
         ),
         SizedBox(height: 5.0),
@@ -280,7 +280,7 @@ class _LoginPageState extends State<LoginPage> {
                 Icons.lock_outline,
                 color: Colors.white,
               ),
-              hintText: 'Confirm your Password',
+              hintText: 'Confirme ton mot de passe',
               hintStyle: CustomStyle.hintTextLoginPage,
             ),
           ),
@@ -302,7 +302,7 @@ class _LoginPageState extends State<LoginPage> {
         splashColor: Colors.transparent,
         onTap: () => _showDialog(),
         child: Text(
-          'Forgot Password?',
+          'Mot de passe oublié',
           style: CustomStyle.labelLoginPage,
         ),
       ),
@@ -325,7 +325,7 @@ class _LoginPageState extends State<LoginPage> {
           valueColor:
           new AlwaysStoppedAnimation<Color>(CustomColors.blue),
         )
-          : Text('LOGIN', style: CustomStyle.loginButtonLoginPage),
+          : Text('CONNEXION', style: CustomStyle.loginButtonLoginPage),
       ),
     );
   }
@@ -346,7 +346,7 @@ class _LoginPageState extends State<LoginPage> {
           valueColor:
           new AlwaysStoppedAnimation<Color>(CustomColors.blue),
         )
-          : Text('REGISTER', style: CustomStyle.loginButtonLoginPage),
+          : Text('INSCRIPTION', style: CustomStyle.loginButtonLoginPage),
       ),
     );
   }
@@ -355,7 +355,7 @@ class _LoginPageState extends State<LoginPage> {
     return Column(
       children: <Widget>[
         Text(
-          '- OR -',
+          '- OU -',
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.w400,
@@ -363,7 +363,7 @@ class _LoginPageState extends State<LoginPage> {
         ),
         SizedBox(height: 15.0),
         Text(
-          'Sign in with',
+          'Me connecter avec',
           style: CustomStyle.labelLoginPage,
         ),
         SizedBox(height: 15.0),
@@ -417,7 +417,7 @@ class _LoginPageState extends State<LoginPage> {
         text: TextSpan(
           children: [
             TextSpan(
-              text: 'Don\'t have an Account? ',
+              text: 'Tu n\'as pas de compte?',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 14.0,
@@ -425,7 +425,7 @@ class _LoginPageState extends State<LoginPage> {
                 fontFamily: 'Poppins'),
             ),
             TextSpan(
-              text: 'Sign Up',
+              text: 'S\'inscrire',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 14.0,
@@ -445,7 +445,7 @@ class _LoginPageState extends State<LoginPage> {
         text: TextSpan(
           children: [
             TextSpan(
-              text: 'Have an Account? ',
+              text: 'J\'ai déjà un compte',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 14.0,
@@ -453,7 +453,7 @@ class _LoginPageState extends State<LoginPage> {
                 fontFamily: 'Poppins'),
             ),
             TextSpan(
-              text: 'Sign In',
+              text: 'Connection',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 14.0,
@@ -569,9 +569,9 @@ class _LoginPageState extends State<LoginPage> {
       builder: (BuildContext context) {
         // return object of type Dialog
         return AlertDialog(
-          title: new Text("Forgot password"),
+          title: new Text("Mot de passe oublié"),
           content: new Text(
-              "Un mail va être envoyé à $mail, est ce bien vôtre adresse?"),
+              "Un mail va être envoyé à $mail, est ce bien votre adresse?"),
           actions: <Widget>[
             // usually buttons at the bottom of the dialog
             new FlatButton(

@@ -77,7 +77,7 @@ class _HomePageState extends State<HomePage> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: CustomSize.leftAndRightPadding),
             child: Text(
-              "Hi Clément",
+              "Bonjour Clément",
               style: CustomStyle.greySubtitle,
             ),
           ),
@@ -87,7 +87,7 @@ class _HomePageState extends State<HomePage> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: CustomSize.leftAndRightPadding),
             child: Text(
-              "Popular transcribers",
+              "Transcribers populaires",
               style: CustomStyle.title,
             ),
           ),
@@ -108,7 +108,7 @@ class _HomePageState extends State<HomePage> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: CustomSize.leftAndRightPadding),
             child: Text(
-              "Popular songs",
+              "Musiques populaires",
               style: CustomStyle.title,
             ),
           ),
@@ -122,7 +122,7 @@ class _HomePageState extends State<HomePage> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: CustomSize.leftAndRightPadding),
             child: Text(
-              "Play for fun",
+              "Joue pour t'amuser",
               style: CustomStyle.title,
             ),
           ),
@@ -231,7 +231,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buttonLoadMorePopular() {
-    return CustomWidgets.buttonLoadMorePopularSongStyle('MORE POPULAR SONGS', () {
+    return CustomWidgets.buttonLoadMorePopularSongStyle('CHARGER PLUS DE MUSIQUES', () {
       _trendingBloc.add(GetMoreTrendingMusic());
     });
   }
@@ -296,7 +296,7 @@ class _HomePageState extends State<HomePage> {
             style: CustomStyle.gameTileName,
           ),
           Text(
-            Utils.showNumber(game.nbPlayers.toString()) + " players",
+            Utils.showNumber(game.nbPlayers.toString()) + " joueurs",
             style: CustomStyle.gameTileNbPlayers,
           ),
           SizedBox(

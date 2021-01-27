@@ -87,7 +87,7 @@ class _SearchPageState extends State<SearchPage> {
                   children: <Widget>[
                     CustomWidgets.settingsIcon(context),
                     Text(
-                      "Search",
+                      "Recherche",
                       style: CustomStyle.pageTitle,
                     ),
                     ProfileImage(),
@@ -100,7 +100,7 @@ class _SearchPageState extends State<SearchPage> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: CustomSize.leftAndRightPadding),
                 child: Text(
-                  "Discover",
+                  "Découvrir",
                   style: CustomStyle.greySubtitle,
                 ),
               ),
@@ -110,7 +110,7 @@ class _SearchPageState extends State<SearchPage> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: CustomSize.leftAndRightPadding),
                 child: Text(
-                  "Ready to explore?",
+                  "Prêt à explorer?",
                   style: CustomStyle.title,
                 ),
               ),
@@ -177,7 +177,7 @@ class _SearchPageState extends State<SearchPage> {
                 },
                 decoration: InputDecoration(
                     border: InputBorder.none,
-                    hintText: "Search",
+                    hintText: "Recherche",
                     hintStyle: CustomStyle.searchFieldHintText),
               ),
             ),
@@ -227,7 +227,7 @@ class _SearchPageState extends State<SearchPage> {
             if (state is MusicListLoadedState) {
               if (state.musics.length>0)
                 return MusicListWidget(state.musics, null, onSelect: onMusicSelect,);
-              return _searchMessage("No result");
+              return _searchMessage("Aucun résultat");
             }
             if (state is MusicListLoadingState) {
               return Center(
@@ -245,7 +245,7 @@ class _SearchPageState extends State<SearchPage> {
             if (state is TranscriberListLoadedState) {
               if (state.transcribers.length>0)
                 return TranscriberListWidget(state.transcribers, null);
-              return _searchMessage("No result");
+              return _searchMessage("Aucun résultat");
             }
             if (state is TranscriberListLoadingState) {
               return Center(
@@ -263,7 +263,7 @@ class _SearchPageState extends State<SearchPage> {
             if (state is ArtistListLoadedState) {
               if (state.artists.length>0)
                 return ArtistListWidget(state.artists, null);
-              return _searchMessage("No result");
+              return _searchMessage("Aucun résultat");
             }
             if (state is ArtistListLoadingState) {
               return Center(
@@ -308,7 +308,7 @@ class _SearchPageState extends State<SearchPage> {
       children: [
         SizedBox(height: 20,),
         Text(
-          "RECENT",
+          "RÉCENT",
           style: TextStyle(
             color: CustomColors.white,
             fontSize: 15,
@@ -343,7 +343,7 @@ class _SearchPageState extends State<SearchPage> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SearchTypeElement("SONGS", _selectedCategory == 0, () {
+          SearchTypeElement("MUSIQUES", _selectedCategory == 0, () {
             changeSelectedCategory(0);
           }),
           SizedBox(
@@ -355,7 +355,7 @@ class _SearchPageState extends State<SearchPage> {
           SizedBox(
             width: 31,
           ),
-          SearchTypeElement("ARTISTS", _selectedCategory == 2, () {
+          SearchTypeElement("ARTISTES", _selectedCategory == 2, () {
             changeSelectedCategory(2);
           }),
           SizedBox(

@@ -200,7 +200,7 @@ class _TranscriberPageState extends State<TranscriberPage> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              "Songs",
+                              "Musiques",
                               style: CustomStyle.title,
                             ),
                             SizedBox(

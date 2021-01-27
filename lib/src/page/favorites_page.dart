@@ -41,7 +41,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
 				  	children: <Widget>[
 				  		CustomWidgets.settingsIcon(context),
 				  		Text(
-				  			"Favorites",
+				  			"Favoris",
 				  			style: CustomStyle.pageTitle,
 				  		),
 				  		ProfileImage(),
@@ -75,7 +75,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
 				mainAxisAlignment: MainAxisAlignment.spaceAround,
 				mainAxisSize: MainAxisSize.max,
 				children: [
-					SearchTypeElement("SONGS", _selectedCategory == 0, () {
+					SearchTypeElement("MUSIQUES", _selectedCategory == 0, () {
 						changeSelectedCategory(0);
 					}),
 					SearchTypeElement("TRANSCRIBERS", _selectedCategory == 1, () {
@@ -101,7 +101,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
 						);
 					}
 					return Center(
-						child: Text("No Liked music"),
+						child: Text("Aucune musique en favoris"),
 					);
 				}
 				return SizedBox();
@@ -124,7 +124,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
 						);
 					}
 					return Center(
-						child: Text("No Followed transcribers"),
+						child: Text("Aucun artiste suivi"),
 					);
 				}
 				return SizedBox();

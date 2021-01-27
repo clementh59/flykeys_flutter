@@ -319,7 +319,7 @@ class CustomWidgets {
         ),
         Align(
           alignment: Alignment.center,
-          child: CustomWidgets.textWithoutLoadingIndicator("Bluetooth is off!"),
+          child: CustomWidgets.textWithoutLoadingIndicator("Le bluetooth n'est pas activé!"),
         ),
       ],
     );

@@ -90,7 +90,7 @@ class _WidgetArtistTileState extends State<WidgetArtistTile> {
                         child: Text(
                             Utils.showNumber(
                                     widget.artist.musics.length.toString()) +
-                                " songs",
+                                " musiques",
                             style: CustomStyle.transcriberSmallTileFollowers),
                       ),
                     ),

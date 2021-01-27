@@ -165,7 +165,7 @@ class _ArtistPageState extends State<ArtistPage> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Text(
-                                    "Songs",
+                                    "Musiques",
                                     style: CustomStyle.title,
                                   ),
                                   SizedBox(

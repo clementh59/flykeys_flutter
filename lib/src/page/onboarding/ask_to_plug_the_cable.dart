@@ -23,7 +23,7 @@ class AskToPlugTheCable extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 28),
                 child: Text(
-                  'Branchez le cable MIDI à ton piano',
+                  'Branchez le cable MIDI à votre piano',
                   style: CustomStyle.bigTextOnBoardingPage,
                   textAlign: TextAlign.center,
                 ),

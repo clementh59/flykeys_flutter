@@ -30,7 +30,7 @@ class AskToPlugTheObject extends StatelessWidget {
 							),
 							SizedBox(height: 26),
 							Text(
-								'L’application va communiquer avec l’objet pour configurer les limites de votre piano. Pour cela, il faut brancher l\'objet Flykeys sur une prise.',
+								'L’application va communiquer avec l’objet pour configurer les limites de votre piano. Pour cela, il faut brancher l\'objet Flykeys sur une prise électrique.',
 								style: CustomStyle.smallTextOnBoardingPage,
 								textAlign: TextAlign.left,
 							),
