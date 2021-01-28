@@ -5,6 +5,7 @@ import 'package:flykeys/src/bloc/authentification/authentification_bloc.dart';
 import 'package:flykeys/src/page/loading_page.dart';
 import 'package:flykeys/src/page/login_page.dart';
 import 'package:flykeys/src/page/main_page.dart';
+import 'package:flykeys/src/page/music_page_debug.dart';
 import 'package:flykeys/src/page/onboarding/onboarding_page.dart';
 import 'package:flykeys/src/repository/authentification_repository.dart';
 import 'package:flykeys/src/repository/bluetooth_repository.dart';
@@ -14,6 +15,7 @@ import 'package:flykeys/src/utils/utils.dart';
 
 import 'bloc/bluetooth/bloc.dart';
 import 'bloc/favorites/bloc.dart';
+import 'model/music.dart';
 
 enum possiblePages { loading, mainPage, login, onBoarding }
 
@@ -60,6 +62,7 @@ class _AppState extends State<App> {
 
   /// [returns] the page to show according to [pageToShow]
   Widget getPageToShow() {
+    return MusicDebugPage(Music.fromDummyValues());
     switch (pageToShow) {
       case possiblePages.loading:
         return LoadingPage();

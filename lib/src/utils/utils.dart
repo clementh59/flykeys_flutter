@@ -37,6 +37,14 @@ class Utils{
 		return str + " " + (reste/1000).floor().toString() + " " + (reste%1000).toString();
 	}
 
+	/// Convertis un nombre en string
+	/// ex : si nb de second = 4, string = "04"
+	/// si nb de second = 15, str = "15"
+	static String intSecondsToStringDuration(int seconds) {
+		if (seconds < 10) return "0" + seconds.toString();
+		return seconds.toString();
+	}
+
 	/// This function is useful when you retrieve a list of string from Firestore (because the type in dart is dynamic by default)
 	/// It [returns] a list of string
 	static List<String> listDynamicToStringList(List<dynamic> listDyn){

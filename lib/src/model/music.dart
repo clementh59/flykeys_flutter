@@ -83,6 +83,23 @@ class Music{
 		transcriberName = "Peter PlutaX";
 	}
 
+	/// Generate a Music instance with dummy values
+	Music.fromDummyValues() {
+		name = 'DUMMY_ID';
+		imageName = '';
+		id = 'DUMMY_ID';
+		difficulty = 3;
+		liked = false;
+
+		speed = 100;
+		stars = 4.5;
+		numberOfVotes = 8521;
+		transcriberName = "Peter PlutaX";
+		auteurs = [Artist.fromDummyValues()];
+
+		iLoadedAllInfos = true;
+	}
+
 	@override
   bool operator ==(Object other) =>
       identical(this, other) ||

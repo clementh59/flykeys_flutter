@@ -38,6 +38,15 @@ class Artist{
 		iLoadedAllInfo = false;
 	}
 
+
+	/// Generate an Artist instance with dummy values
+	Artist.fromDummyValues() {
+		//todo: fill all values and not only smaller artist object
+		name = 'Dummy Artist';
+		id = 'Dummy ID';
+		iLoadedAllInfo = false;
+	}
+
 	@override
   String toString() {
     return 'Artist{name: $name, musics: $musics}';
