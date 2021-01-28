@@ -12,7 +12,6 @@ import 'package:flykeys/src/utils/strings.dart';
 import 'package:flykeys/src/utils/utils.dart';
 
 class BluetoothRepository {
-
   //region Variables
   BluetoothDevice flyKeysDevice;
   BluetoothCharacteristic mainBluetoothCharacteristic;
@@ -21,6 +20,7 @@ class BluetoothRepository {
   StreamSubscription streamSubscriptionNotePushedListening;
   StreamSubscription deviceStateSubscription;
   List<int> bytesSent = [];
+
   //endregion
 
   //region Trame morceau
@@ -33,12 +33,12 @@ class BluetoothRepository {
     int actualTick = -8;
     Note n;
 
-    List<Note> lastKeysOn = List(
-        128); //Pour savoir si on doit appuyer sur une touche deux fois alors que l'on voit juste deux LEDs
-    List<Note>
-        actualKeysOn; //Pour savoir si on doit appuyer sur une touche deux fois alors que l'on voit juste deux LEDs
+    List<Note> lastKeysOn = List(128); //Pour savoir si on doit appuyer sur une touche deux fois alors que l'on voit juste deux LEDs
+    List<Note> actualKeysOn; //Pour savoir si on doit appuyer sur une touche deux fois alors que l'on voit juste deux LEDs
 
-    listNotes.forEach((element) {element.key -= (leftLimit);});
+    listNotes.forEach((element) {
+      element.key -= (leftLimit);
+    });
 
     while (listNotes.length > 0) {
       lastKeysOn = actualKeysOn;
@@ -47,24 +47,27 @@ class BluetoothRepository {
         n = listNotes[i];
 
         // To know if the color is white or black, we need to get the value of the key before removing the leftLimit!
-        int colorOffset = Utils.isWhiteKey(n.getKey() + leftLimit)? 0 : BluetoothConstants.lastIndexOfColorDefine;
+        int colorOffset = Utils.isWhiteKey(n.getKey() + leftLimit) ? 0 : BluetoothConstants.lastIndexOfColorDefine;
 
-        if (n.getKey() > rightLimit) {
-          //je fais rien car elle ne sera pas visible sur le clavier!!
-          notesDejaEnvoyees.add(n);
-        } else if (n.getTimeOff() < actualTick) {
+        if (n.getTimeOff() < actualTick) {
           //On ne voit plus la note
           notesDejaEnvoyees.add(n);
         } else {
           //La note est visible ou le sera encore, on continue de la traiter
           if (n.getTimeOn() < actualTick && n.getTimeOff() >= actualTick) {
-            //alors c'est visible
+            // alors c'est visible
 
-            if (n.isReleaseAndPush()) {
+            // With the midi offset of the piano, it is possible that some keys are <0.
+            // If it's the case, it will throw an exception we can't send negative values via BLE here
+            // And of course, if the key is higher than the size of the piano, we don't show it
+            if (n.getKey() < 0 || n.getKey() > (rightLimit-leftLimit)) {
+              // I do nothing -> I don't want to show it
+              // I just wait for them to be remove by the check above
+              continue;
+            } else if (n.isReleaseAndPush()) {
               tramesAEnvoyer.add(n.key); //je la met en rouge
               tramesAEnvoyer.add(BluetoothConstants.mapStringColorToCode[n.getColor()] + colorOffset);
-            } else if (lastKeysOn[n.getKey()] != null &&
-                lastKeysOn[n.getKey()] != n && lastKeysOn[n.getKey()].getColor() == n.getColor()) {
+            } else if (lastKeysOn[n.getKey()] != null && lastKeysOn[n.getKey()] != n && lastKeysOn[n.getKey()].getColor() == n.getColor()) {
               tramesAEnvoyer.add(n.key); //je la met en rouge
               n.setIsReleaseAndPushColor();
               tramesAEnvoyer.add(BluetoothConstants.mapStringColorToCode[n.getColor()] + colorOffset);
@@ -76,16 +79,16 @@ class BluetoothRepository {
           }
         }
       }
+
       tramesAEnvoyer.add(BluetoothConstants.CODE_NEW_TICK); //AFFICHAGE
       actualTick++;
-      for (int i = 0; i < notesDejaEnvoyees.length; i++)
-        listNotes.remove(notesDejaEnvoyees[i]);
+      for (int i = 0; i < notesDejaEnvoyees.length; i++) listNotes.remove(notesDejaEnvoyees[i]);
       notesDejaEnvoyees.clear();
     }
     return tramesAEnvoyer;
   }
 
-	/// Send a morceau to the esp32
+  /// Send a morceau to the esp32
   ///
   /// The [tramesAEnvoyer] needs to be a list of int. I reccomand you to create
   /// it with createTrameFromListeNote()
@@ -106,13 +109,11 @@ class BluetoothRepository {
   /// ...
   ///
   /// [leftLimit] is the first key of the piano
-  Stream<int> envoiLaTrameMorceau(
-      List<int> tramesAEnvoyer, ValueNotifier valueNotifierStopSending, int leftLimit) async* {
+  Stream<int> envoiLaTrameMorceau(List<int> tramesAEnvoyer, ValueNotifier valueNotifierStopSending, int leftLimit) async* {
     bytesSent = [];
     List<int> trameDeMaxMTU =
         []; // On envoi les bytes BluetoothConstants.MTU_SIZE par BluetoothConstants.MTU_SIZE, ce tableau les contient temporairement à chaque fois
-    int actualIndextrameDeMaxMTU =
-        0; // Pour se repérer dans l'index du tableau de trame de BluetoothConstants.MTU_SIZE où on est
+    int actualIndextrameDeMaxMTU = 0; // Pour se repérer dans l'index du tableau de trame de BluetoothConstants.MTU_SIZE où on est
 
     await mainBluetoothCharacteristic
         .write([BluetoothConstants.CODE_MODE_APPRENTISSAGE_ENVOI_DU_MORCEAU, leftLimit]); //Je dis à l'esp que je lui envoi le morceau
@@ -120,15 +121,12 @@ class BluetoothRepository {
     for (int i = 0; i < tramesAEnvoyer.length; i++) {
       trameDeMaxMTU.add(tramesAEnvoyer[i]);
 
-      if (actualIndextrameDeMaxMTU == BluetoothConstants.MTU_SIZE ||
-          i == tramesAEnvoyer.length - 1) {
+      if (actualIndextrameDeMaxMTU == BluetoothConstants.MTU_SIZE || i == tramesAEnvoyer.length - 1) {
         //Si la trame est pleine, ou si on vient de remplir la dernière trame à envoyer
         actualIndextrameDeMaxMTU = 0;
-        await envoiLaTrameMTU(trameDeMaxMTU,
-            mainBluetoothCharacteristic); // J'envoi la trame
+        await envoiLaTrameMTU(trameDeMaxMTU, mainBluetoothCharacteristic); // J'envoi la trame
         bytesSent.addAll(trameDeMaxMTU);
-        trameDeMaxMTU =
-            []; //sinon la dernière trame peut contenir des valeurs indésirables
+        trameDeMaxMTU = []; //sinon la dernière trame peut contenir des valeurs indésirables
         yield i;
       } else
         actualIndextrameDeMaxMTU++;
@@ -141,6 +139,7 @@ class BluetoothRepository {
 
     return;
   }
+
   //endregion
 
   //region Connection
@@ -152,8 +151,7 @@ class BluetoothRepository {
     dev.log('fetching BLUETOOTH connected devices', name: "findFlyKeysDevice");
     List<BluetoothDevice> connectedDevices = await flutterBlue.connectedDevices;
 
-    dev.log('checking if connected device list contains flykeys device',
-        name: "findFlyKeysDevice");
+    dev.log('checking if connected device list contains flykeys device', name: "findFlyKeysDevice");
     for (BluetoothDevice device in connectedDevices) {
       if (isFlyKeysDevice(device)) {
         flutterBlue.stopScan();
@@ -221,18 +219,15 @@ class BluetoothRepository {
         if (c.uuid.toString() == BluetoothConstants.uuidOfMainCommunication) {
           //todo:generate a new one for my purpose on a website generator
           mainBluetoothCharacteristic = c;
-          dev.log("found the mainBluetoothCharacteristic",
-            name: "hasTheGoodCharacteristics");
+          dev.log("found the mainBluetoothCharacteristic", name: "hasTheGoodCharacteristics");
         } else if (c.uuid.toString() == BluetoothConstants.uuidOfTickCommunication) {
           tickBluetoothCharacteristic = c;
-          dev.log("found the tickBluetoothCharacteristic",
-            name: "hasTheGoodCharacteristics");
+          dev.log("found the tickBluetoothCharacteristic", name: "hasTheGoodCharacteristics");
         }
       }
     }
 
-    if (mainBluetoothCharacteristic != null &&
-      tickBluetoothCharacteristic != null) {
+    if (mainBluetoothCharacteristic != null && tickBluetoothCharacteristic != null) {
       return true;
     }
     return false;
@@ -250,14 +245,14 @@ class BluetoothRepository {
       return true;
     } catch (id) {
       print("error : " + id.toString());
-      if (id.toString() ==
-          "PlatformException(already_connected, connection with device already exists, null)") {
+      if (id.toString() == "PlatformException(already_connected, connection with device already exists, null)") {
         subscribeToConnectionStateChanges(onDisconnectNotifier);
         return true; //je suis déjà connecté
       }
       return false;
     }
   }
+
   //endregion
 
   //region Send to esp32
@@ -290,30 +285,117 @@ class BluetoothRepository {
     int delay = delayDouble.floor();
     int virguleFois100 = ((delayDouble - delay) * 100).round();
 
-    print("Je dois envoyer le delay : " + delay.toString());
     ByteData byteData = new ByteData(2);
     byteData.setInt16(0, delay);
     //J'envoi les deux premier int qui correspondent à la partie entière de la vitesse puis une nombre de 0 à 99 qui correspond à la virgule
-    await mainBluetoothCharacteristic.write([
-      BluetoothConstants.CODE_DELAY,
-      byteData.getUint8(1),
-      byteData.getUint8(0),
-      virguleFois100
-    ]); // PLAY
+    await mainBluetoothCharacteristic.write([BluetoothConstants.CODE_DELAY, byteData.getUint8(1), byteData.getUint8(0), virguleFois100]); // PLAY
   }
 
   Future<void> sendColors() async {
     Color MD = await Utils.readColorFromSharedPreferences(Strings.COLOR_MD_SHARED_PREFS, Constants.DefaultMDColor);
     Color MG = await Utils.readColorFromSharedPreferences(Strings.COLOR_MG_SHARED_PREFS, Constants.DefaultMGColor);
-    await mainBluetoothCharacteristic.write([BluetoothConstants.CODE_I_SEND_COLOR,
+    await mainBluetoothCharacteristic.write([
+      BluetoothConstants.CODE_I_SEND_COLOR,
       BluetoothConstants.mapStringColorToCode['MD'],
-      MD.red,MD.green,MD.blue,MD.red,MD.green,MD.blue,MD.red,MD.green,MD.blue,MD.red,MD.green,MD.blue,MD.red,MD.green,MD.blue,MD.red,MD.green,MD.blue,MD.red,MD.green,MD.blue,MD.red,MD.green,MD.blue,
+      MD.red,
+      MD.green,
+      MD.blue,
+      MD.red,
+      MD.green,
+      MD.blue,
+      MD.red,
+      MD.green,
+      MD.blue,
+      MD.red,
+      MD.green,
+      MD.blue,
+      MD.red,
+      MD.green,
+      MD.blue,
+      MD.red,
+      MD.green,
+      MD.blue,
+      MD.red,
+      MD.green,
+      MD.blue,
+      MD.red,
+      MD.green,
+      MD.blue,
       BluetoothConstants.mapStringColorToCode['MD_R&P'],
-      189,255,177,189,255,177,189,255,177,189,255,177,189,255,177,189,255,177,189,255,177,189,255,177,
+      189,
+      255,
+      177,
+      189,
+      255,
+      177,
+      189,
+      255,
+      177,
+      189,
+      255,
+      177,
+      189,
+      255,
+      177,
+      189,
+      255,
+      177,
+      189,
+      255,
+      177,
+      189,
+      255,
+      177,
       BluetoothConstants.mapStringColorToCode['MG'],
-      MG.red,MG.green,MG.blue,MG.red,MG.green,MG.blue,MG.red,MG.green,MG.blue,MG.red,MG.green,MG.blue,MG.red,MG.green,MG.blue,MG.red,MG.green,MG.blue,MG.red,MG.green,MG.blue,MG.red,MG.green,MG.blue,
+      MG.red,
+      MG.green,
+      MG.blue,
+      MG.red,
+      MG.green,
+      MG.blue,
+      MG.red,
+      MG.green,
+      MG.blue,
+      MG.red,
+      MG.green,
+      MG.blue,
+      MG.red,
+      MG.green,
+      MG.blue,
+      MG.red,
+      MG.green,
+      MG.blue,
+      MG.red,
+      MG.green,
+      MG.blue,
+      MG.red,
+      MG.green,
+      MG.blue,
       BluetoothConstants.mapStringColorToCode['MG_R&P'],
-      255, 191, 28,255, 191, 28,255, 191, 28,255, 191, 28,255, 191, 28,255, 191, 28,255, 191, 28,255, 191, 28
+      255,
+      191,
+      28,
+      255,
+      191,
+      28,
+      255,
+      191,
+      28,
+      255,
+      191,
+      28,
+      255,
+      191,
+      28,
+      255,
+      191,
+      28,
+      255,
+      191,
+      28,
+      255,
+      191,
+      28
     ]);
   }
 
@@ -346,7 +428,6 @@ class BluetoothRepository {
 
   /// Je demande à l'esp32 d'allumer une liste de LEDs
   Future<void> lightLeds(List<int> ledsToLight) async {
-
     List<int> trame = [BluetoothConstants.CODE_LIGHT_LEDS];
 
     ledsToLight.forEach((element) {
@@ -374,9 +455,7 @@ class BluetoothRepository {
     await mainBluetoothCharacteristic.write([BluetoothConstants.CODE_CLEAR_LEDS]);
   }
 
-  Future<Null> envoiLaTrameMTU(List<int> trame,
-    BluetoothCharacteristic bluetoothCharacteristicToSend) async {
-    //print("J'envoi la trame $trame");
+  Future<Null> envoiLaTrameMTU(List<int> trame, BluetoothCharacteristic bluetoothCharacteristicToSend) async {
     await bluetoothCharacteristicToSend.write(trame);
   }
 
@@ -388,8 +467,6 @@ class BluetoothRepository {
     int index = findTheIndexCorrespondToTheTick(tick);
 
     if (index == -1) {
-      print(tick);
-      print(bytesSent);
       return false;
     }
 
@@ -438,17 +515,14 @@ class BluetoothRepository {
   Future<int> subscribeWhenTickIsUpdated(ValueNotifier valueNotifierActualTick) async {
     await tickBluetoothCharacteristic.setNotifyValue(true);
     streamSubscriptionTickListening?.cancel();
-    streamSubscriptionTickListening =
-        tickBluetoothCharacteristic.value.listen((event) {
-      dev.log("Value changed : " + tickBluetoothCharacteristic.value.toString(),
-          name: "tickBluetoothCharacteristic");
+    streamSubscriptionTickListening = tickBluetoothCharacteristic.value.listen((event) {
+      dev.log("Value changed : " + tickBluetoothCharacteristic.value.toString(), name: "tickBluetoothCharacteristic");
 
       if (event.length == 4) {
         int value = event[0] + event[1] * 256 + event[2] * 256 * 256 + event[3] * 256 * 256 * 256;
 
         if (value > 1000000) {
-          valueNotifierActualTick.value =
-              -1; //Je notifie que le morceau est finis
+          valueNotifierActualTick.value = -1; //Je notifie que le morceau est finis
         } else
           valueNotifierActualTick.value = value;
       }
@@ -465,17 +539,14 @@ class BluetoothRepository {
   Future<int> subscribeWhenNoteIsPushed(ValueNotifier valueNotifierNotePushed) async {
     await tickBluetoothCharacteristic.setNotifyValue(true);
     streamSubscriptionNotePushedListening?.cancel();
-    streamSubscriptionNotePushedListening =
-      tickBluetoothCharacteristic.value.listen((event) {
-        dev.log("Value changed : " + tickBluetoothCharacteristic.value.toString(),
-          name: "Note is pushed");
+    streamSubscriptionNotePushedListening = tickBluetoothCharacteristic.value.listen((event) {
 
-        if (event.length == 1) { // I receive a Note Pushed info
-          int value = event[0];
-          print('I received '+value.toString());
-          valueNotifierNotePushed.value = value;
-        }
-      });
+      if (event.length == 1) {
+        // I receive a Note Pushed info
+        int value = event[0];
+        valueNotifierNotePushed.value = value;
+      }
+    });
 
     return 0;
   }
@@ -485,6 +556,7 @@ class BluetoothRepository {
       streamSubscriptionNotePushedListening?.cancel();
     } catch (e) {}
   }
+
   //endregion
 
   //region Utils
@@ -506,6 +578,7 @@ class BluetoothRepository {
     }
     return -1;
   }
+
   //endregion
 
   void dispose() {
@@ -515,5 +588,4 @@ class BluetoothRepository {
     streamSubscriptionNotePushedListening?.cancel();
     deviceStateSubscription?.cancel();
   }
-
 }
