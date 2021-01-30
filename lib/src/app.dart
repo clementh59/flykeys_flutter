@@ -62,6 +62,7 @@ class _AppState extends State<App> {
 
   /// [returns] the page to show according to [pageToShow]
   Widget getPageToShow() {
+    //return MusicDebugPage(Music.fromDummyValues());
     switch (pageToShow) {
       case possiblePages.loading:
         return LoadingPage();

@@ -175,7 +175,6 @@ class SendingMorceauPage extends StatefulWidget {
 }
 
 class _SendingMorceauPageState extends State<SendingMorceauPage> {
-
   bool stopSending = false;
 
   @override
@@ -196,7 +195,6 @@ class _SendingMorceauPageState extends State<SendingMorceauPage> {
   }
 
   Widget envoiEnCoursPage(context, double avancement) {
-
     if (!stopSending)
       return Column(
         mainAxisSize: MainAxisSize.max,
@@ -346,6 +344,7 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
       child: _generatePage(buttonState),
     );
   }
+
   //endregion
 
   //region Widget
@@ -635,14 +634,27 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
                     thumbShape: RoundSliderThumbShape(enabledThumbRadius: 2)),
                 child: Slider(
                   onChangeEnd: (value) {
-                    _sendNewTick(value);
+                    if (!repeatAPartOfTheMorceau) _sendNewTick(value);
                   },
                   divisions: durationOfTheMorceau.inSeconds,
                   //pour eviter erreur
                   value: min(durationOfTheMorceau.inSeconds.toDouble(), (nbMinutes * 60 + nbSeconds).toDouble()),
                   onChanged: (newTime) {
-                    if (valueNotifierUpdateTickInPage.value) valueNotifierUpdateTickInPage.value = false;
-                    valueNotifierActualDuration.value = new Duration(seconds: newTime.floor());
+                    if (!repeatAPartOfTheMorceau) {
+                      if (valueNotifierUpdateTickInPage.value) valueNotifierUpdateTickInPage.value = false;
+                      valueNotifierActualDuration.value = new Duration(seconds: newTime.floor());
+                    } else {
+                      if (!_imActuallyShowingASnackbar) {
+                        _imActuallyShowingASnackbar = true;
+                        Scaffold
+                            .of(context)
+                            .showSnackBar(SnackBar(content: Text("Il est impossible d'aller à un endroit choisi lorsque le mode répétition en boucle est activé")))
+                            .closed
+                            .then((value) {
+                          _imActuallyShowingASnackbar = false;
+                        });
+                      }
+                    }
                   },
                   min: 0,
                   max: durationOfTheMorceau.inSeconds.toDouble(),
@@ -803,6 +815,7 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
       ),
     );
   }
+
   //endregion
 
   //region Logic
@@ -835,15 +848,15 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
   }
 
   /**
-	 * Crée une action dans BluetoothBloc qui envoi mes couleurs
-	 */
+   * Crée une action dans BluetoothBloc qui envoi mes couleurs
+   */
   void envoiMesCouleurs() {
     BlocProvider.of<BluetoothBloc>(context).add(EnvoiMesCouleursEvent());
   }
 
   /**
-	 * Crée un event dans le BluetoothBloc pour dire de montrer les deux mains
-	 */
+   * Crée un event dans le BluetoothBloc pour dire de montrer les deux mains
+   */
   void envoiLaMainQueJeVeuxJouer() async {
     bool MD = await Utils.getBooleanFromSharedPreferences(widget.music.id + '_MD', defaultValue: true);
     bool MG = await Utils.getBooleanFromSharedPreferences(widget.music.id + '_MG', defaultValue: true);
@@ -870,9 +883,9 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
   }
 
   /**
-	 * Crée une action dans BluetoothBloc qui envoi mon choix pour
-	 * waitForTheUserInput
-	 */
+   * Crée une action dans BluetoothBloc qui envoi mon choix pour
+   * waitForTheUserInput
+   */
   void envoiWaitForTheUserInput() async {
     bool wait = await getWaitForUserInput();
     if (wait)
@@ -884,6 +897,7 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
   Future<bool> getWaitForUserInput() async {
     return await Utils.getBooleanFromSharedPreferences(Strings.WAIT_FOR_USER_INPUT_SHARED_PREFS, defaultValue: false);
   }
+
 //endregion
 
   //region bottomPanel
@@ -943,19 +957,19 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
             ),
             showRightArrow
                 ? Icon(
-              Icons.arrow_forward_ios,
-              color: CustomColors.white,
-              size: 18,
-            )
+                    Icons.arrow_forward_ios,
+                    color: CustomColors.white,
+                    size: 18,
+                  )
                 : SizedBox(),
             showSwitch
                 ? Switch(
-              onChanged: (bool) {
-                callBack();
-              },
-              activeColor: CustomColors.blue,
-              value: switchState,
-            )
+                    onChanged: (bool) {
+                      callBack();
+                    },
+                    activeColor: CustomColors.blue,
+                    value: switchState,
+                  )
                 : SizedBox(),
           ],
         ),
@@ -1055,14 +1069,14 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
                 ),
                 Expanded(
                     child: RichText(
-                      text: TextSpan(
-                        style: CustomStyle.notificationNameParameterPage,
-                        children: <TextSpan>[
-                          TextSpan(text: 'Je travaille '),
-                          TextSpan(text: getTextCorrespondingToHands(), style: TextStyle(fontWeight: CustomStyle.BOLD)),
-                        ],
-                      ),
-                    )),
+                  text: TextSpan(
+                    style: CustomStyle.notificationNameParameterPage,
+                    children: <TextSpan>[
+                      TextSpan(text: 'Je travaille '),
+                      TextSpan(text: getTextCorrespondingToHands(), style: TextStyle(fontWeight: CustomStyle.BOLD)),
+                    ],
+                  ),
+                )),
                 Transform.rotate(
                   angle: expandChooseHandParameter ? -pi / 2 : pi / 2,
                   child: Icon(
@@ -1275,5 +1289,5 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
     BlocProvider.of<BluetoothBloc>(context).add(StopRepeatModeEvent());
   }
 //endregion
-  //endregion
+//endregion
 }

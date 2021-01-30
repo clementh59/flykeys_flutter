@@ -389,14 +389,27 @@ class _MusicDebugPageState extends State<MusicDebugPage> {
                     thumbShape: RoundSliderThumbShape(enabledThumbRadius: 2)),
                 child: Slider(
                   onChangeEnd: (value) {
-                    print('Change end ' + value.toString());
+
                   },
                   divisions: durationOfTheMorceau.inSeconds,
                   //pour eviter erreur
                   value: min(durationOfTheMorceau.inSeconds.toDouble(), (nbMinutes * 60 + nbSeconds).toDouble()),
                   onChanged: (newTime) {
-                    if (valueNotifierUpdateTickInPage.value) valueNotifierUpdateTickInPage.value = false;
-                    valueNotifierActualDuration.value = new Duration(seconds: newTime.floor());
+                    if (!repeatAPartOfTheMorceau) {
+                      if (valueNotifierUpdateTickInPage.value) valueNotifierUpdateTickInPage.value = false;
+                      valueNotifierActualDuration.value = new Duration(seconds: newTime.floor());
+                    } else {
+                      if (!_imActuallyShowingASnackbar) {
+                        _imActuallyShowingASnackbar = true;
+                        Scaffold
+                            .of(context)
+                            .showSnackBar(SnackBar(content: Text("Il est impossible d'aller à un endroit choisi lorsque le mode répétition en boucle est activé")))
+                            .closed
+                            .then((value) {
+                          _imActuallyShowingASnackbar = false;
+                        });
+                      }
+                    }
                   },
                   min: 0,
                   max: durationOfTheMorceau.inSeconds.toDouble(),
