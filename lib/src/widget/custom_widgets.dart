@@ -567,6 +567,7 @@ class CustomWidgets {
       builder: (context, constraints) {
         return SingleChildScrollView(
           controller: scrollController,
+          physics: ClampingScrollPhysics(),
           child: ConstrainedBox(
             constraints: constraints.copyWith(
               minHeight: constraints.maxHeight,
