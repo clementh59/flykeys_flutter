@@ -84,9 +84,11 @@ class _MusicDebugPageState extends State<MusicDebugPage> {
   @override
   Widget build(BuildContext context) {
     int buttonState = PAUSE;
-    return Scaffold(resizeToAvoidBottomInset: false, backgroundColor: CustomColors.backgroundColor, body: SafeArea(child: _generatePage(buttonState)));
+    return Scaffold(
+        resizeToAvoidBottomInset: false,
+        backgroundColor: CustomColors.backgroundColor,
+        body: SafeArea(child: _generatePage(buttonState)));
   }
-
   //endregion
 
   //region Widget

@@ -350,123 +350,132 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
 
   //region Widget
   Widget _generatePage(int buttonState) {
-    return Stack(
-      children: <Widget>[
-        CustomWidgets.scrollViewWithBoundedHeight(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            mainAxisSize: MainAxisSize.max,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(top: 20),
-                child: _topBar(context),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 10.0),
-                child: _generateInfoMusic(),
-              ),
-              Container(
-                transform: Matrix4.translationValues(0.0, -16.0, 0.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _generateMusicParameterButton(),
-                    _generateBottomCenterButton(buttonState),
-                    InkWell(
-                        focusColor: Colors.transparent,
-                        hoverColor: Colors.transparent,
-                        highlightColor: Colors.transparent,
-                        splashColor: Colors.transparent,
-                        onTap: () {
-                          if (widget.music.liked) {
-                            setState(() {
-                              widget.music.liked = false;
-                            });
-                            BlocProvider.of<FavoritesBloc>(context)..add(RemoveAFavoriteMusic(widget.music));
-                          } else {
-                            setState(() {
-                              widget.music.liked = true;
-                            });
-                            BlocProvider.of<FavoritesBloc>(context)..add(AddAFavoriteMusic(widget.music));
-                          }
-                        },
-                        child: BlocBuilder<FavoritesBloc, FavoritesState>(builder: (BuildContext context, FavoritesState state) {
-                          if (state is ListsLoadedState) {
-                            if (state.musicsId.contains(widget.music.id)) {
-                              widget.music.liked = true;
-                              return CustomWidgets.heartIcon(true);
+    return WillPopScope(
+      onWillPop: () async {
+        if (!bottomPanelIsCollapsed) {
+          hideBottomPanel();
+          return false;
+        }
+        return true;
+      },
+      child: Stack(
+        children: <Widget>[
+          CustomWidgets.scrollViewWithBoundedHeight(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisSize: MainAxisSize.max,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(top: 20),
+                  child: _topBar(context),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 10.0),
+                  child: _generateInfoMusic(),
+                ),
+                Container(
+                  transform: Matrix4.translationValues(0.0, -16.0, 0.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _generateMusicParameterButton(),
+                      _generateBottomCenterButton(buttonState),
+                      InkWell(
+                          focusColor: Colors.transparent,
+                          hoverColor: Colors.transparent,
+                          highlightColor: Colors.transparent,
+                          splashColor: Colors.transparent,
+                          onTap: () {
+                            if (widget.music.liked) {
+                              setState(() {
+                                widget.music.liked = false;
+                              });
+                              BlocProvider.of<FavoritesBloc>(context)..add(RemoveAFavoriteMusic(widget.music));
                             } else {
-                              widget.music.liked = false;
-                              return CustomWidgets.heartIcon(false);
+                              setState(() {
+                                widget.music.liked = true;
+                              });
+                              BlocProvider.of<FavoritesBloc>(context)..add(AddAFavoriteMusic(widget.music));
                             }
-                          }
-                          return CustomWidgets.heartIcon(false);
-                        })),
+                          },
+                          child: BlocBuilder<FavoritesBloc, FavoritesState>(builder: (BuildContext context, FavoritesState state) {
+                            if (state is ListsLoadedState) {
+                              if (state.musicsId.contains(widget.music.id)) {
+                                widget.music.liked = true;
+                                return CustomWidgets.heartIcon(true);
+                              } else {
+                                widget.music.liked = false;
+                                return CustomWidgets.heartIcon(false);
+                              }
+                            }
+                            return CustomWidgets.heartIcon(false);
+                          })),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 16.0),
+                  child: _generateTranscriber(),
+                ),
+              ],
+            ),
+          ),
+          if (!bottomPanelIsCollapsed)
+            InkWell(
+              onTap: () {
+                hideBottomPanel();
+              },
+              focusColor: Colors.transparent,
+              hoverColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+              splashColor: Colors.transparent,
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+              ),
+            ),
+          AnimatedPositioned(
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.decelerate,
+            bottom: _bottomPanelBottomPosition,
+            left: 0,
+            right: 0,
+            child: Container(
+              padding: EdgeInsets.only(left: 1, right: 1, top: 1),
+              decoration: BoxDecoration(
+                color: CustomColors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(30), bottom: Radius.circular(0)),
+              ),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: CustomColors.backgroundColor,
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(30), bottom: Radius.circular(0)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    InkWell(
+                      onTap: () {
+                        hideBottomPanel();
+                      },
+                      child: Container(
+                        alignment: Alignment.centerLeft,
+                        padding: const EdgeInsets.symmetric(horizontal: 32),
+                        height: 80,
+                        child: Text(
+                          "Paramètres",
+                          style: CustomStyle.pageTitle,
+                        ),
+                      ),
+                    ),
+                    _bottomPanelChilds(),
                   ],
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 16.0),
-                child: _generateTranscriber(),
-              ),
-            ],
-          ),
-        ),
-        if (!bottomPanelIsCollapsed)
-          InkWell(
-            onTap: () {
-              hideBottomPanel();
-            },
-            focusColor: Colors.transparent,
-            hoverColor: Colors.transparent,
-            highlightColor: Colors.transparent,
-            splashColor: Colors.transparent,
-            child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
             ),
           ),
-        AnimatedPositioned(
-          duration: const Duration(milliseconds: 500),
-          curve: Curves.decelerate,
-          bottom: _bottomPanelBottomPosition,
-          left: 0,
-          right: 0,
-          child: Container(
-            padding: EdgeInsets.only(left: 1, right: 1, top: 1),
-            decoration: BoxDecoration(
-              color: CustomColors.white,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(30), bottom: Radius.circular(0)),
-            ),
-            child: Container(
-              decoration: BoxDecoration(
-                color: CustomColors.backgroundColor,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(30), bottom: Radius.circular(0)),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  InkWell(
-                    onTap: () {
-                      hideBottomPanel();
-                    },
-                    child: Container(
-                      alignment: Alignment.centerLeft,
-                      padding: const EdgeInsets.symmetric(horizontal: 32),
-                      height: 80,
-                      child: Text(
-                        "Paramètres",
-                        style: CustomStyle.pageTitle,
-                      ),
-                    ),
-                  ),
-                  _bottomPanelChilds(),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
