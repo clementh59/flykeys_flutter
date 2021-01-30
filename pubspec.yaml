@@ -53,6 +53,10 @@ dependencies:
 
   shimmer: ^1.1.2
 
+  #to preview the app on different device sizes
+  #todo: remove at final build
+  device_preview: ^0.4.8
+
 
 dev_dependencies:
   flutter_test:
