@@ -171,6 +171,21 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
       return;
     }
 
+    if (event is ActiveRepeatModeEvent) {
+      bool res = await bluetoothRepository.sendRepeatSection(event.startTick, event.endTick);
+      if (!res) {
+        yield TickNotPossibleState(new DateTime.now().millisecondsSinceEpoch);
+        if (isPlaying) {
+          await bluetoothRepository.pause();
+          isPlaying = false;
+        }
+        valueNotifierUpdateTickInPage.value = true;
+        updateTimeBarWithLastSecondsSentByTheDevice();
+      } else
+        valueNotifierUpdateTickInPage.value = true;
+      return;
+    }
+
     if (event is PlayEvent) {
       yield LoadingCommandMusicState();
       await bluetoothRepository.play();

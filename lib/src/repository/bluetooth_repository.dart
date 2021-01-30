@@ -60,7 +60,7 @@ class BluetoothRepository {
             // With the midi offset of the piano, it is possible that some keys are <0.
             // If it's the case, it will throw an exception we can't send negative values via BLE here
             // And of course, if the key is higher than the size of the piano, we don't show it
-            if (n.getKey() < 0 || n.getKey() > (rightLimit-leftLimit)) {
+            if (n.getKey() < 0 || n.getKey() > (rightLimit - leftLimit)) {
               // I do nothing -> I don't want to show it
               // I just wait for them to be remove by the check above
               continue;
@@ -461,7 +461,7 @@ class BluetoothRepository {
 
   /// send to the esp32 the [tick] passed in parameter
   ///
-  /// return true if it succeed
+  /// return true if it succeeded
   /// false otherwise
   Future<bool> sendANewTick(int tick) async {
     int index = findTheIndexCorrespondToTheTick(tick);
@@ -488,6 +488,49 @@ class BluetoothRepository {
       byteData2.getUint8(0)
     ], tickBluetoothCharacteristic);
     return true;
+  }
+
+  /// send to the esp32 to active the repeat mode and send where to start and where to end
+  ///
+  /// return true if it succeeded
+  /// false otherwise
+  Future<bool> sendRepeatSection(startTick, endTick) async {
+    int startIndex = findTheIndexCorrespondToTheTick(startTick);
+    int endIndex = findTheIndexCorrespondToTheTick(endTick);
+
+    if (startIndex == -1 || endIndex == -1) {
+      return false;
+    }
+
+    ByteData byteData = new ByteData(4);
+    byteData.setInt32(0, startIndex);
+    ByteData byteData2 = new ByteData(4);
+    byteData2.setInt32(0, startTick);
+    ByteData byteData3 = new ByteData(4);
+    byteData3.setInt32(0, endIndex);
+
+    await mainBluetoothCharacteristic.write([
+      BluetoothConstants.CODE_REPEAT_MODE,
+      1,
+      byteData.getUint8(3),
+      byteData.getUint8(2),
+      byteData.getUint8(1),
+      byteData.getUint8(0),
+      byteData2.getUint8(3),
+      byteData2.getUint8(2),
+      byteData2.getUint8(1),
+      byteData2.getUint8(0),
+      byteData3.getUint8(3),
+      byteData3.getUint8(2),
+      byteData3.getUint8(1),
+      byteData3.getUint8(0)
+    ]);
+    return true;
+  }
+
+  /// ask the esp32 to stop the repeat mode
+  Future<void> stopRepeatMode() async {
+    await mainBluetoothCharacteristic.write([BluetoothConstants.CODE_REPEAT_MODE, 0]);
   }
 
   //endregion
@@ -540,7 +583,6 @@ class BluetoothRepository {
     await tickBluetoothCharacteristic.setNotifyValue(true);
     streamSubscriptionNotePushedListening?.cancel();
     streamSubscriptionNotePushedListening = tickBluetoothCharacteristic.value.listen((event) {
-
       if (event.length == 1) {
         // I receive a Note Pushed info
         int value = event[0];

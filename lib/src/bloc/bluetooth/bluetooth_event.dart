@@ -139,6 +139,25 @@ class SendNewTickEvent extends BluetoothEvent{
   List<Object> get props => [tick];
 }
 
+class ActiveRepeatModeEvent extends BluetoothEvent{
+
+  final int startTick;
+  final int endTick;
+
+  ActiveRepeatModeEvent(this.startTick, this.endTick);
+
+  @override
+  List<Object> get props => [startTick, endTick];
+}
+
+class StopRepeatModeEvent extends BluetoothEvent{
+
+  StopRepeatModeEvent();
+
+  @override
+  List<Object> get props => [];
+}
+
 class DisconnectEvent extends BluetoothEvent{
 
   DisconnectEvent();

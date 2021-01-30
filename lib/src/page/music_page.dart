@@ -301,6 +301,7 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
     _bottomPanelBottomPosition = widget._completeCollapsedBottomPanelBottomPosition;
     initWaitForUserInput();
     initLaMainSelectionnee();
+    initRepeatRangeValues();
   }
 
   @override
@@ -876,7 +877,7 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
   }
 //endregion
 
-//region bottomPanel
+  //region bottomPanel
 
   //region Variables
   bool waitForUserInput = false; // state of the switch to know if I have to wait for the user input to make the morceau fall down or not
@@ -888,7 +889,7 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
 
   //endregion
 
-//region Widget
+  //region Widget
 
   Widget _bottomPanelChilds() {
     return Column(
@@ -1233,6 +1234,7 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
     int start = await Utils.getIntegerFromSharedPreferences(widget.music.id + Strings.REPEAT_RANGE_SHARED_PREFS_START, defaultValue: 0);
     int end = await Utils.getIntegerFromSharedPreferences(widget.music.id + Strings.REPEAT_RANGE_SHARED_PREFS_END, defaultValue: durationOfTheMorceau.inSeconds);
     _currentRepeatRangeValues = RangeValues(start.toDouble(), end.toDouble());
+    print(_currentRepeatRangeValues);
   }
 
   void saveRepeatRangeValues(RangeValues values) async {
@@ -1253,13 +1255,16 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
   }
 
   void envoiLaBoucleARepeter(RangeValues values) async {
-    //todo
+    int startTick = (values.start * 1000 / widget.music.speed).floor();
+    int endTick = (values.end * 1000 / widget.music.speed).floor();
+    print('Jenvoi ' + startTick.toString() + ' ' + endTick.toString());
+    BlocProvider.of<BluetoothBloc>(context).add(ActiveRepeatModeEvent(startTick, endTick));
   }
 
   /// demande à l'esp32 d'arrêter le mode boucle
   void envoiStopLeModeBoucle() {
-    //todo
+    BlocProvider.of<BluetoothBloc>(context).add(StopRepeatModeEvent());
   }
 //endregion
-//endregion
+  //endregion
 }

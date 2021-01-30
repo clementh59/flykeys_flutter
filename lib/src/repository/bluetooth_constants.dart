@@ -19,6 +19,7 @@ class BluetoothConstants {
 	static const CODE_LIGHT_LEDS = 0xF3;
 	static const CODE_CLEAR_LEDS = 0xF2;
 	static const CODE_CHANGE_BRIGHTNESS = 0xF1;
+	static const CODE_REPEAT_MODE = 0xF0;
 
 	static const CODE_NEW_TICK = 0xBD;
 
