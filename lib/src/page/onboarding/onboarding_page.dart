@@ -133,7 +133,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
     bool showBackIcon = history.length > 1;
 
     return Container(
-      padding: const EdgeInsets.only(top: 30.0, bottom: 34),
+      padding: const EdgeInsets.only(bottom: 34),
       width: MediaQuery.of(context).size.width,
       child: Stack(
         children: <Widget>[

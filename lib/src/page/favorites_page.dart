@@ -31,9 +31,6 @@ class _FavoritesPageState extends State<FavoritesPage> {
 			crossAxisAlignment: CrossAxisAlignment.start,
 			mainAxisSize: MainAxisSize.max,
 			children: [
-				SizedBox(
-					height: 20,
-				),
 				Padding(
 					padding: const EdgeInsets.symmetric(horizontal: CustomSize.leftAndRightPadding),
 				  child: Row(

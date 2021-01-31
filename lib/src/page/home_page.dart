@@ -54,9 +54,6 @@ class _HomePageState extends State<HomePage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.max,
         children: <Widget>[
-          SizedBox(
-            height: 20,
-          ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: CustomSize.leftAndRightPadding),
             child: Row(

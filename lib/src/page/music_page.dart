@@ -364,10 +364,7 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(top: 20),
-                  child: _topBar(context),
-                ),
+                _topBar(context),
                 Padding(
                   padding: const EdgeInsets.only(top: 10.0),
                   child: _generateInfoMusic(),

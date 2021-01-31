@@ -127,9 +127,6 @@ class _ParameterPageState extends State<ParameterPage> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(
-          height: 20,
-        ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: CustomSize.leftAndRightPadding),
           child: _topBar("Settings"),
@@ -371,9 +368,6 @@ class _ParameterPageState extends State<ParameterPage> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(
-                height: 20,
-              ),
               _topBar("Choix des couleurs"),
               SizedBox(
                 height: 31,
@@ -480,9 +474,6 @@ class _ParameterPageState extends State<ParameterPage> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(
-          height: 20,
-        ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: CustomSize.leftAndRightPadding),
           child: _topBar("Profil"),

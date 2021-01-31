@@ -9,9 +9,7 @@ import 'dart:developer' as dev;
 
 import 'package:flykeys/src/widget/custom_widgets.dart';
 
-/**
- * Donne des infos sur l'état de la recherche/connection à l'objet
- */
+/// Donne des infos sur l'état de la recherche/connection à l'objet
 class SettingUpBluetoothPage extends StatefulWidget {
 	final MyBluetoothState state;
 	final Function onConnected;

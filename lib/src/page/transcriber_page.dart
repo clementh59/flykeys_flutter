@@ -55,9 +55,6 @@ class _TranscriberPageState extends State<TranscriberPage> {
 											mainAxisSize: MainAxisSize.min,
 											crossAxisAlignment: CrossAxisAlignment.start,
 											children: [
-												SizedBox(
-													height: 20,
-												),
 												Row(
 													mainAxisAlignment: MainAxisAlignment.spaceBetween,
 													children: <Widget>[
