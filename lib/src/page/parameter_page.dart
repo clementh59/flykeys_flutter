@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flykeys/src/bloc/authentification/authentification_bloc.dart';
 import 'package:flykeys/src/bloc/authentification/authentification_event.dart';
+import 'package:flykeys/src/page/onboarding/onboarding_page.dart';
 import 'package:flykeys/src/utils/constants.dart';
 import 'package:flykeys/src/utils/custom_colors.dart';
 import 'package:flykeys/src/utils/custom_size.dart';
@@ -69,8 +70,7 @@ class _ParameterPageState extends State<ParameterPage> {
     );
   }
 
-  Widget _tileParameterWidget(String name, Widget imageAsset, Function callBack,
-      {bool showRightArrow = false, bool showSwitch = false, bool switchState = false}) {
+  Widget _tileParameterWidget(String name, Widget imageAsset, Function callBack, {bool showRightArrow = false, bool showSwitch = false, bool switchState = false}) {
     return InkWell(
       onTap: callBack,
       focusColor: Colors.transparent,
@@ -127,9 +127,6 @@ class _ParameterPageState extends State<ParameterPage> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(
-          height: 20,
-        ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: CustomSize.leftAndRightPadding),
           child: _topBar("Settings"),
@@ -246,8 +243,7 @@ class _ParameterPageState extends State<ParameterPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _tileParameterWidget("Notifications", Image.asset("assets/images/icons/parameter/notification_icon.png"), activeNotification,
-            showSwitch: true, switchState: notificationActive),
+        _tileParameterWidget("Notifications", Image.asset("assets/images/icons/parameter/notification_icon.png"), activeNotification, showSwitch: true, switchState: notificationActive),
         _tileParameterWidget("Choix des couleurs", Image.asset("assets/images/icons/parameter/color_wheel_icon.png"), () {
           setState(() {
             _indexedStackIndex = choixDesCouleursIndex;
@@ -256,6 +252,13 @@ class _ParameterPageState extends State<ParameterPage> {
         _tileParameterWidget("Luminosité de Flykeys", Image.asset("assets/images/icons/parameter/luminosity_icon.png"), () {
           showChooseLuminosityDialog();
         }, showRightArrow: true),
+        _tileParameterWidget(
+          "Redéfinir les limites de mon piano",
+          Image.asset("assets/images/icons/parameter/redefine_piano_limit_icon.png"),
+          () {
+            Navigator.push(context, Utils.createRoute(() => OnBoardingPage(nextPage: ParameterPage(),)));
+          },
+        ),
         _tileParameterWidget(
           "FAQ",
           Image.asset("assets/images/icons/parameter/faq_icon.png"),
@@ -270,8 +273,7 @@ class _ParameterPageState extends State<ParameterPage> {
           },
         ),
         _tileParameterWidget("Informations légales", Image.asset("assets/images/icons/parameter/info_icon.png"), () {
-          showAboutDialog(
-              context: context, applicationLegalese: Constants.legalPhrase, applicationVersion: Constants.app_version, applicationName: 'FlyKeys');
+          showAboutDialog(context: context, applicationLegalese: Constants.legalPhrase, applicationVersion: Constants.app_version, applicationName: 'FlyKeys');
         }),
       ],
     );
@@ -306,52 +308,49 @@ class _ParameterPageState extends State<ParameterPage> {
 
   void showChooseLuminosityDialog() {
     showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          content: StatefulBuilder(
-            builder: (BuildContext context, StateSetter setState) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: List<Widget>.generate(3, (int index) {
-                  return ListTile(
-                    title: Text(getBrightnessText(index)),
-                    leading: Radio(
-                      value: index,
-                      groupValue: selectedRadioLuminosity,
-                      onChanged: (value) {
-                        Utils.saveIntegerToSharedPreferences(Strings.BRIGHTNESS_SHARED_PREFS, mapIndexToBrightness(index));
-                        setState(() {
-                          selectedRadioLuminosity = value;
-                        });
-                      },
-                    ),
-                  );
-                }),
-              );
-            },
-          ),
-        );
-      });
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: List<Widget>.generate(3, (int index) {
+                    return ListTile(
+                      title: Text(getBrightnessText(index)),
+                      leading: Radio(
+                        value: index,
+                        groupValue: selectedRadioLuminosity,
+                        onChanged: (value) {
+                          Utils.saveIntegerToSharedPreferences(Strings.BRIGHTNESS_SHARED_PREFS, mapIndexToBrightness(index));
+                          setState(() {
+                            selectedRadioLuminosity = value;
+                          });
+                        },
+                      ),
+                    );
+                  }),
+                );
+              },
+            ),
+          );
+        });
   }
 
   /// return 'Faible' for 0, 'Élevée' for 2, ...
   String getBrightnessText(int index) {
-    if (index == 0)
-      return 'Faible';
-    if (index == 2)
-      return 'Élevée';
+    if (index == 0) return 'Faible';
+    if (index == 2) return 'Élevée';
     return 'Moyen';
   }
 
   /// return an integer corresponding to the brightness corresponding to the index of the radio buttons
   int mapIndexToBrightness(int index) {
-    if (index == 0)
-      return Constants.lightBrightness;
-    if (index == 1)
-      return Constants.mediumBrightness;
+    if (index == 0) return Constants.lightBrightness;
+    if (index == 1) return Constants.mediumBrightness;
     return Constants.strongBrightness;
   }
+
   //endregion
 
   /***************    CHOIX DES COULEURS PAGE   *************/
@@ -371,9 +370,6 @@ class _ParameterPageState extends State<ParameterPage> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(
-                height: 20,
-              ),
               _topBar("Choix des couleurs"),
               SizedBox(
                 height: 31,
@@ -480,9 +476,6 @@ class _ParameterPageState extends State<ParameterPage> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(
-          height: 20,
-        ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: CustomSize.leftAndRightPadding),
           child: _topBar("Profil"),

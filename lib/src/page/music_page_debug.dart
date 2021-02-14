@@ -108,10 +108,7 @@ class _MusicDebugPageState extends State<MusicDebugPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(top: 0),
-                  child: _topBar(context),
-                ),
+                _topBar(context),
                 Padding(
                   padding: const EdgeInsets.only(top: 10.0),
                   child: _generateInfoMusic(),
@@ -587,7 +584,7 @@ class _MusicDebugPageState extends State<MusicDebugPage> {
 
 //endregion
 
-//region bottomPanel
+  //region bottomPanel
 
   //region Variables
   bool waitForUserInput = false; // state of the switch to know if I have to wait for the user input to make the morceau fall down or not
@@ -599,7 +596,7 @@ class _MusicDebugPageState extends State<MusicDebugPage> {
 
   //endregion
 
-//region Widget
+  //region Widget
   Widget _tileParameterWidget(String name, Widget imageAsset, Function callBack, {bool showRightArrow = false, bool showSwitch = false, bool switchState = false}) {
     return InkWell(
       onTap: callBack,
@@ -958,7 +955,7 @@ class _MusicDebugPageState extends State<MusicDebugPage> {
     //todo
   }
 //endregion
-//endregion
+  //endregion
 
 //endregion
 }

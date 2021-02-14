@@ -297,10 +297,10 @@ class CustomWidgets {
     return _textWidget(text);
   }
 
-  static Widget bluetoothIsOffPage(context) {
+  static Widget bluetoothIsOffPage(context, {showGoBackIcon = true}) {
     return Stack(
       children: <Widget>[
-        Container(
+        showGoBackIcon? Container(
           margin: EdgeInsets.only(top: 15, left: 15),
           child: InkWell(
             onTap: () {
@@ -316,7 +316,7 @@ class CustomWidgets {
               color: Colors.white,
             ),
           ),
-        ),
+        ) : SizedBox(),
         Align(
           alignment: Alignment.center,
           child: CustomWidgets.textWithoutLoadingIndicator("Le bluetooth n'est pas activé!"),

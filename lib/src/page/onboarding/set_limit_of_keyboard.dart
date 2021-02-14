@@ -144,7 +144,7 @@ class _SetLimitOfKeyboardState extends State<SetLimitOfKeyboard> {
                 } else if (state == BluetoothState.off) {
                   bluetoothBloc.onDisconnect();
                 }
-                return CustomWidgets.bluetoothIsOffPage(context);
+                return CustomWidgets.bluetoothIsOffPage(context, showGoBackIcon: false);
               }),
         ),
       ),
