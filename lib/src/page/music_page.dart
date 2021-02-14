@@ -318,6 +318,9 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
 
       envoiLaMainQueJeVeuxJouer();
 
+      // Au cas ou le morceau d'avant était en repeat mode
+      envoiStopLeModeBoucle();
+
       //De base je suis en pause
       buttonState = PAUSE;
     } else if (widget.state is PlayingMusicState) {
@@ -636,7 +639,7 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
                   onChangeEnd: (value) {
                     if (!repeatAPartOfTheMorceau) _sendNewTick(value);
                   },
-                  divisions: durationOfTheMorceau.inSeconds,
+                  divisions: durationOfTheMorceau.inSeconds > 0? durationOfTheMorceau.inSeconds : 1, // to avoid a bug when the page loads
                   //pour eviter erreur
                   value: min(durationOfTheMorceau.inSeconds.toDouble(), (nbMinutes * 60 + nbSeconds).toDouble()),
                   onChanged: (newTime) {
@@ -1257,7 +1260,6 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
     int start = await Utils.getIntegerFromSharedPreferences(widget.music.id + Strings.REPEAT_RANGE_SHARED_PREFS_START, defaultValue: 0);
     int end = await Utils.getIntegerFromSharedPreferences(widget.music.id + Strings.REPEAT_RANGE_SHARED_PREFS_END, defaultValue: durationOfTheMorceau.inSeconds);
     _currentRepeatRangeValues = RangeValues(start.toDouble(), end.toDouble());
-    print(_currentRepeatRangeValues);
   }
 
   void saveRepeatRangeValues(RangeValues values) async {

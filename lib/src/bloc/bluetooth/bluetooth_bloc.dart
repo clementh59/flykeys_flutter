@@ -186,6 +186,10 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
       return;
     }
 
+    if (event is StopRepeatModeEvent) {
+      await bluetoothRepository.stopRepeatMode();
+    }
+
     if (event is PlayEvent) {
       yield LoadingCommandMusicState();
       await bluetoothRepository.play();

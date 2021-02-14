@@ -299,7 +299,9 @@ class _MusicListWidgetState extends State<MusicListWidget> {
 
     for (int i = 0; i < widget.musicList.length; i++) {
       musicWidgets.add(WidgetMusic(widget.musicList[i],showFromArtistList: widget.showFromArtistList,onSelect: () {
-        widget.onSelect(widget.musicList[i]);
+        try {
+          widget.onSelect(widget.musicList[i]);
+        } catch (e) {}
       },));
       if (i != widget.musicList.length - 1)
         musicWidgets.add(SizedBox(
