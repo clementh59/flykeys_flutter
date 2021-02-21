@@ -6,9 +6,9 @@ import 'package:flykeys/src/model/music.dart';
 import 'package:flykeys/src/model/transcriber.dart';
 import 'package:flykeys/src/utils/constants.dart';
 import 'package:flykeys/src/utils/utils.dart';
+import 'dart:math';
 
 abstract class DatabaseRepository {
-
   //region Musics
   Future<Music> fetchMusic(String id);
 
@@ -21,6 +21,7 @@ abstract class DatabaseRepository {
   List<Music> fetchMusicsByQuery(QuerySnapshot qs);
 
   Music fetchMusicByQuery(DocumentSnapshot qs);
+
   //endregion
 
   //region Transcribers
@@ -29,6 +30,7 @@ abstract class DatabaseRepository {
   Future<List<Transcriber>> fetchTranscribers(List<String> ids);
 
   List<Transcriber> fetchTranscribersByQuery(QuerySnapshot qs);
+
   //endregion
 
   //region Artists
@@ -39,12 +41,11 @@ abstract class DatabaseRepository {
   List<Artist> fetchArtistsByQuery(QuerySnapshot qs);
 
   Artist fetchArtistByQuery(DocumentSnapshot ds);
-  //endregion
+//endregion
 }
 
 class FirestoreRepository extends DatabaseRepository {
-
-  String uid = "t8QDyOeKSYFR1lYKOGqa";//todo : remove...
+  String uid = "t8QDyOeKSYFR1lYKOGqa"; //todo : remove...
 
   //region Musics
   @override
@@ -55,30 +56,40 @@ class FirestoreRepository extends DatabaseRepository {
 
   @override
   Future<List<Music>> fetchAllMusics() async {
-    QuerySnapshot qs =
-        await Firestore.instance.collection("music").getDocuments();
+    QuerySnapshot qs = await Firestore.instance.collection("music").getDocuments();
     return fetchMusicsByQuery(qs);
-
   }
 
+  // todo: add unit testing?
   @override
   Future<List<Music>> fetchMusics(List<String> ids) async {
-
-    if (ids.length==0){
+    if (ids.length == 0) {
       return [];
     }
 
-    QuerySnapshot qs = await Firestore.instance
-      .collection("music")
-      .where(FieldPath.documentId, whereIn: ids)
-      .getDocuments();
-    return fetchMusicsByQuery(qs);
+    if (ids.length < 10) {
+      QuerySnapshot qs = await Firestore.instance.collection("music").where(FieldPath.documentId, whereIn: ids).getDocuments();
+      return fetchMusicsByQuery(qs);
+    }
 
+    List<Music> musics = [];
+    int i = 0;
+
+    do {
+      musics.addAll(await fetchMusics(ids.sublist(i, min(i + 9, ids.length))));
+      i += 9;
+    } while (i < ids.length);
+
+    return musics;
   }
 
   @override
   Future<List<Music>> fetchMusicWithThisPattern(String text) async {
-    QuerySnapshot qs = await Firestore.instance.collection("music").where("searchKeys", arrayContains: text).limit(Constants.numberOfElementLoadedWhenSearch).getDocuments();
+    QuerySnapshot qs = await Firestore.instance
+        .collection("music")
+        .where("searchKeys", arrayContains: text)
+        .limit(Constants.numberOfElementLoadedWhenSearch)
+        .getDocuments();
     return fetchMusicsByQuery(qs);
   }
 
@@ -106,26 +117,27 @@ class FirestoreRepository extends DatabaseRepository {
     data["stars"] = 5;
     return Music.fromMapObject(data);
   }
+
   //endregion
 
   //region Transcribers
   @override
   Future<List<Transcriber>> fetchTranscribers(List<String> ids) async {
-
-    if (ids.length==0){
+    if (ids.length == 0) {
       return [];
     }
 
-    QuerySnapshot qs = await Firestore.instance
-        .collection("transcribers")
-        .where(FieldPath.documentId, whereIn: ids)
-        .getDocuments();
+    QuerySnapshot qs = await Firestore.instance.collection("transcribers").where(FieldPath.documentId, whereIn: ids).getDocuments();
     return fetchTranscribersByQuery(qs);
   }
 
   @override
   Future<List<Transcriber>> fetchTranscriberWithThisPattern(String text) async {
-    QuerySnapshot qs = await Firestore.instance.collection("transcribers").where("searchKeys", arrayContains: text).limit(Constants.numberOfElementLoadedWhenSearch).getDocuments();
+    QuerySnapshot qs = await Firestore.instance
+        .collection("transcribers")
+        .where("searchKeys", arrayContains: text)
+        .limit(Constants.numberOfElementLoadedWhenSearch)
+        .getDocuments();
     return fetchTranscribersByQuery(qs);
   }
 
@@ -138,32 +150,35 @@ class FirestoreRepository extends DatabaseRepository {
       DocumentSnapshot ds = qs.documents[i];
       Map<String, dynamic> data = ds.data;
       data["key"] = ds.documentID;
-      data["iFollow"]=false;
+      data["iFollow"] = false;
 
       transcribers.add(Transcriber.fromMapObject(data));
     }
 
     return transcribers;
   }
+
   //endregion
 
   //region Trending
   Future<Map<String, dynamic>> fetchTrendings() async {
-    DocumentSnapshot ds = await Firestore.instance
-        .collection("trending")
-        .document("trending")
-        .get();
+    DocumentSnapshot ds = await Firestore.instance.collection("trending").document("trending").get();
 
     Map<String, dynamic> data = ds.data;
 
     return data;
   }
+
   //endregion
 
   //region Artists
   @override
   Future<List<Artist>> fetchArtistWithThisPattern(String text) async {
-    QuerySnapshot qs = await Firestore.instance.collection("artists").where("searchKeys", arrayContains: text).limit(Constants.numberOfElementLoadedWhenSearch).getDocuments();
+    QuerySnapshot qs = await Firestore.instance
+        .collection("artists")
+        .where("searchKeys", arrayContains: text)
+        .limit(Constants.numberOfElementLoadedWhenSearch)
+        .getDocuments();
     return fetchArtistsByQuery(qs);
   }
 
@@ -193,6 +208,7 @@ class FirestoreRepository extends DatabaseRepository {
     data["id"] = ds.documentID;
     return Artist.fromMapObject(data);
   }
+
   //endregion
 
   //region Follows
@@ -204,12 +220,17 @@ class FirestoreRepository extends DatabaseRepository {
   }
 
   void removeFromFollowed(Transcriber transcriber) async {
-    Firestore.instance.collection("users").document(uid).updateData({"followedTranscribers":FieldValue.arrayRemove([transcriber.id])});
+    Firestore.instance.collection("users").document(uid).updateData({
+      "followedTranscribers": FieldValue.arrayRemove([transcriber.id])
+    });
   }
 
   void addToFollowed(Transcriber transcriber) async {
-    Firestore.instance.collection("users").document(uid).updateData({"followedTranscribers":FieldValue.arrayUnion([transcriber.id])});
+    Firestore.instance.collection("users").document(uid).updateData({
+      "followedTranscribers": FieldValue.arrayUnion([transcriber.id])
+    });
   }
+
   //endregion
 
   //region Favorites
@@ -221,17 +242,20 @@ class FirestoreRepository extends DatabaseRepository {
   }
 
   void removeFromFavorite(Music music) async {
-    Firestore.instance.collection("users").document(uid).updateData({"liked":FieldValue.arrayRemove([music.id])});
+    Firestore.instance.collection("users").document(uid).updateData({
+      "liked": FieldValue.arrayRemove([music.id])
+    });
   }
 
   void addToFavorite(Music music) async {
-    Firestore.instance.collection("users").document(uid).updateData({"liked":FieldValue.arrayUnion([music.id])});
+    Firestore.instance.collection("users").document(uid).updateData({
+      "liked": FieldValue.arrayUnion([music.id])
+    });
   }
 //endregion
 }
 
-class SharedPrefsRepository extends DatabaseRepository{
-
+class SharedPrefsRepository extends DatabaseRepository {
   //region Musics
   @override
   Future<List<Music>> fetchAllMusics() {
@@ -268,6 +292,7 @@ class SharedPrefsRepository extends DatabaseRepository{
     // TODO: implement fetchMusicByQuery
     throw UnimplementedError();
   }
+
   //endregion
 
   //region Transcribers
@@ -288,6 +313,7 @@ class SharedPrefsRepository extends DatabaseRepository{
     // TODO: implement fetchTranscribersByQuery
     throw UnimplementedError();
   }
+
   //endregion
 
   //region Artists
