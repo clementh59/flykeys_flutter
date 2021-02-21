@@ -718,20 +718,7 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
   }
 
   Widget _topBar(context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: CustomSize.leftAndRightPadding),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          CustomWidgets.backArrowIcon(context),
-          Text(
-            "Apprentissage",
-            style: CustomStyle.pageTitle,
-          ),
-          CustomWidgets.settingsIcon(context),
-        ],
-      ),
-    );
+    return CustomWidgets.topBar('Apprentissage', CustomWidgets.backArrowIcon(context), CustomWidgets.settingsIcon(context));
   }
 
   Widget _generateBottomCenterButton(int state) {

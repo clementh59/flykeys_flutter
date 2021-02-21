@@ -150,35 +150,23 @@ class _ParameterPageState extends State<ParameterPage> {
   }
 
   Widget _topBar(String text) {
-    return Stack(
-      children: [
-        Align(
-            alignment: Alignment.topLeft,
-            child: InkWell(
-              onTap: () {
-                if (_indexedStackIndex == parameterIndex) Navigator.of(context).pop();
-                setState(() {
-                  _indexedStackIndex = parameterIndex;
-                });
-              },
-              focusColor: Colors.transparent,
-              hoverColor: Colors.transparent,
-              highlightColor: Colors.transparent,
-              splashColor: Colors.transparent,
-              child: Icon(
-                Icons.arrow_back_ios,
-                color: Colors.white,
-                size: 24,
-              ),
-            )),
-        Align(
-            alignment: Alignment.topCenter,
-            child: Text(
-              text,
-              style: CustomStyle.pageTitle,
-            )),
-      ],
-    );
+    return CustomWidgets.topBar('Paramètres', InkWell(
+      onTap: () {
+        if (_indexedStackIndex == parameterIndex) Navigator.of(context).pop();
+        setState(() {
+          _indexedStackIndex = parameterIndex;
+        });
+      },
+      focusColor: Colors.transparent,
+      hoverColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      splashColor: Colors.transparent,
+      child: Icon(
+        Icons.arrow_back_ios,
+        color: Colors.white,
+        size: 24,
+      ),
+    ), null, horizontalPadding: 0);
   }
 
   Widget _profileWidget(bool arrow) {

@@ -11,6 +11,7 @@ import 'package:flykeys/src/utils/utils.dart';
 import 'package:flykeys/src/widget/custom_widgets.dart';
 
 import 'ask_to_plug_the_object.dart';
+import 'package:flykeys/src/utils/custom_size.dart';
 
 class OnBoardingPage extends StatefulWidget {
   final Widget nextPage;
@@ -133,7 +134,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
     bool showBackIcon = history.length > 1;
 
     return Container(
-      padding: const EdgeInsets.only(bottom: 34),
+      padding: const EdgeInsets.only(bottom: 34, top: CustomSize.topMarginTopBar),
       width: MediaQuery.of(context).size.width,
       child: Stack(
         children: <Widget>[

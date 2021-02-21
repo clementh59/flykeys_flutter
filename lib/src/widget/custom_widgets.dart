@@ -4,6 +4,7 @@ import 'package:flykeys/src/bloc/image_loading/bloc.dart';
 import 'package:flykeys/src/page/parameter_page.dart';
 import 'package:flykeys/src/utils/custom_colors.dart';
 import 'package:flykeys/src/utils/custom_style.dart';
+import 'package:flykeys/src/utils/custom_size.dart';
 import 'package:flykeys/src/utils/utils.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -591,4 +592,40 @@ class CustomWidgets {
     );
   }
 //endregion
+
+  static Widget topBar(title, leftWidget, rightWidget, {double horizontalPadding = CustomSize.leftAndRightPadding}) {
+
+    if (rightWidget == null)
+      return Padding(
+        padding: EdgeInsets.only(left: horizontalPadding, right: horizontalPadding, top: CustomSize.topMarginTopBar),
+        child: Stack(
+          children: [
+            Align(
+              alignment: Alignment.topLeft,
+              child: leftWidget),
+            Align(
+              alignment: Alignment.topCenter,
+              child: Text(
+                title,
+                style: CustomStyle.pageTitle,
+              )),
+          ],
+        ),
+      );
+
+    return Padding(
+      padding: EdgeInsets.only(left: horizontalPadding, right: horizontalPadding, top: 15),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          leftWidget,
+          Text(
+            title,
+            style: CustomStyle.pageTitle,
+          ),
+          rightWidget,
+        ],
+      ),
+    );
+  }
 }

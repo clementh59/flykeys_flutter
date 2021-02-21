@@ -77,20 +77,7 @@ class _SearchPageState extends State<SearchPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.max,
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: CustomSize.leftAndRightPadding),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    CustomWidgets.settingsIcon(context),
-                    Text(
-                      "Recherche",
-                      style: CustomStyle.pageTitle,
-                    ),
-                    ProfileImage(),
-                  ],
-                ),
-              ),
+              CustomWidgets.topBar('Recherche', CustomWidgets.settingsIcon(context), ProfileImage()),
               SizedBox(
                 height: 30,
               ),

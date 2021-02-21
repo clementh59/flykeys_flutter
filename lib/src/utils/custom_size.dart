@@ -1,6 +1,7 @@
 class CustomSize{
 
 	static const double leftAndRightPadding = 22;
+	static const double topMarginTopBar = 15;
 
 	//region Transcriber tile
 	static const double heightOfTranscriberTile = 259;

@@ -55,17 +55,7 @@ class _TranscriberPageState extends State<TranscriberPage> {
 											mainAxisSize: MainAxisSize.min,
 											crossAxisAlignment: CrossAxisAlignment.start,
 											children: [
-												Row(
-													mainAxisAlignment: MainAxisAlignment.spaceBetween,
-													children: <Widget>[
-														CustomWidgets.backArrowIcon(context),
-														Text(
-															"Transcriber",
-															style: CustomStyle.pageTitle,
-														),
-														ProfileImage(),
-													],
-												),
+												CustomWidgets.topBar('Transcriber', CustomWidgets.backArrowIcon(context), ProfileImage(), horizontalPadding: 0),
 												SizedBox(
 													height: 15,
 												),

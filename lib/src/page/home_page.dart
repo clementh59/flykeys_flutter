@@ -54,20 +54,7 @@ class _HomePageState extends State<HomePage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.max,
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: CustomSize.leftAndRightPadding),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                CustomWidgets.settingsIcon(context),
-                Text(
-                  "Home",
-                  style: CustomStyle.pageTitle,
-                ),
-                ProfileImage(),
-              ],
-            ),
-          ),
+          CustomWidgets.topBar('Home', CustomWidgets.settingsIcon(context), ProfileImage()),
           SizedBox(
             height: 30,
           ),

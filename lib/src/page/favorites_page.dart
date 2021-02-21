@@ -31,20 +31,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.max,
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: CustomSize.leftAndRightPadding),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                CustomWidgets.settingsIcon(context),
-                Text(
-                  "Favoris",
-                  style: CustomStyle.pageTitle,
-                ),
-                ProfileImage(),
-              ],
-            ),
-          ),
+          CustomWidgets.topBar('Favoris', CustomWidgets.settingsIcon(context), ProfileImage()),
           SizedBox(
             height: 30,
           ),
