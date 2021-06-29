@@ -245,7 +245,7 @@ class BluetoothRepository {
       return true;
     } catch (id) {
       print("error : " + id.toString());
-      if (id.toString() == "PlatformException(already_connected, connection with device already exists, null)") {
+      if (id.toString().contains('connection with device already exists')) {
         subscribeToConnectionStateChanges(onDisconnectNotifier);
         return true; //je suis déjà connecté
       }
@@ -322,7 +322,7 @@ class BluetoothRepository {
       MD.green,
       MD.blue,
       BluetoothConstants.mapStringColorToCode['MD_R&P'],
-      189,
+      189, // todo: change
       255,
       177,
       189,
