@@ -300,6 +300,7 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
     initWaitForUserInput();
     initLaMainSelectionnee();
     initRepeatRangeValues();
+    _sendMyConfig(widget.music.speed);
   }
 
   @override
@@ -307,21 +308,10 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
     int buttonState = LOADING;
 
     if (widget.state is MorceauSentState) {
-      //Je viens d'envoyer le morceau, je lui envoi donc le delay
-      _sendDelay(widget.music.speed);
-
-      //je lui envoi aussi si il doit attendre que j'appuie sur les touches ou non
-      envoiWaitForTheUserInput();
-
-      // Je lui envoi aussi mes couleurs
-      envoiMesCouleurs();
-
-      envoiLaMainQueJeVeuxJouer();
-
-      // Au cas ou le morceau d'avant était en repeat mode
-      envoiStopLeModeBoucle();
-
-      //De base je suis en pause
+      // if i am in this state, I need to wait that the phone sends my config
+      buttonState = LOADING;
+    } else if (widget.state is ConfigSentState) {
+      // now, everything is setup and I can click on play
       buttonState = PAUSE;
     } else if (widget.state is PlayingMusicState) {
       buttonState = PLAYING;
@@ -806,6 +796,15 @@ class _InteractWithMorceauPageState extends State<InteractWithMorceauPage> {
   //endregion
 
   //region Logic
+
+  /// I just arrive on interact with morceau page and I need to send my config
+  void _sendMyConfig(double delayDouble) async {
+    bool md = await Utils.getBooleanFromSharedPreferences(widget.music.id + '_MD', defaultValue: true);
+    bool mg = await Utils.getBooleanFromSharedPreferences(widget.music.id + '_MG', defaultValue: true);
+    bool wait = await getWaitForUserInput();
+    lastDelaySent = delayDouble;
+    BlocProvider.of<BluetoothBloc>(context).add(SendMyConfigEvent(md,mg,delayDouble, wait));
+  }
 
   void _play() async {
     BlocProvider.of<BluetoothBloc>(context).add(PlayEvent());

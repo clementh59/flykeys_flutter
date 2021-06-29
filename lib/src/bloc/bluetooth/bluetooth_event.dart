@@ -175,6 +175,21 @@ class LightningShowEvent extends BluetoothEvent{
 
 }
 
+/// This is the event that is called when the user arrives on the interact with music page
+class SendMyConfigEvent extends BluetoothEvent{
+
+  final bool md; // if I play MD
+  final bool mg; // if I play MG
+  final double speed;
+  final bool waitForTheUserInput;
+
+
+  SendMyConfigEvent(this.md, this.mg, this.speed, this.waitForTheUserInput);
+
+  @override
+  List<Object> get props => [md, mg, speed, waitForTheUserInput];
+}
+
 /// I ask the esp32 to pass in a mode where the user will set up the limit of the midi keyboard
 class SetUpMidiKeyboardLimitEvent extends BluetoothEvent{
 

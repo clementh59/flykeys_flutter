@@ -163,6 +163,14 @@ class StoppedMusicState extends BluetoothInteractWithMusic{
   List<Object> get props => [];
 }
 
+class ConfigSentState extends BluetoothInteractWithMusic{
+
+  ConfigSentState();
+
+  @override
+  List<Object> get props => [];
+}
+
 /**
  * Lorsque je demande à aller à un endroit du morceau que je n'ai pas envoyer à l'esp
  * Je dois mettre un id car sinon, si je yield plusieurs fois TickNotPossibleState, je ne build que la premiere étant donnée que le state reste le même

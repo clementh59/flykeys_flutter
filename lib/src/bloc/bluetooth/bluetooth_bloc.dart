@@ -118,6 +118,29 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
     //endregion
 
     //region Interact with morceau
+    if (event is SendMyConfigEvent) {
+
+      await bluetoothRepository.sendDelay(event.speed);
+
+      if (event.waitForTheUserInput)
+        await bluetoothRepository.askToWaitForUserInputInModeApprentissage();
+      else
+        await bluetoothRepository.askToNotWaitForUserInputInModeApprentissage();
+
+      await bluetoothRepository.sendColors();
+
+      if (event.md && event.mg)
+        await bluetoothRepository.showTheTwoHands();
+      else if (event.md)
+        await bluetoothRepository.showOnlyTheRightHand();
+      else
+        await bluetoothRepository.showOnlyTheLeftHand();
+
+      await bluetoothRepository.stopRepeatMode();
+
+      yield ConfigSentState();
+    }
+
     if (event is SendSpeedEvent) {
       await bluetoothRepository.sendDelay(event.speed);
       return;
