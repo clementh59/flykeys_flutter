@@ -6,57 +6,81 @@ import 'package:google_sign_in/google_sign_in.dart';
 class AuthentificationRepository {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn googleSignIn = GoogleSignIn();
-  FirebaseUser _user;
+  User _user;
 
   //region Sign in / up
   //region Google
   Future<int> signInWithGoogle() async {
-    final GoogleSignInAccount googleSignInAccount = await googleSignIn.signIn();
-    final GoogleSignInAuthentication googleSignInAuthentication =
-        await googleSignInAccount.authentication;
 
-    final AuthCredential credential = GoogleAuthProvider.getCredential(
-      accessToken: googleSignInAuthentication.accessToken,
-      idToken: googleSignInAuthentication.idToken,
-    );
+    try {
 
-    final AuthResult authResult = await _auth.signInWithCredential(credential);
-    final FirebaseUser user = authResult.user;
+      print("0");
 
-    assert(!user.isAnonymous);
-    assert(await user.getIdToken() != null);
+      final GoogleSignInAccount googleSignInAccount = await googleSignIn.signIn();
 
-    final FirebaseUser currentUser = await _auth.currentUser();
-    assert(user.uid == currentUser.uid);
+      print("0,1");
 
-    _user = user;
+      final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
 
-    return 0;
+      print("0,2");
+
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleSignInAuthentication.accessToken,
+        idToken: googleSignInAuthentication.idToken,
+      );
+
+      print("1");
+
+      final UserCredential authResult = await _auth.signInWithCredential(credential);
+      final User user = authResult.user;
+
+      assert(!user.isAnonymous);
+      print("2");
+
+      assert(await user.getIdToken() != null);
+      print("3");
+
+      final User currentUser = _auth.currentUser;
+      assert(user.uid == currentUser.uid);
+
+      _user = user;
+
+      print('Everything is ok');
+      return 0;
+    } catch (e) {
+      print('Everyth nnnnnok');
+      print(e);
+      return -1;
+    }
   }
   //endregion
 
   //region Email/password
   Future<String> handleSignInEmail(String email, String password) async {
     try {
-      AuthResult result;
-      result = await _auth.signInWithEmailAndPassword(
-          email: email, password: password);
-
-      final FirebaseUser user = result.user;
+      UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
+      User user = userCredential.user;
 
       assert(user != null);
       assert(await user.getIdToken() != null);
 
-      final FirebaseUser currentUser = await _auth.currentUser();
+      final User currentUser = _auth.currentUser;
       assert(user.uid == currentUser.uid);
 
       print('signInEmail succeeded: $user');
 
-			_user = user;
+      _user = user;
 
-			return "OK";
+      return "OK";
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        return Strings.email_non_valide;
+      } else if (e.code == 'wrong-password') {
+        return Strings.error_wrong_password;
+      }
+      return getErrorString(e.code);
     } on PlatformException catch (exception) {
-			return getErrorString(exception.code);
+      return getErrorString(exception.code);
     }
 
 		return Strings.la_creation_de_compte_a_echoue;
@@ -64,9 +88,9 @@ class AuthentificationRepository {
 
   Future<String> handleSignUp(email, password, name) async {
     try {
-      AuthResult result = await _auth.createUserWithEmailAndPassword(
+      UserCredential result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
-      final FirebaseUser user = result.user;
+      final User user = result.user;
 
       assert(user != null);
       assert(await user.getIdToken() != null);
@@ -74,6 +98,13 @@ class AuthentificationRepository {
 			_user = user;
 
 			return "OK";
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        return Strings.mdp_too_short;
+      } else if (e.code == 'email-already-in-use') {
+        return Strings.account_already_exists;
+      }
+      return getErrorString(e.code);
     } on PlatformException catch (exception) {
       return getErrorString(exception.code);
     }
@@ -90,12 +121,11 @@ class AuthentificationRepository {
 
   void signOutGoogle() async {
     await googleSignIn.signOut();
-
-    print("User Sign Out");
   }
   //endregion
 
   //region Utils
+  // todo: these codes are now invalid ?
   String getErrorString(String code) {
     switch (code) {
       case "ERROR_INVALID_CUSTOM_TOKEN":
@@ -141,7 +171,7 @@ class AuthentificationRepository {
 
   /// [returns] true if the user is logged in - false otherwise
   Future<bool> checkIfHeIsLoggedIn() async {
-    FirebaseUser value = await FirebaseAuth.instance.currentUser();
+    User value = FirebaseAuth.instance.currentUser;
     if (value == null)
      return false;
     return true;

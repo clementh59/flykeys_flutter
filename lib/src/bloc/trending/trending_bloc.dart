@@ -15,10 +15,7 @@ class TrendingBloc extends Bloc<TrendingEvent, TrendingState> {
   List<String> trendingMusicsIds = [];
   List<String> musicsIdsFetched = [];
 
-  TrendingBloc(this.transcriberBloc, this.musicBloc, this.firestoreRepository);
-
-  @override
-  TrendingState get initialState => InitialTrendingState();
+  TrendingBloc(this.transcriberBloc, this.musicBloc, this.firestoreRepository) : super(InitialTrendingState());
 
   @override
   Stream<TrendingState> mapEventToState(

@@ -21,13 +21,11 @@ import 'package:flykeys/src/widget/widget_transcriber.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 class SearchPage extends StatefulWidget {
-
   @override
   _SearchPageState createState() => _SearchPageState();
 }
 
 class _SearchPageState extends State<SearchPage> {
-
   //region Variables
   String _searchtext = "";
   MusicBloc _musicBloc;
@@ -39,6 +37,7 @@ class _SearchPageState extends State<SearchPage> {
   int _selectedCategory = 0;
 
   List<bool> _categoryIsAlreadyLoaded;
+
   //endregion
 
   //region Overrides
@@ -60,7 +59,6 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
-
     return VisibilityDetector(
       key: Key('searchPageKey'),
       onVisibilityChanged: (VisibilityInfo info) {
@@ -107,7 +105,7 @@ class _SearchPageState extends State<SearchPage> {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: CustomSize.leftAndRightPadding),
-                child: _isSearching? _searchResult() : _recentElements(),
+                child: _isSearching ? _searchResult() : _recentElements(),
               ),
             ],
           ),
@@ -115,6 +113,7 @@ class _SearchPageState extends State<SearchPage> {
       ),
     );
   }
+
   //endregion
 
   //region Widget
@@ -149,7 +148,7 @@ class _SearchPageState extends State<SearchPage> {
                 maxLines: 1,
                 onChanged: (text) {
                   _searchtext = text;
-                  if (text==""){
+                  if (text == "") {
                     setState(() {
                       _isSearching = false;
                     });
@@ -159,17 +158,14 @@ class _SearchPageState extends State<SearchPage> {
                 onEditingComplete: () {
                   _search(_searchtext);
                 },
-                decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: "Recherche",
-                    hintStyle: CustomStyle.searchFieldHintText),
+                decoration: InputDecoration(border: InputBorder.none, hintText: "Recherche", hintStyle: CustomStyle.searchFieldHintText),
               ),
             ),
             SizedBox(
               width: 10,
             ),
             InkWell(
-              onTap: (){
+              onTap: () {
                 _searchFieldController.text = "";
                 _searchtext = "";
                 setState(() {
@@ -200,17 +196,20 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Widget _searchResult() {
-
     Widget _result = _searchMessage("Not implemented");
 
-    switch(_selectedCategory){
+    switch (_selectedCategory) {
       case 0:
         _result = BlocBuilder<MusicBloc, MusicState>(
           bloc: _musicBloc,
           builder: (BuildContext context, MusicState state) {
             if (state is MusicListLoadedState) {
-              if (state.musics.length>0)
-                return MusicListWidget(state.musics, null, onSelect: onMusicSelect,);
+              if (state.musics.length > 0)
+                return MusicListWidget(
+                  state.musics,
+                  null,
+                  onSelect: onMusicSelect,
+                );
               return _searchMessage("Aucun résultat");
             }
             if (state is MusicListLoadingState) {
@@ -227,8 +226,7 @@ class _SearchPageState extends State<SearchPage> {
           bloc: _transcriberBloc,
           builder: (BuildContext context, TranscriberState state) {
             if (state is TranscriberListLoadedState) {
-              if (state.transcribers.length>0)
-                return TranscriberListWidget(state.transcribers, null);
+              if (state.transcribers.length > 0) return TranscriberListWidget(state.transcribers, null);
               return _searchMessage("Aucun résultat");
             }
             if (state is TranscriberListLoadingState) {
@@ -245,8 +243,7 @@ class _SearchPageState extends State<SearchPage> {
           bloc: _artistBloc,
           builder: (BuildContext context, ArtistState state) {
             if (state is ArtistListLoadedState) {
-              if (state.artists.length>0)
-                return ArtistListWidget(state.artists, null);
+              if (state.artists.length > 0) return ArtistListWidget(state.artists, null);
               return _searchMessage("Aucun résultat");
             }
             if (state is ArtistListLoadingState) {
@@ -266,7 +263,6 @@ class _SearchPageState extends State<SearchPage> {
         break;
       case 6:
         break;
-
     }
 
     return Column(
@@ -275,8 +271,7 @@ class _SearchPageState extends State<SearchPage> {
         SizedBox(
           height: 15,
         ),
-        SingleChildScrollView(
-            scrollDirection: Axis.horizontal, child: _searchTypeBar()),
+        SingleChildScrollView(scrollDirection: Axis.horizontal, child: _searchTypeBar()),
         SizedBox(
           height: 8,
         ),
@@ -285,43 +280,49 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-  Widget _recentElements(){
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(height: 20,),
-        Text(
-          "RÉCENT",
-          style: TextStyle(
-            color: CustomColors.white,
-            fontSize: 15,
-            fontFamily: 'Poppins',
-            fontWeight: CustomStyle.MEDIUM,
-          ),
-        ),
-        SizedBox(height: 20,),
-        BlocBuilder<MusicBloc, MusicState>(
-          bloc: _recentMusicBloc,
-          builder: (BuildContext context, MusicState state) {
-            if (state is MusicListLoadedState) {
-              if (state.musics.length>0)
-                return MusicListWidget(state.musics, null, onSelect: onMusicSelect,);
-              return _searchMessage("Aucune recherche récente");
-            }
-            if (state is MusicListLoadingState) {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-            return SizedBox();
-          },
-        )
-      ],
+  Widget _recentElements() {
+    return BlocBuilder<MusicBloc, MusicState>(
+      bloc: _recentMusicBloc,
+      builder: (BuildContext context, MusicState state) {
+        if (state is MusicListLoadedState && state.musics.length > 0) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                height: 20,
+              ),
+              Text(
+                "RÉCENT",
+                style: TextStyle(
+                  color: CustomColors.white,
+                  fontSize: 15,
+                  fontFamily: 'Poppins',
+                  fontWeight: CustomStyle.MEDIUM,
+                ),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              MusicListWidget(
+                state.musics,
+                null,
+                onSelect: onMusicSelect,
+              )
+            ],
+          );
+        }
+        if (state is MusicListLoadingState) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+        return SizedBox();
+      },
     );
   }
 
-  Widget _searchTypeBar(){
+  Widget _searchTypeBar() {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 10),
       child: Row(
@@ -374,7 +375,7 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-  Widget _searchMessage(String text){
+  Widget _searchMessage(String text) {
     return Container(
       height: 150,
       child: Center(
@@ -385,14 +386,13 @@ class _SearchPageState extends State<SearchPage> {
       ),
     );
   }
+
   //endregion
 
   //region Logic
   void _search(String text) {
     if (text.length < 2) {
-      Scaffold.of(context).showSnackBar(SnackBar(
-          content: Text(
-              "Il faut au moins 2 caractères pour effectuer une recherche")));
+      Scaffold.of(context).showSnackBar(SnackBar(content: Text("Il faut au moins 2 caractères pour effectuer une recherche")));
       return;
     }
 
@@ -430,24 +430,22 @@ class _SearchPageState extends State<SearchPage> {
 
     // I unfocus the textfield
     unfocusTextField();
-
   }
 
-  void _initCategoryAreLoadedBoolean(){
-
-    if (_categoryIsAlreadyLoaded==null){
+  void _initCategoryAreLoadedBoolean() {
+    if (_categoryIsAlreadyLoaded == null) {
       _categoryIsAlreadyLoaded = [];
-      for(int i=0; i<7;i++){
+      for (int i = 0; i < 7; i++) {
         _categoryIsAlreadyLoaded.add(false);
       }
     }
 
-    for(int i=0; i<7;i++){
-      _categoryIsAlreadyLoaded[i]=false;
+    for (int i = 0; i < 7; i++) {
+      _categoryIsAlreadyLoaded[i] = false;
     }
   }
 
-  void changeSelectedCategory(int category){
+  void changeSelectedCategory(int category) {
     setState(() {
       _selectedCategory = category;
     });
@@ -455,24 +453,20 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   void onMusicSelect(Music music) async {
-    List<String> musicsIds = await Utils.readListOfStringFromSharedPreferences(Strings.RECENT_SEARCH_SHARED_PREFS, defaultValue:List<String>());
-    if (!musicsIds.contains(music.id))
-      musicsIds.add(music.id);
-    if (musicsIds.length>5)
-      musicsIds.removeAt(0);
+    List<String> musicsIds = await Utils.readListOfStringFromSharedPreferences(Strings.RECENT_SEARCH_SHARED_PREFS, defaultValue: List<String>());
+    if (!musicsIds.contains(music.id)) musicsIds.add(music.id);
+    if (musicsIds.length > 5) musicsIds.removeAt(0);
     await Utils.saveListOfStringToSharedPreferences(Strings.RECENT_SEARCH_SHARED_PREFS, musicsIds);
   }
 
   void _loadRecentSearchs() async {
-    List<String> musicsIds = await Utils.readListOfStringFromSharedPreferences(Strings.RECENT_SEARCH_SHARED_PREFS, defaultValue:List<String>());
-    if (musicsIds.length>0)
-    	_recentMusicBloc.add(GetMusics(musicsIds));
+    List<String> musicsIds = await Utils.readListOfStringFromSharedPreferences(Strings.RECENT_SEARCH_SHARED_PREFS, defaultValue: List<String>());
+    if (musicsIds.length > 0) _recentMusicBloc.add(GetMusics(musicsIds));
   }
 
   /// Hide the keyboard by unfocusing the textfield
   void unfocusTextField() {
     FocusScope.of(context).requestFocus(new FocusNode());
   }
-  //endregion
+//endregion
 }
-

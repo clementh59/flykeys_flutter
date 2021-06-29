@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -83,6 +84,9 @@ class _AppState extends State<App> {
   /// else if the user isn't logged in, we show the login page
   /// else we show the main page
   void checkWhichPageIShow() async {
+
+    await Firebase.initializeApp();
+
     var results = await Future.wait([
       Utils.getBooleanFromSharedPreferences(Strings.I_DID_ONBOARDING_SHARED_PREFS),
       AuthentificationRepository().checkIfHeIsLoggedIn(),

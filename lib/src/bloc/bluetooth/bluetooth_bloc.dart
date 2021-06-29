@@ -36,12 +36,9 @@ class BluetoothBloc extends Bloc<BluetoothEvent, MyBluetoothState> {
   // To know which note has been pushed
   ValueNotifier<int> valueNotifierNotePushed;
 
-  BluetoothBloc(this.bluetoothRepository) {
+  BluetoothBloc(this.bluetoothRepository) : super(InitialBluetoothState()) {
     flutterBlue = FlutterBlue.instance;
   }
-
-  @override
-  MyBluetoothState get initialState => InitialBluetoothState();
 
   void initEverythingLearningMode() {
     valueNotifierStopSendingMorceau = ValueNotifier(false);

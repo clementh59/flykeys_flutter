@@ -10,10 +10,7 @@ class ImageLoadingBloc extends Bloc<ImageLoadingEvent, ImageLoadingState> {
 
   final ImageProviderRepository imageProviderRepository;
 
-  ImageLoadingBloc(this.imageProviderRepository);
-
-  @override
-  ImageLoadingState get initialState => LoadingImageState();
+  ImageLoadingBloc(this.imageProviderRepository) : super(LoadingImageState());
 
   @override
   Stream<ImageLoadingState> mapEventToState(

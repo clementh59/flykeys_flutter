@@ -10,10 +10,7 @@ class TranscriberBloc extends Bloc<TranscriberEvent, TranscriberState> {
 
   final DatabaseRepository transcribersRepository;
 
-  TranscriberBloc(this.transcribersRepository);
-
-  @override
-  TranscriberState get initialState => InitialTranscriberState();
+  TranscriberBloc(this.transcribersRepository) : super(InitialTranscriberState());
 
   @override
   Stream<TranscriberState> mapEventToState(

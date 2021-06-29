@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'src/app.dart';
 
 void main(){
-  runApp(Row(
+  /*runApp(Row(
     textDirection: TextDirection.ltr,
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
@@ -14,6 +14,6 @@ void main(){
         ),
       ),
     ],
-  ));
-  //runApp(App());
+  ));*/
+  runApp(App());
 }

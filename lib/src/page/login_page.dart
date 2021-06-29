@@ -55,8 +55,8 @@ class _LoginPageState extends State<LoginPage> {
       bloc: authentificationBloc,
       listener: (BuildContext context, state) {
         if (state is AuthentificateFailedState) {
-          Scaffold.of(context)
-              .showSnackBar(SnackBar(content: Text(state.result)));
+          _scaffoldKey.currentState.showSnackBar(
+              SnackBar(content: Text(state.result)));
         }
         setState(() {
           im_waiting = false;
@@ -403,7 +403,7 @@ class _LoginPageState extends State<LoginPage> {
         _buildSocialBtn(
             () => loginWithGoogle(),
           AssetImage(
-            'assets/images/icons/google.jpg',
+            'assets/images/icons/google.jpeg',
           ),
         ),
       ],
@@ -417,7 +417,7 @@ class _LoginPageState extends State<LoginPage> {
         text: TextSpan(
           children: [
             TextSpan(
-              text: 'Tu n\'as pas de compte?',
+              text: 'Tu n\'as pas de compte? ',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 14.0,

@@ -54,7 +54,7 @@ class _MusicPageState extends State<MusicPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomPadding: false,
+      resizeToAvoidBottomInset: false,
       backgroundColor: CustomColors.backgroundColor,
       body: SafeArea(
         child: BlocBuilder<MusicBloc, MusicState>(

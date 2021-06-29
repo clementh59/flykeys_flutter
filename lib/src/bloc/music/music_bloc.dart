@@ -11,10 +11,7 @@ class MusicBloc extends Bloc<MusicEvent, MusicState> {
   //to keep trending musics that are already loaded
   List<Music> trendingMusic = [];
 
-  MusicBloc(this.musicRepository);
-
-  @override
-  MusicState get initialState => InitialMusicState();
+  MusicBloc(this.musicRepository) : super(InitialMusicState());
 
   @override
   Stream<MusicState> mapEventToState(

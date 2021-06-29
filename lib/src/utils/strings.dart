@@ -10,6 +10,7 @@ class Strings{
 	static const String email_envoye = "Email envoyé!";
 	static const String entre_ton_email_pour_reinitialiser = "Entre ton email pour pouvoir réinitialiser ton mot de passe!";
 	static const String deconnection = "Déconnexion";
+	static const String authenticate_google_failed = "La connexion avec Google a échouée";
 
 	//region Errors Firebase connection
 	static const String ERROR_INVALID_CUSTOM_TOKEN =  "The custom token format is incorrect. Please check the documentation.";

@@ -9,10 +9,7 @@ class ArtistBloc extends Bloc<ArtistEvent, ArtistState> {
 
   final DatabaseRepository artistsRepository;
 
-  ArtistBloc(this.artistsRepository);
-
-  @override
-  ArtistState get initialState => InitialArtistState();
+  ArtistBloc(this.artistsRepository) : super(InitialArtistState());
 
   @override
   Stream<ArtistState> mapEventToState(

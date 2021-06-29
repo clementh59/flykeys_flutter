@@ -25,7 +25,7 @@ class _LightningShowPageState extends State<LightningShowPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomPadding: false,
+      resizeToAvoidBottomInset: false,
       backgroundColor: CustomColors.backgroundColor,
       body: SafeArea(
           child: WillPopScope(

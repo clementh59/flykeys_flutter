@@ -1,12 +1,11 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:flykeys/src/repository/authentification_repository.dart';
+import 'package:flykeys/src/utils/strings.dart';
 import './bloc.dart';
 
 class AuthentificationBloc extends Bloc<AuthentificationEvent, AuthentificationState> {
-
-  @override
-  AuthentificationState get initialState => InitialAuthentificationState();
+  AuthentificationBloc() : super(InitialAuthentificationState());
 
   AuthentificationRepository authentificationRepository = AuthentificationRepository();
 
@@ -40,7 +39,7 @@ class AuthentificationBloc extends Bloc<AuthentificationEvent, AuthentificationS
       if (result==0){
         yield AuthentificateSucceedState();
       }else{
-        yield AuthentificateFailedState("Authentification with Google failed");
+        yield AuthentificateFailedState(Strings.authenticate_google_failed);
       }
     }
 

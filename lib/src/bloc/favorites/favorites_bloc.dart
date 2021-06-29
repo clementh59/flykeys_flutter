@@ -15,10 +15,7 @@ class FavoritesBloc extends Bloc<FavoritesEvent, FavoritesState> {
   List<Music> musics = [];
   List<Transcriber> transcribers = [];
 
-  FavoritesBloc(this.sharedPrefsRepository, this.firestoreRepository);
-
-  @override
-  FavoritesState get initialState => InitialFavoritesState();
+  FavoritesBloc(this.sharedPrefsRepository, this.firestoreRepository) : super(InitialFavoritesState());
 
   @override
   Stream<FavoritesState> mapEventToState(

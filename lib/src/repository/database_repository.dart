@@ -50,13 +50,13 @@ class FirestoreRepository extends DatabaseRepository {
   //region Musics
   @override
   Future<Music> fetchMusic(String id) async {
-    DocumentSnapshot qs = await Firestore.instance.collection("music").document(id).get();
+    DocumentSnapshot qs = await FirebaseFirestore.instance.collection("music").doc(id).get();
     return fetchMusicByQuery(qs);
   }
 
   @override
   Future<List<Music>> fetchAllMusics() async {
-    QuerySnapshot qs = await Firestore.instance.collection("music").getDocuments();
+    QuerySnapshot qs = await FirebaseFirestore.instance.collection("music").get();
     return fetchMusicsByQuery(qs);
   }
 
@@ -68,7 +68,7 @@ class FirestoreRepository extends DatabaseRepository {
     }
 
     if (ids.length < 10) {
-      QuerySnapshot qs = await Firestore.instance.collection("music").where(FieldPath.documentId, whereIn: ids).getDocuments();
+      QuerySnapshot qs = await FirebaseFirestore.instance.collection("music").where(FieldPath.documentId, whereIn: ids).get();
       return fetchMusicsByQuery(qs);
     }
 
@@ -85,11 +85,11 @@ class FirestoreRepository extends DatabaseRepository {
 
   @override
   Future<List<Music>> fetchMusicWithThisPattern(String text) async {
-    QuerySnapshot qs = await Firestore.instance
+    QuerySnapshot qs = await FirebaseFirestore.instance
         .collection("music")
         .where("searchKeys", arrayContains: text)
         .limit(Constants.numberOfElementLoadedWhenSearch)
-        .getDocuments();
+        .get();
     return fetchMusicsByQuery(qs);
   }
 
@@ -99,8 +99,8 @@ class FirestoreRepository extends DatabaseRepository {
 
     //todo : throw NetWork Error
 
-    for (int i = 0; i < qs.documents.length; i++) {
-      DocumentSnapshot ds = qs.documents[i];
+    for (int i = 0; i < qs.docs.length; i++) {
+      DocumentSnapshot ds = qs.docs[i];
       musics.add(fetchMusicByQuery(ds));
     }
 
@@ -109,8 +109,8 @@ class FirestoreRepository extends DatabaseRepository {
 
   @override
   Music fetchMusicByQuery(DocumentSnapshot ds) {
-    Map<String, dynamic> data = ds.data;
-    data["key"] = ds.documentID;
+    Map<String, dynamic> data = ds.data();
+    data["key"] = ds.id;
     data["liked"] = false;
 
     //todo:ajout bdd
@@ -127,17 +127,17 @@ class FirestoreRepository extends DatabaseRepository {
       return [];
     }
 
-    QuerySnapshot qs = await Firestore.instance.collection("transcribers").where(FieldPath.documentId, whereIn: ids).getDocuments();
+    QuerySnapshot qs = await FirebaseFirestore.instance.collection("transcribers").where(FieldPath.documentId, whereIn: ids).get();
     return fetchTranscribersByQuery(qs);
   }
 
   @override
   Future<List<Transcriber>> fetchTranscriberWithThisPattern(String text) async {
-    QuerySnapshot qs = await Firestore.instance
+    QuerySnapshot qs = await FirebaseFirestore.instance
         .collection("transcribers")
         .where("searchKeys", arrayContains: text)
         .limit(Constants.numberOfElementLoadedWhenSearch)
-        .getDocuments();
+        .get();
     return fetchTranscribersByQuery(qs);
   }
 
@@ -146,10 +146,10 @@ class FirestoreRepository extends DatabaseRepository {
     List<Transcriber> transcribers = [];
 
     //todo : throw NetWork Error
-    for (int i = 0; i < qs.documents.length; i++) {
-      DocumentSnapshot ds = qs.documents[i];
-      Map<String, dynamic> data = ds.data;
-      data["key"] = ds.documentID;
+    for (int i = 0; i < qs.docs.length; i++) {
+      DocumentSnapshot ds = qs.docs[i];
+      Map<String, dynamic> data = ds.data();
+      data["key"] = ds.id;
       data["iFollow"] = false;
 
       transcribers.add(Transcriber.fromMapObject(data));
@@ -162,9 +162,9 @@ class FirestoreRepository extends DatabaseRepository {
 
   //region Trending
   Future<Map<String, dynamic>> fetchTrendings() async {
-    DocumentSnapshot ds = await Firestore.instance.collection("trending").document("trending").get();
+    DocumentSnapshot ds = await FirebaseFirestore.instance.collection("trending").doc("trending").get();
 
-    Map<String, dynamic> data = ds.data;
+    Map<String, dynamic> data = ds.data();
 
     return data;
   }
@@ -174,17 +174,17 @@ class FirestoreRepository extends DatabaseRepository {
   //region Artists
   @override
   Future<List<Artist>> fetchArtistWithThisPattern(String text) async {
-    QuerySnapshot qs = await Firestore.instance
+    QuerySnapshot qs = await FirebaseFirestore.instance
         .collection("artists")
         .where("searchKeys", arrayContains: text)
         .limit(Constants.numberOfElementLoadedWhenSearch)
-        .getDocuments();
+        .get();
     return fetchArtistsByQuery(qs);
   }
 
   @override
   Future<Artist> fetchArtist(String id) async {
-    DocumentSnapshot qs = await Firestore.instance.collection("artists").document(id).get();
+    DocumentSnapshot qs = await FirebaseFirestore.instance.collection("artists").doc(id).get();
     return fetchArtistByQuery(qs);
   }
 
@@ -194,8 +194,8 @@ class FirestoreRepository extends DatabaseRepository {
 
     //todo : throw NetWork Error
 
-    for (int i = 0; i < qs.documents.length; i++) {
-      DocumentSnapshot ds = qs.documents[i];
+    for (int i = 0; i < qs.docs.length; i++) {
+      DocumentSnapshot ds = qs.docs[i];
       artists.add(fetchArtistByQuery(ds));
     }
 
@@ -204,8 +204,8 @@ class FirestoreRepository extends DatabaseRepository {
 
   @override
   Artist fetchArtistByQuery(DocumentSnapshot ds) {
-    Map<String, dynamic> data = ds.data;
-    data["id"] = ds.documentID;
+    Map<String, dynamic> data = ds.data();
+    data["id"] = ds.id;
     return Artist.fromMapObject(data);
   }
 
@@ -214,19 +214,19 @@ class FirestoreRepository extends DatabaseRepository {
   //region Follows
   Future<List<String>> fetchFollowedTranscribersIds() async {
     //todo: change
-    DocumentSnapshot ds = await Firestore.instance.collection("users").document("t8QDyOeKSYFR1lYKOGqa").get();
-    Map<String, dynamic> data = ds.data;
+    DocumentSnapshot ds = await FirebaseFirestore.instance.collection("users").doc("t8QDyOeKSYFR1lYKOGqa").get();
+    Map<String, dynamic> data = ds.data();
     return Utils.listDynamicToStringList(data["followedTranscribers"]);
   }
 
   void removeFromFollowed(Transcriber transcriber) async {
-    Firestore.instance.collection("users").document(uid).updateData({
+    FirebaseFirestore.instance.collection("users").doc(uid).update({
       "followedTranscribers": FieldValue.arrayRemove([transcriber.id])
     });
   }
 
   void addToFollowed(Transcriber transcriber) async {
-    Firestore.instance.collection("users").document(uid).updateData({
+    FirebaseFirestore.instance.collection("users").doc(uid).update({
       "followedTranscribers": FieldValue.arrayUnion([transcriber.id])
     });
   }
@@ -236,19 +236,19 @@ class FirestoreRepository extends DatabaseRepository {
   //region Favorites
   Future<List<String>> fetchLikedMusicIds() async {
     //todo:change
-    DocumentSnapshot ds = await Firestore.instance.collection("users").document(uid).get();
-    Map<String, dynamic> data = ds.data;
+    DocumentSnapshot ds = await FirebaseFirestore.instance.collection("users").doc(uid).get();
+    Map<String, dynamic> data = ds.data();
     return Utils.listDynamicToStringList(data["liked"]);
   }
 
   void removeFromFavorite(Music music) async {
-    Firestore.instance.collection("users").document(uid).updateData({
+    FirebaseFirestore.instance.collection("users").doc(uid).update({
       "liked": FieldValue.arrayRemove([music.id])
     });
   }
 
   void addToFavorite(Music music) async {
-    Firestore.instance.collection("users").document(uid).updateData({
+    FirebaseFirestore.instance.collection("users").doc(uid).update({
       "liked": FieldValue.arrayUnion([music.id])
     });
   }
